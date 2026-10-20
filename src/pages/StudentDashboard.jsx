@@ -28,11 +28,11 @@ import {
 import { shortenAddress } from "../lib/utils";
 import { getExplorerUrl } from "../lib/solana";
 import { Button } from "../components/Button";
+import { SignInRequired } from "../components/SignInRequired";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
-
-const API_BASE_URL = import.meta.env.VITE_APP_SERVER_URL;
 
 const UNIVERSITY_FEES = 0.01;
 
@@ -41,6 +41,7 @@ export function StudentDashboard() {
 
   const wallet = useWallet();
   const connection = new Connection(clusterApiUrl("devnet"));
+  const { isAuthenticated, isRestoring } = useAuth();
 
   const { connected, publicKey } = wallet;
   const walletAddress = publicKey?.toBase58();
@@ -134,12 +135,17 @@ export function StudentDashboard() {
         return;
       }
 
+      if (!isAuthenticated) {
+        resetStates();
+        return;
+      }
+
       setIsLoading(true);
       resetErrorStates();
 
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/check-authorization/${walletAddress}`,
+        const response = await api.get(
+          `/check-authorization/${walletAddress}`,
         );
 
         if (response.data.authorized && response.data.nftInfo) {
@@ -217,7 +223,7 @@ export function StudentDashboard() {
       const balanceInterval = setInterval(() => checkWalletBalance(), 5000); // Refresh every 5 seconds
       return () => clearInterval(balanceInterval); // Cleanup interval
     }
-  }, [connected, walletAddress]);
+  }, [connected, walletAddress, isAuthenticated]);
 
   const handleConfirm = async () => {
     if (!walletAddress || !nftInfo) return;
@@ -230,12 +236,9 @@ export function StudentDashboard() {
     setIsSavingChanges(true);
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/confirm-nft-credential`,
-        {
-          walletAddress,
-        },
-      );
+      const response = await api.post("/confirm-nft-credential", {
+        walletAddress,
+      });
 
       if (response.data.success) {
         setIsConfirmed(true);
@@ -268,7 +271,7 @@ export function StudentDashboard() {
     setIsSavingChanges(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/update-credential`, {
+      const response = await api.post("/update-credential", {
         walletAddress,
         nftInfo: editedNftInfo,
       });
@@ -388,7 +391,7 @@ export function StudentDashboard() {
 
       // Notify backend about successful mint
       try {
-        await axios.post(`${API_BASE_URL}/confirm-mint`, {
+        await api.post("/confirm-mint", {
           walletAddress: walletAddress,
           nft_Mint_Address: mint.publicKey.toString(),
         });
@@ -418,9 +421,7 @@ export function StudentDashboard() {
 
     setLoadingNfts(true);
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/minted-nfts/${walletAddress}`,
-      );
+      const response = await api.get(`/minted-nfts/${walletAddress}`);
 
       if (response.data.nfts) {
         setMintedNfts(response.data.nfts || []);
@@ -496,7 +497,7 @@ export function StudentDashboard() {
       const nftUriData = await nftUriDataFromPinata.json();
       // console.log("NFT Data:", nftUriData);
 
-      const response = await axios.post(`${API_BASE_URL}/report-issue`, {
+      const response = await api.post("/report-issue", {
         //  universityWallet: we need to extract this from the NFT uri or metadata. So Do it Later || Done (9.17PM , 19.06.2025)
         universityWallet:
           nftUriData.properties.creators[0].universityWalletAddress || "",
@@ -576,6 +577,24 @@ export function StudentDashboard() {
           Connect your wallet to view your credentials
         </p>
       </div>
+    );
+  }
+
+  if (isRestoring) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+        <Loader2 className="h-12 w-12 animate-spin text-indigo-500" />
+        <p className="mt-4 text-gray-400">Restoring your session...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <SignInRequired
+        title="Sign in to view your credentials"
+        description="Sign a free message with your connected wallet to access your student dashboard."
+      />
     );
   }
 

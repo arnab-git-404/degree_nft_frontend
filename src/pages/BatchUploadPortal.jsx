@@ -18,6 +18,8 @@ import {
   HelpCircle,
 } from "lucide-react";
 import axios from "axios";
+import api from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import Papa from "papaparse";
 import { useNavigate } from "react-router-dom";
 
@@ -29,12 +31,12 @@ export function BatchUploadPortal() {
 
   const { connected, publicKey } = useWallet();
   const { isLoading, setCurrentIpfsHash } = useSolana();
+  const { isAuthenticated, hasRole, roleName } = useAuth();
   const navigate = useNavigate();
 
   // Add Pinata API configuration
   const PINATA_API_KEY = import.meta.env.VITE_APP_PINATA_API_KEY;
   const PINATA_SECRET_KEY = import.meta.env.VITE_APP_PINATA_API_SECRET;
-  const API_BASE_URL = import.meta.env.VITE_APP_SERVER_URL;
 
 
   // State management
@@ -233,18 +235,14 @@ export function BatchUploadPortal() {
     const metadataUri = `https://ipfs.io/ipfs/${ipfsHash}`;
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/create-nft-ipfsHash-allocation`,
-        {
-          studentWallet: studentData.studentAddress,
-          universityWallet: publicKey.toString(),
-          name: studentData.degreeType,
-          symbol: "DegreeNFT",
-          uri: metadataUri,
-          ipfsHash: ipfsHash,
-          sellerFeeBasisPoints: 500,
-        }
-      );
+      const response = await api.post("/create-nft-ipfsHash-allocation", {
+        studentWallet: studentData.studentAddress,
+        name: studentData.degreeType,
+        symbol: "DegreeNFT",
+        uri: metadataUri,
+        ipfsHash: ipfsHash,
+        sellerFeeBasisPoints: 500,
+      });
       console.log("Data Uploaded To Backend");
       return response.data;
     } catch (error) {
@@ -328,6 +326,18 @@ export function BatchUploadPortal() {
 
   // Process batch certificates
   const handleBatchMint = async () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in with your wallet first");
+      return;
+    }
+
+    if (!hasRole("university", "admin")) {
+      toast.error(
+        `This wallet is registered as '${roleName || "unknown"}'. A university account is required for batch uploads.`
+      );
+      return;
+    }
+
     setIsProcessing(true);
     setUploadStep("processing");
     setCurrentIndex(0);

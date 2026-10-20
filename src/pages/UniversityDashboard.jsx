@@ -13,23 +13,44 @@ import { shortenAddress } from "../lib/utils";
 import { isValidPublicKey } from "../lib/solana";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
+import { SignInRequired } from "../components/SignInRequired";
 import { useSolana } from "../context/SolanaContext";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { fromJSON } from "postcss";
+import api from "../lib/api";
 
 export function UniversityDashboard() {
   // Add Pinata API configuration
   const PINATA_API_KEY = import.meta.env.VITE_APP_PINATA_API_KEY;
   const PINATA_SECRET_KEY = import.meta.env.VITE_APP_PINATA_API_SECRET;
-  const API_BASE_URL = import.meta.env.VITE_APP_SERVER_URL;
   const EXTERNAL_API_URL = "https://degree-nft.vercel.app/";
 
   const { publicKey } = useWallet();
+  const {
+    isAuthenticated,
+    isRestoring,
+    hasRole,
+    roleName,
+    refreshUser,
+  } = useAuth();
   const navigate = useNavigate();
 
   const [issuingNftData, setIssuingNftData] = useState(false);
+  const [universityProfile, setUniversityProfile] = useState(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [profileError, setProfileError] = useState("");
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
+  const [profileFormError, setProfileFormError] = useState("");
+  const [profileForm, setProfileForm] = useState({
+    name: "",
+    code: "",
+    email: "",
+    phone: "",
+    website: "",
+    accreditation: "",
+  });
 
   const {
     connected,
@@ -57,6 +78,90 @@ export function UniversityDashboard() {
   });
 
   const [recentCredentials, setRecentCredentials] = useState([]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setUniversityProfile(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadProfile = async () => {
+      setIsLoadingProfile(true);
+      setProfileError("");
+
+      try {
+        const { data } = await api.get("/university/profile");
+
+        if (!cancelled) {
+          setUniversityProfile(data.university);
+        }
+      } catch (error) {
+        if (cancelled) return;
+
+        if (error.response?.status === 404) {
+          setUniversityProfile(null);
+        } else {
+          setProfileError(
+            error.response?.data?.message ||
+              "Failed to load your university profile"
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingProfile(false);
+        }
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated]);
+
+  const handleProfileInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setProfileForm((prev) => ({
+      ...prev,
+      [name]: name === "code" ? value.toUpperCase() : value,
+    }));
+  };
+
+  const handleCreateProfile = async (e) => {
+    e.preventDefault();
+
+    if (!publicKey) {
+      toast.error("Connect your wallet first");
+      return;
+    }
+
+    setIsCreatingProfile(true);
+    setProfileFormError("");
+
+    try {
+      const { data } = await api.post("/university/profile", {
+        ...profileForm,
+        walletAddress: publicKey.toBase58(),
+      });
+
+      setUniversityProfile(data.university);
+      await refreshUser().catch(() => {});
+      toast.success("University profile created successfully");
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to create university profile";
+      setProfileFormError(message);
+      toast.error(message);
+    } finally {
+      setIsCreatingProfile(false);
+    }
+  };
 
   // Format form data into NFT metadata
   const createNftMetadata = (formData) => {
@@ -281,12 +386,23 @@ export function UniversityDashboard() {
   const handleIssueDegree = async (e) => {
     e.preventDefault();
 
+    if (!isAuthenticated) {
+      toast.error("Please sign in with your wallet first");
+      return;
+    }
+
+    if (!hasRole("university", "admin")) {
+      toast.error(
+        `This wallet is registered as '${roleName || "unknown"}'. A university account is required to issue credentials.`
+      );
+      return;
+    }
+
     const validationError = validateForm();
     if (validationError) {
       toast.error(validationError);
       return;
     }
-
 
     setIssuingNftData(true);
     try {
@@ -335,22 +451,19 @@ export function UniversityDashboard() {
 
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/create-nft-ipfsHash-allocation`,
-        {
-          studentWallet: formData.studentAddress,
-          universityWallet: publicKey.toString(),
-          name: formData.degreeType,
-          symbol: "DegreeNFT",
-          uri: metadataUri,
-          ipfsHash: ipfsHash,
-          sellerFeeBasisPoints: 500,
-        }
-      );
+      const response = await api.post("/create-nft-ipfsHash-allocation", {
+        studentWallet: formData.studentAddress,
+        name: formData.degreeType,
+        symbol: "DegreeNFT",
+        uri: metadataUri,
+        ipfsHash: ipfsHash,
+        sellerFeeBasisPoints: 500,
+      });
       console.log("Data Uploaded TO Backend");
       return response.data;
     } catch (error) {
       console.error("Error creating NFT allocation:", error);
+      throw error;
     }
   };
 
@@ -364,6 +477,140 @@ export function UniversityDashboard() {
         <p className="mt-2 text-gray-400">
           Connect your wallet to issue academic credentials
         </p>
+      </div>
+    );
+  }
+
+  if (isRestoring) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+        <Loader2 className="h-12 w-12 animate-spin text-indigo-500" />
+        <p className="mt-4 text-gray-400">Restoring your session...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <SignInRequired
+        title="Sign in to manage your university"
+        description="Sign a free message with your connected wallet to create a profile and issue credentials."
+      />
+    );
+  }
+
+  if (isLoadingProfile) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+        <Loader2 className="h-12 w-12 animate-spin text-indigo-500" />
+        <p className="mt-4 text-gray-400">Loading your university profile...</p>
+      </div>
+    );
+  }
+
+  if (!universityProfile) {
+    return (
+      <div className="mx-auto max-w-2xl space-y-6">
+        <div className="text-center">
+          <School className="mx-auto h-16 w-16 text-indigo-500" />
+          <h2 className="mt-4 text-2xl font-bold">Register Your University</h2>
+          <p className="mt-2 text-gray-400">
+            Create a university profile to issue credentials. Your account will
+            be upgraded to the university role and marked as pending
+            verification.
+          </p>
+        </div>
+
+        <form
+          onSubmit={handleCreateProfile}
+          className="space-y-4 rounded-lg border border-gray-700 bg-gray-800/50 p-6"
+        >
+          <Input
+            label="University or Institution Name"
+            name="name"
+            placeholder="e.g. Harvard University"
+            value={profileForm.name}
+            onChange={handleProfileInputChange}
+            required
+          />
+
+          <Input
+            label="University Code"
+            name="code"
+            placeholder="e.g. HARVARD"
+            value={profileForm.code}
+            onChange={handleProfileInputChange}
+            description="A unique short code used to identify your institution"
+            required
+          />
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Input
+              label="Contact Email"
+              name="email"
+              type="email"
+              placeholder="registrar@university.edu"
+              value={profileForm.email}
+              onChange={handleProfileInputChange}
+            />
+
+            <Input
+              label="Phone"
+              name="phone"
+              placeholder="+1 555 000 0000"
+              value={profileForm.phone}
+              onChange={handleProfileInputChange}
+            />
+          </div>
+
+          <Input
+            label="Website"
+            name="website"
+            placeholder="https://university.edu"
+            value={profileForm.website}
+            onChange={handleProfileInputChange}
+          />
+
+          <Input
+            label="Accreditation"
+            name="accreditation"
+            placeholder="Accrediting body or reference"
+            value={profileForm.accreditation}
+            onChange={handleProfileInputChange}
+          />
+
+          <div className="rounded-md bg-gray-700/40 p-3">
+            <p className="text-sm text-gray-300">
+              Profile wallet:{" "}
+              <span className="font-mono">
+                {shortenAddress(publicKey?.toBase58() || "")}
+              </span>
+            </p>
+          </div>
+
+          {profileError && (
+            <p className="text-sm text-red-400">{profileError}</p>
+          )}
+
+          {profileFormError && (
+            <p className="text-sm text-red-400">{profileFormError}</p>
+          )}
+
+          <Button
+            type="submit"
+            disabled={isCreatingProfile || !profileForm.name || !profileForm.code}
+            className="w-full"
+          >
+            {isCreatingProfile ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating profile...
+              </>
+            ) : (
+              "Create University Profile"
+            )}
+          </Button>
+        </form>
       </div>
     );
   }
@@ -412,6 +659,39 @@ export function UniversityDashboard() {
           </Button>
         </div>
       </div>
+
+      <div className="flex flex-col gap-3 rounded-lg border border-gray-700 bg-gray-800/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 className="font-semibold">{universityProfile.name}</h3>
+          <p className="mt-1 text-sm text-gray-400">
+            Code: {universityProfile.code} · Wallet:{" "}
+            {shortenAddress(universityProfile.walletAddress)}
+          </p>
+        </div>
+        <span
+          className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${
+            universityProfile.verificationStatus === "VERIFIED"
+              ? "bg-green-500/15 text-green-300"
+              : universityProfile.verificationStatus === "REJECTED"
+              ? "bg-red-500/15 text-red-300"
+              : "bg-yellow-500/15 text-yellow-200"
+          }`}
+        >
+          {universityProfile.verificationStatus || "PENDING"}
+        </span>
+      </div>
+
+      {!hasRole("university", "admin") && (
+        <div className="rounded-lg border border-yellow-600/40 bg-yellow-500/10 p-4">
+          <p className="font-medium text-yellow-200">
+            University account required
+          </p>
+          <p className="mt-1 text-sm text-yellow-100/80">
+            This wallet is registered as &apos;{roleName || "unknown"}&apos;.
+            Credential issuing and batch uploads require a university role.
+          </p>
+        </div>
+      )}
 
       <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
         <h3 className="text-xl font-semibold">Issue New Degree Credential</h3>
@@ -592,6 +872,7 @@ export function UniversityDashboard() {
                 !formData.cgpa ||
                 !formData.programDuration ||
                 !formData.major ||
+                !hasRole("university", "admin") ||
                 isLoading
               }
               className=" hover:cursor-pointer w-full"
