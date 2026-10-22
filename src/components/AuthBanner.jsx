@@ -1,74 +1,44 @@
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useLocation } from "react-router-dom";
-import { Loader2, ShieldCheck, Wallet } from "lucide-react";
-import toast from "react-hot-toast";
+import { Link, useLocation } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { Button } from "./Button";
 
 const AUTH_BANNER_PATHS = ["/batch-upload"];
 
 export function AuthBanner() {
-  const { connected } = useWallet();
   const { pathname } = useLocation();
-  const {
-    isAuthenticated,
-    isRestoring,
-    isAuthenticating,
-    authError,
-    signIn,
-  } = useAuth();
+  const { isAuthenticated, isRestoring } = useAuth();
 
   const shouldShow = AUTH_BANNER_PATHS.some((path) =>
     pathname.startsWith(path)
   );
 
-  if (!shouldShow || !connected || isAuthenticated || isRestoring) {
+  if (!shouldShow || isAuthenticated || isRestoring) {
     return null;
   }
 
-  const handleSignIn = async () => {
-    try {
-      await signIn();
-      toast.success("Signed in successfully");
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || error.message || "Failed to sign in"
-      );
-    }
-  };
+  const next = encodeURIComponent(pathname);
 
   return (
-    <div className="border-b border-indigo-500/30 bg-indigo-500/10">
-      <div className="container mx-auto flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="border-b border-cobalt/20 bg-cobalt/5">
+      <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <Wallet className="h-5 w-5 text-indigo-400" />
+          <ShieldCheck className="h-5 w-5 text-cobalt" />
           <div>
-            <p className="text-sm font-medium text-white">
-              Wallet connected. Sign in to access protected features.
+            <p className="text-sm font-medium text-ink">
+              Sign in to use the batch upload desk.
             </p>
-            {authError ? (
-              <p className="text-xs text-red-300">{authError}</p>
-            ) : (
-              <p className="text-xs text-gray-400">
-                Signing is free and does not create a blockchain transaction.
-              </p>
-            )}
+            <p className="text-xs text-ink/55">
+              Use email or a Solana wallet. Signing in is free.
+            </p>
           </div>
         </div>
 
-        <Button onClick={handleSignIn} disabled={isAuthenticating}>
-          {isAuthenticating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
-            </>
-          ) : (
-            <>
-              <ShieldCheck className="mr-2 h-4 w-4" />
-              Sign In
-            </>
-          )}
-        </Button>
+        <Link
+          to={`/login?next=${next}`}
+          className="inline-flex h-9 items-center justify-center bg-cobalt px-4 font-mono text-[9px] uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink"
+        >
+          Sign in
+        </Link>
       </div>
     </div>
   );

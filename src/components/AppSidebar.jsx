@@ -1,17 +1,17 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   BadgeCheck,
   ChevronRight,
   Droplets,
   FileWarning,
-  LayoutDashboard,
+  KeyRound,
   Loader2,
   LogOut,
   School,
   Shield,
   Upload,
-  User,
+  UserRound,
   Users,
   X,
 } from "lucide-react";
@@ -21,65 +21,34 @@ import { shortenAddress } from "../lib/utils";
 
 const MAIN_MODULES = [
   {
-    to: "/",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    end: true,
-  },
-  {
     to: "/university",
-    label: "Universities",
+    label: "University desk",
     icon: School,
+    permissions: ["nft:create", "batch:upload", "student:read"],
   },
   {
     to: "/student",
-    label: "Students",
+    label: "Student desk",
     icon: Users,
+    permissions: ["nft:read", "nft:confirm", "report:create"],
   },
-  {
-    to: "/verify",
-    label: "Verify Credentials",
-    icon: BadgeCheck,
-  },
+  { to: "/verify", label: "Verify credentials", icon: BadgeCheck },
   {
     to: "/batch-upload",
-    label: "Batch Upload",
+    label: "Batch upload",
     icon: Upload,
+    permissions: ["batch:upload"],
   },
-  {
-    to: "/faucet",
-    label: "Faucet",
-    icon: Droplets,
-  },
+  { to: "/faucet", label: "Devnet faucet", icon: Droplets },
 ];
 
 const ADMIN_MODULES = [
-  {
-    to: "/admin",
-    label: "Overview",
-    icon: Shield,
-    end: true,
-  },
-  {
-    to: "/admin/universities",
-    label: "Manage Universities",
-    icon: School,
-  },
-  {
-    to: "/admin/users",
-    label: "Manage Users",
-    icon: Users,
-  },
-  {
-    to: "/admin/credentials",
-    label: "All Credentials",
-    icon: BadgeCheck,
-  },
-  {
-    to: "/admin/reports",
-    label: "Reports",
-    icon: FileWarning,
-  },
+  { to: "/admin", label: "Overview", icon: Shield, end: true },
+  { to: "/admin/universities", label: "Universities", icon: School },
+  { to: "/admin/users", label: "Users", icon: Users },
+  { to: "/admin/roles", label: "Roles & permissions", icon: KeyRound },
+  { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck },
+  { to: "/admin/reports", label: "Reports", icon: FileWarning },
 ];
 
 function SidebarLink({ module, onNavigate }) {
@@ -91,16 +60,16 @@ function SidebarLink({ module, onNavigate }) {
       end={module.end}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+        `group flex items-center gap-3 px-3 py-2.5 text-sm transition-colors ${
           isActive
-            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-950/30"
-            : "text-gray-300 hover:bg-gray-800 hover:text-white"
+            ? "bg-cobalt text-paper"
+            : "text-ink/65 hover:bg-paper-deep hover:text-ink"
         }`
       }
     >
       <Icon className="h-4 w-4 shrink-0" />
       <span className="truncate">{module.label}</span>
-      <ChevronRight className="ml-auto h-4 w-4 shrink-0 opacity-40" />
+      <ChevronRight className="ml-auto h-3.5 w-3.5 shrink-0 opacity-40" />
     </NavLink>
   );
 }
@@ -118,18 +87,17 @@ const getInitials = (name) => {
 };
 
 export function AppSidebar({ onNavigate, onClose }) {
-  const { connected, publicKey } = useWallet();
+  const { publicKey } = useWallet();
   const {
     user,
     roleName,
     isAuthenticated,
     isRestoring,
-    isAuthenticating,
-    authError,
-    signIn,
     signOut,
     hasRole,
+    hasAnyPermission,
   } = useAuth();
+  const navigate = useNavigate();
 
   const walletAddress =
     user?.primaryWallet?.address || publicKey?.toBase58() || "";
@@ -137,44 +105,38 @@ export function AppSidebar({ onNavigate, onClose }) {
   const roleLabel = roleName
     ? `${roleName.charAt(0).toUpperCase()}${roleName.slice(1)}`
     : "Not signed in";
-
-  const handleSignIn = async () => {
-    try {
-      await signIn();
-      toast.success("Signed in successfully");
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || error.message || "Failed to sign in"
-      );
-    }
-  };
+  const visibleMainModules = MAIN_MODULES.filter(
+    (module) =>
+      !module.permissions || hasAnyPermission(...module.permissions)
+  );
 
   const handleSignOut = () => {
     signOut();
     toast.success("Signed out");
     onNavigate?.();
+    navigate("/login");
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-gray-900/50">
-      <div className="flex items-center justify-between border-b border-gray-700/70 px-4 py-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+    <div className="flex h-full flex-col overflow-hidden bg-paper">
+      <div className="flex items-center justify-between border-b border-ink/15 px-4 py-4">
+        <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink/45">
           Navigation
         </p>
-        {onClose && (
+        {onClose ? (
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white"
+            className="flex h-7 w-7 items-center justify-center border border-ink/20 text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt"
             aria-label="Close sidebar"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
           </button>
-        )}
+        ) : null}
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {MAIN_MODULES.map((module) => (
+        {visibleMainModules.map((module) => (
           <SidebarLink
             key={module.to}
             module={module}
@@ -182,9 +144,9 @@ export function AppSidebar({ onNavigate, onClose }) {
           />
         ))}
 
-        {hasRole("admin") && (
+        {hasRole("admin") ? (
           <>
-            <p className="px-3 pb-2 pt-5 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <p className="px-3 pb-2 pt-5 font-mono text-[8px] uppercase tracking-[0.2em] text-ink/40">
               Administration
             </p>
             {ADMIN_MODULES.map((module) => (
@@ -195,73 +157,83 @@ export function AppSidebar({ onNavigate, onClose }) {
               />
             ))}
           </>
-        )}
+        ) : null}
+
+        <p className="px-3 pb-2 pt-5 font-mono text-[8px] uppercase tracking-[0.2em] text-ink/40">
+          Account
+        </p>
+        <SidebarLink
+          module={{ to: "/profile", label: "My profile", icon: UserRound }}
+          onNavigate={onNavigate}
+        />
       </nav>
 
-      <div className="border-t border-gray-700/70 p-4">
+      <div className="border-t border-ink/15 p-4">
         {isRestoring ? (
-          <div className="flex items-center gap-2 text-sm text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-ink/50">
             <Loader2 className="h-4 w-4 animate-spin" />
             Restoring session...
           </div>
         ) : isAuthenticated ? (
           <>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">
+            <Link
+              to="/profile"
+              onClick={onNavigate}
+              className="flex items-center gap-3 transition-opacity hover:opacity-80"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-cobalt font-mono text-xs font-medium text-paper">
                 {getInitials(displayName)}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold" title={displayName}>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold">
                   {displayName}
-                </p>
-                <p className="truncate text-xs text-gray-400">
+                </span>
+                <span className="block truncate text-[11px] text-ink/50">
                   {roleLabel}
                   {walletAddress ? ` · ${shortenAddress(walletAddress)}` : ""}
-                </p>
-              </div>
+                </span>
+              </span>
               <span
-                className="h-2 w-2 shrink-0 rounded-full bg-emerald-400"
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-cobalt"
                 title="Signed in"
               />
-            </div>
+            </Link>
             <button
               type="button"
               onClick={handleSignOut}
-              className="mt-4 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-gray-400 transition-colors hover:bg-gray-800 hover:text-white"
+              className="mt-4 flex w-full items-center gap-2 border border-ink/15 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/55 transition-colors hover:border-cobalt hover:text-cobalt"
             >
-              <LogOut className="h-4 w-4" />
-              Log out
+              <LogOut className="h-3.5 w-3.5" />
+              Sign out
             </button>
           </>
         ) : (
           <>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-700 text-gray-300">
-                <User className="h-5 w-5" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-ink/20 bg-paper-deep text-ink/50">
+                <UserRound className="h-5 w-5" />
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold">Guest</p>
-                <p className="truncate text-xs text-gray-400">
-                  {connected ? "Sign in to continue" : "Connect a wallet"}
+                <p className="truncate text-[11px] text-ink/50">
+                  Sign in to manage credentials
                 </p>
               </div>
             </div>
-            {authError && (
-              <p className="mt-2 text-xs text-red-300">{authError}</p>
-            )}
-            {connected && (
-              <button
-                type="button"
-                onClick={handleSignIn}
-                disabled={isAuthenticating}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isAuthenticating && (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                )}
-                {isAuthenticating ? "Signing in..." : "Sign in"}
-              </button>
-            )}
+            <Link
+              to="/login"
+              onClick={onNavigate}
+              className="mt-4 flex w-full items-center justify-center bg-cobalt px-3 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink"
+            >
+              Sign in
+            </Link>
+            <Link
+              to="/login?mode=signup"
+              onClick={onNavigate}
+              className="mt-2 flex w-full items-center justify-center border border-ink/20 px-3 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/70 transition-colors hover:border-cobalt hover:text-cobalt"
+            >
+              Create account
+            </Link>
           </>
         )}
       </div>

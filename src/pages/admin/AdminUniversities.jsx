@@ -89,9 +89,9 @@ export function AdminUniversities() {
         <AdminLoading />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border border-gray-700">
+          <div className="overflow-x-auto rounded-none border border-ink/20">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-800 text-gray-400">
+              <thead className="bg-paper-soft text-ink/60">
                 <tr>
                   <th className="px-4 py-3">University</th>
                   <th className="px-4 py-3">Wallet</th>
@@ -104,11 +104,11 @@ export function AdminUniversities() {
                 {universities.map((university) => (
                   <tr
                     key={university._id}
-                    className="border-t border-gray-700/60"
+                    className="border-t border-ink/15"
                   >
                     <td className="px-4 py-3">
                       <p className="font-medium">{university.name}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-ink/60">
                         {university.code}
                       </p>
                     </td>
@@ -117,7 +117,7 @@ export function AdminUniversities() {
                     </td>
                     <td className="px-4 py-3">
                       <p>{university.userId?.name || "—"}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-ink/60">
                         {university.userId?.email || ""}
                       </p>
                     </td>

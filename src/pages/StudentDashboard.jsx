@@ -8,7 +8,7 @@ import {
   createNft,
   mplTokenMetadata,
 } from "@metaplex-foundation/mpl-token-metadata";
-import { generateSigner, percentAmount } from "@metaplex-foundation/umi";
+import { generateSigner } from "@metaplex-foundation/umi";
 import {
   UserCheck,
   ExternalLink,
@@ -26,7 +26,6 @@ import {
   X,
 } from "lucide-react";
 import { shortenAddress } from "../lib/utils";
-import { getExplorerUrl } from "../lib/solana";
 import { Button } from "../components/Button";
 import { SignInRequired } from "../components/SignInRequired";
 import { useNavigate } from "react-router-dom";
@@ -62,9 +61,6 @@ export function StudentDashboard() {
   const [mintedNfts, setMintedNfts] = useState([]);
   const [loadingNfts, setLoadingNfts] = useState(false);
 
-  // New states for verification window
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editedNftInfo, setEditedNftInfo] = useState(null);
   const [confirmationDeadline, setConfirmationDeadline] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -200,8 +196,6 @@ export function StudentDashboard() {
       setMintSuccess(false);
       setMintedNft(null);
       setMintError("");
-      setIsEditMode(false);
-      setEditedNftInfo(null);
       setConfirmationDeadline(null);
       setTimeRemaining(null);
       setIsConfirmed(false);
@@ -254,52 +248,6 @@ export function StudentDashboard() {
     }
   };
 
-  // Handle editing mode toggle
-  const handleEditToggle = () => {
-    if (isEditMode) {
-      setIsEditMode(false);
-    } else {
-      setEditedNftInfo({ ...nftInfo });
-      setIsEditMode(true);
-    }
-  };
-
-  // Handle saving edited info
-  const handleSaveChanges = async () => {
-    if (!walletAddress || !editedNftInfo) return;
-
-    setIsSavingChanges(true);
-
-    try {
-      const response = await api.post("/update-credential", {
-        walletAddress,
-        nftInfo: editedNftInfo,
-      });
-
-      if (response.data.success) {
-        setNftInfo(editedNftInfo);
-        setIsEditMode(false);
-        toast.success("Changes saved successfully!");
-      } else {
-        toast.error("Failed to save changes");
-      }
-    } catch (error) {
-      console.error("Error saving changes:", error);
-      toast.error("Failed to save changes");
-    } finally {
-      setIsSavingChanges(false);
-    }
-  };
-
-  // Handle input changes in edit mode
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedNftInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   // Handle Minting using UMI directly in the frontend
   const handleMintNft = async () => {
     const minimumBalance = 0.01;
@@ -320,7 +268,7 @@ export function StudentDashboard() {
           <div className="flex items-center justify-between w-full  p-1">
             <div className="flex-1">
               <p className="font-bold text-red-600">Insufficient Balance</p>
-              <p className="text-m text-black">
+              <p className="text-m text-ink">
                 You need minimum ~{minimumBalance} Devnet SOL for minting. Your
                 balance: {walletBalance} SOL
               </p>
@@ -331,7 +279,7 @@ export function StudentDashboard() {
                 navigate("/faucet");
                 toast.dismiss(t.id);
               }}
-              className="ml-4 !py-1.5 !px-3 hover:bg-blue-600 bg-blue-500 text-white hover:cursor-pointer"
+              className="ml-4 !py-1.5 !px-3 hover:bg-cobalt bg-cobalt text-paper hover:cursor-pointer"
             >
               Go to Faucet
             </Button>
@@ -561,8 +509,8 @@ export function StudentDashboard() {
   if (isLoading) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-indigo-500" />
-        <p className="mt-4 text-gray-400">Checking your credentials...</p>
+        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
+        <p className="mt-4 text-ink/60">Checking your credentials...</p>
       </div>
     );
   }
@@ -571,9 +519,9 @@ export function StudentDashboard() {
   if (!connected) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <UserCheck className="h-16 w-16 text-indigo-500" />
+        <UserCheck className="h-16 w-16 text-cobalt" />
         <h2 className="mt-4 text-2xl font-bold">Student Dashboard</h2>
-        <p className="mt-2 text-gray-400">
+        <p className="mt-2 text-ink/60">
           Connect your wallet to view your credentials
         </p>
       </div>
@@ -583,8 +531,8 @@ export function StudentDashboard() {
   if (isRestoring) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-indigo-500" />
-        <p className="mt-4 text-gray-400">Restoring your session...</p>
+        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
+        <p className="mt-4 text-ink/60">Restoring your session...</p>
       </div>
     );
   }
@@ -623,14 +571,14 @@ export function StudentDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Student Dashboard</h2>
-          <p className="mt-1 text-gray-250">
+          <p className="mt-1 text-ink/60">
             Connected as :{" "}
             <span className="font-mono">
               {shortenAddress(walletAddress || "")}
             </span>
           </p>
 
-          <p className="mt-1 text-gray-250">
+          <p className="mt-1 text-ink/60">
             Wallet Balance :{" "}
             <span className="font-mono">
               {balanceRefreshing ? (
@@ -656,11 +604,11 @@ export function StudentDashboard() {
 
       {/* Display Mint Success Message */}
       {mintSuccess && mintedNft && (
-        <div className="rounded-md border border-green-600 bg-green-900/30 p-4 animate-fadeIn">
+        <div className="rounded-none border border-green-600 bg-green-600/10 p-4 animate-fadeIn">
           <div className="flex items-center space-x-3">
             <div>
-              <p className="font-semibold text-2xl text-green-300 flex items-center gap-2">
-                <CheckCircle className="h-6 w-6 text-green-400" />
+              <p className="font-semibold text-2xl text-green-700 flex items-center gap-2">
+                <CheckCircle className="h-6 w-6 text-green-700" />
                 <span>NFT Minted Successfully!</span>
               </p>
 
@@ -673,13 +621,13 @@ export function StudentDashboard() {
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center text-sm text-green-400 hover:text-green-300 underline cursor-pointer"
+                  className="inline-flex items-center text-sm text-green-700 hover:text-green-800 underline cursor-pointer"
                 >
                   View NFT <ExternalLink className="ml-1 h-4 w-4" />
                 </a>
 
                 <p
-                  className=" hover:cursor-pointer inline-flex items-center text-sm text-green-400 hover:text-green-300 underline cursor-pointer"
+                  className=" hover:cursor-pointer inline-flex items-center text-sm text-green-700 hover:text-green-800 underline cursor-pointer"
                   onClick={() => window.location.reload()}
                 >
                   Reload Page
@@ -693,9 +641,9 @@ export function StudentDashboard() {
       {/* Display Available NFT to Verify/Mint */}
 
       {isAuthorized && nftInfo && !mintSuccess && (
-        <div className="rounded-lg border border-indigo-600 bg-indigo-900/30 p-6 shadow-lg hover:shadow-indigo-900/20 transition-all">
+        <div className="rounded-none border border-cobalt bg-cobalt/5 p-6 shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] hover:shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] transition-all">
           <div className="flex justify-between items-start">
-            <h3 className="text-xl font-semibold text-indigo-300 flex items-center">
+            <h3 className="text-xl font-semibold text-cobalt flex items-center">
               <Award className="inline-block mr-2 h-5 w-5" />
               {isConfirmed
                 ? "Credential Ready to Mint"
@@ -707,7 +655,7 @@ export function StudentDashboard() {
                 <Clock className="h-4 w-4 mr-1" />
                 <div>
                   <p>Time remaining: {formatTimeRemaining()}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-ink/60">
                     Auto-confirms after deadline
                   </p>
                 </div>
@@ -720,35 +668,35 @@ export function StudentDashboard() {
           {isReportingIssue ? (
             // <div className="mt-4 space-y-4">
             //   <div>
-            //     <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
+            //     <label className="block text-sm font-medium text-ink/70 mb-1">Name</label>
             //     <input
             //       type="text"
             //       name="name"
             //       value={editedNftInfo.name || ""}
             //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
             //     />
             //   </div>
 
             //   <div>
-            //     <label className="block text-sm font-medium text-gray-300 mb-1">Symbol</label>
+            //     <label className="block text-sm font-medium text-ink/70 mb-1">Symbol</label>
             //     <input
             //       type="text"
             //       name="symbol"
             //       value={editedNftInfo.symbol || ""}
             //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
             //     />
             //   </div>
 
             //   <div>
-            //     <label className="block text-sm font-medium text-gray-300 mb-1">Metadata URI</label>
+            //     <label className="block text-sm font-medium text-ink/70 mb-1">Metadata URI</label>
             //     <input
             //       type="text"
             //       name="uri"
             //       value={editedNftInfo.uri || ""}
             //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
             //     />
             //   </div>
 
@@ -784,18 +732,18 @@ export function StudentDashboard() {
             // </div>
 
             <div className="mt-4 space-y-4">
-              <p className="text-gray-300">
+              <p className="text-ink/70">
                 Report an issue with your credential information that requires
                 university attention:
               </p>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-ink/70 mb-1">
                   Issue Description
                 </label>
                 <textarea
                   value={issueDescription}
                   onChange={(e) => setIssueDescription(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
                   rows={4}
                   placeholder="Describe the issue with your credential details..."
                 />
@@ -835,24 +783,24 @@ export function StudentDashboard() {
           ) : (
             <>
               {/* View Mode */}
-              {/* <div className="mt-4 space-y-2 text-gray-300">
+              {/* <div className="mt-4 space-y-2 text-ink/70">
                 <p>
-                  <span className="font-medium text-gray-100">Name:</span>{" "}
+                  <span className="font-medium text-ink">Name:</span>{" "}
                   {nftInfo.name}
                 </p>
                 <p>
-                  <span className="font-medium text-gray-100">Symbol:</span>{" "}
+                  <span className="font-medium text-ink">Symbol:</span>{" "}
                   {nftInfo.symbol || "CRED"}
                 </p>
                 <p>
-                  <span className="font-medium text-gray-100">
+                  <span className="font-medium text-ink">
                     Metadata URI:
                   </span>{" "}
                   <a
                     href={nftInfo.uri}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline hover:text-indigo-400 break-all cursor-pointer"
+                    className="underline hover:text-cobalt break-all cursor-pointer"
                   >
                     {nftInfo.uri}
                   </a>
@@ -861,24 +809,24 @@ export function StudentDashboard() {
 
               <div className="mt-4 space-y-4">
                 {/* Basic NFT Info */}
-                <div className="space-y-2 text-gray-300">
+                <div className="space-y-2 text-ink/70">
                   <p>
-                    <span className="font-medium text-gray-100">Name:</span>{" "}
+                    <span className="font-medium text-ink">Name:</span>{" "}
                     {nftInfo.name}
                   </p>
                   <p>
-                    <span className="font-medium text-gray-100">Symbol:</span>{" "}
+                    <span className="font-medium text-ink">Symbol:</span>{" "}
                     {nftInfo.symbol || "CRED"}
                   </p>
                   <p>
-                    <span className="font-medium text-gray-100">
+                    <span className="font-medium text-ink">
                       Metadata URI:
                     </span>{" "}
                     <a
                       href={nftInfo.uri}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline hover:text-indigo-400 break-all cursor-pointer"
+                      className="underline hover:text-cobalt break-all cursor-pointer"
                     >
                       {nftInfo.uri}
                     </a>
@@ -888,8 +836,8 @@ export function StudentDashboard() {
                 {/* Metadata Details */}
                 {loadingMetadata ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
-                    <span className="ml-2 text-gray-400">
+                    <Loader2 className="h-6 w-6 animate-spin text-cobalt" />
+                    <span className="ml-2 text-ink/60">
                       Loading credential details...
                     </span>
                   </div>
@@ -897,7 +845,7 @@ export function StudentDashboard() {
                   <div className="mt-6 space-y-6">
                     {/* Image */}
                     {metadataDetails.image && (
-                      <div className="rounded-lg overflow-hidden border border-gray-700">
+                      <div className="rounded-none overflow-hidden border border-ink/20">
                         <img
                           src={metadataDetails.image}
                           alt={metadataDetails.name}
@@ -911,11 +859,11 @@ export function StudentDashboard() {
 
                     {/* Description */}
                     {metadataDetails.description && (
-                      <div className="bg-gray-800/50 rounded-lg p-4">
-                        <h4 className="text-sm font-medium text-gray-100 mb-2">
+                      <div className="bg-paper-soft rounded-none p-4">
+                        <h4 className="text-sm font-medium text-ink mb-2">
                           Description
                         </h4>
-                        <p className="text-gray-300">
+                        <p className="text-ink/70">
                           {metadataDetails.description}
                         </p>
                       </div>
@@ -924,17 +872,17 @@ export function StudentDashboard() {
                     {/* Attributes */}
                     {metadataDetails.attributes &&
                       metadataDetails.attributes.length > 0 && (
-                        <div className="bg-gray-800/50 rounded-lg p-4">
-                          <h4 className="text-sm font-medium text-gray-100 mb-3">
+                        <div className="bg-paper-soft rounded-none p-4">
+                          <h4 className="text-sm font-medium text-ink mb-3">
                             Credential Details
                           </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {metadataDetails.attributes.map((attr, index) => (
                               <div key={index} className="flex flex-col">
-                                <span className="text-xs text-gray-400">
+                                <span className="text-xs text-ink/60">
                                   {attr.trait_type}
                                 </span>
-                                <span className="text-sm text-gray-200 font-medium">
+                                <span className="text-sm text-ink/80 font-medium">
                                   {attr.value}
                                 </span>
                               </div>
@@ -945,15 +893,15 @@ export function StudentDashboard() {
 
                     {/* Additional Properties */}
                     {metadataDetails.external_url && (
-                      <div className="bg-gray-800/50 rounded-lg p-4">
-                        <h4 className="text-sm font-medium text-gray-100 mb-2">
+                      <div className="bg-paper-soft rounded-none p-4">
+                        <h4 className="text-sm font-medium text-ink mb-2">
                           External URL
                         </h4>
                         <a
                           href={metadataDetails.external_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-indigo-400 hover:text-indigo-300 underline text-sm flex items-center cursor-pointer"
+                          className="text-cobalt hover:text-cobalt underline text-sm flex items-center cursor-pointer"
                         >
                           {metadataDetails.external_url}
                           <ExternalLink className="ml-1 h-3 w-3" />
@@ -970,7 +918,7 @@ export function StudentDashboard() {
                     <Button
                       disabled={isSavingChanges}
                       onClick={handleConfirm}
-                      className="cursor-pointer hover:bg-green-600 bg-green-700 transition-colors flex items-center"
+                      className="cursor-pointer flex items-center"
                       {...(alreadyReported
                         ? {
                             title:
@@ -997,7 +945,7 @@ export function StudentDashboard() {
                     <Button
                       onClick={handleReportIssue}
                       variant="outline"
-                      className="cursor-pointer hover:bg-amber-700 transition-colors flex items-center  "
+                      className="cursor-pointer flex items-center"
                       disabled={isSendingIssue}
                     >
                       <Flag className="mr-2 h-4 w-4" />
@@ -1010,7 +958,7 @@ export function StudentDashboard() {
                   <Button
                     onClick={handleMintNft}
                     disabled={isMinting || !umi.identity}
-                    className="w-full sm:w-auto cursor-pointer hover:bg-indigo-600 transition-colors"
+                    className="w-full sm:w-auto cursor-pointer"
                   >
                     {isMinting ? (
                       <>
@@ -1025,7 +973,7 @@ export function StudentDashboard() {
               </div>
 
               {isConfirmed && (
-                <p className="mt-3 text-sm text-green-400 flex items-center">
+                <p className="mt-3 text-sm text-green-700 flex items-center">
                   <CheckCircle className="mr-1 h-4 w-4" />
                   You've confirmed these details are correct
                 </p>
@@ -1039,13 +987,13 @@ export function StudentDashboard() {
               )}
 
               {mintError && (
-                <p className="mt-3 text-sm text-red-400 flex items-center">
+                <p className="mt-3 text-sm text-red-700 flex items-center">
                   <AlertCircle className="mr-1 h-4 w-4" /> {mintError}
                 </p>
               )}
 
               {!umi.identity && (
-                <p className="mt-3 text-sm text-yellow-400 flex items-center">
+                <p className="mt-3 text-sm text-yellow-700 flex items-center">
                   <AlertCircle className="mr-1 h-4 w-4" /> Wallet not fully
                   ready for signing. Please ensure it's connected and
                   initialized.
@@ -1058,13 +1006,13 @@ export function StudentDashboard() {
 
       {/* Display if not authorized or no allocation found */}
       {!isAuthorized && !isLoading && !mintSuccess && (
-        <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+        <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
           <h3 className="text-xl font-semibold flex items-center">
-            <Calendar className="mr-2 h-5 w-5 text-gray-400" />
+            <Calendar className="mr-2 h-5 w-5 text-ink/60" />
             Pending Credentials : {nftInfo ? nftInfo.length : "None"}
           </h3>
           <div className="mt-4">
-            <p className="text-gray-400">
+            <p className="text-ink/60">
               {authorizationError ||
                 "No pending credentials found for your wallet, or they have already been minted."}
             </p>
@@ -1073,15 +1021,15 @@ export function StudentDashboard() {
       )}
 
       {/* Section for already minted NFTs */}
-      <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+      <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
         <h3 className="text-xl font-semibold flex items-center">
-          <School className="mr-2 h-5 w-5 text-gray-100" />
+          <School className="mr-2 h-5 w-5 text-ink" />
           Total Minted Credentials : {mintedNfts.length}
         </h3>
 
         {loadingNfts ? (
           <div className="flex justify-center my-8">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-cobalt" />
           </div>
         ) : mintedNfts.length > 0 ? (
           <div className="mt-6 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -1094,11 +1042,11 @@ export function StudentDashboard() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center text-center py-8 text-gray-400">
-            <Award className="h-12 w-12 text-gray-600 mb-3" />
+          <div className="flex flex-col items-center justify-center text-center py-8 text-ink/60">
+            <Award className="h-12 w-12 text-ink/50 mb-3" />
             <p>You haven't minted any credential NFTs yet.</p>
             {isAuthorized && nftInfo && (
-              <p className="mt-2 text-indigo-400">
+              <p className="mt-2 text-cobalt">
                 You have a credential ready to {isConfirmed ? "mint" : "review"}{" "}
                 above!
               </p>

@@ -30,4 +30,11 @@ export default [
       ],
     },
   },
+  {
+    files: ['src/components/NFT.jsx', 'src/components/wallet.jsx'],
+    languageOptions: {
+      globals: globals.node,
+      sourceType: 'commonjs',
+    },
+  },
 ]

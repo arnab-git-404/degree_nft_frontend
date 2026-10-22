@@ -80,9 +80,9 @@ export function AdminCredentials() {
         <AdminLoading />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border border-gray-700">
+          <div className="overflow-x-auto rounded-none border border-ink/20">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-800 text-gray-400">
+              <thead className="bg-paper-soft text-ink/60">
                 <tr>
                   <th className="px-4 py-3">Credential</th>
                   <th className="px-4 py-3">University</th>
@@ -95,12 +95,12 @@ export function AdminCredentials() {
                 {allocations.map((allocation) => (
                   <tr
                     key={allocation._id}
-                    className="border-t border-gray-700/60"
+                    className="border-t border-ink/15"
                   >
                     <td className="px-4 py-3">
                       <p className="font-medium">{allocation.name}</p>
                       <p
-                        className="max-w-xs truncate text-xs text-gray-400"
+                        className="max-w-xs truncate text-xs text-ink/60"
                         title={allocation.ipfsHash}
                       >
                         {allocation.ipfsHash}
@@ -111,13 +111,13 @@ export function AdminCredentials() {
                         {allocation.universityId?.name ||
                           shortenAddress(allocation.universityWallet || "")}
                       </p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-ink/60">
                         {allocation.universityId?.code || ""}
                       </p>
                     </td>
                     <td className="px-4 py-3">
                       <p>{allocation.studentId?.name || "—"}</p>
-                      <p className="font-mono text-xs text-gray-400">
+                      <p className="font-mono text-xs text-ink/60">
                         {shortenAddress(allocation.studentWallet || "")}
                       </p>
                     </td>
@@ -126,7 +126,7 @@ export function AdminCredentials() {
                         {credentialLabel(allocation)}
                       </StatusBadge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-400">
+                    <td className="px-4 py-3 text-xs text-ink/60">
                       {formatDate(allocation.allocatedAt)}
                     </td>
                   </tr>

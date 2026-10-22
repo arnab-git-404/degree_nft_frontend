@@ -1,311 +1,359 @@
-import { useState, useEffect  } from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap, School, UserCheck, Shield, Wallet, ExternalLink } from "lucide-react";
-import { Button } from "../components/Button";
-
-// import { toast, ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-
-import { toast } from 'react-hot-toast';
-
+import { useWallet } from "@solana/wallet-adapter-react";
 import {
-  Connection,
-  PublicKey,
-  LAMPORTS_PER_SOL,
-  clusterApiUrl,
-} from "@solana/web3.js";
+  ArrowRight,
+  ArrowUpRight,
+  BadgeCheck,
+  Droplets,
+  GraduationCap,
+  School,
+  ShieldCheck,
+  Upload,
+  UserRound,
+  Wallet,
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { shortenAddress } from "../lib/utils";
+
+const tickerItems = [
+  "Issued on Solana",
+  "Student owned",
+  "Tamper evident",
+  "Verified in seconds",
+  "Profile managed",
+  "Permanent record",
+];
+
+const MODULES = [
+  {
+    to: "/university",
+    title: "University desk",
+    description:
+      "Build the institution profile, allocate credentials, and track the records you issue.",
+    icon: School,
+    label: "Issuer workspace",
+  },
+  {
+    to: "/student",
+    title: "Student desk",
+    description:
+      "Review allocations, confirm your credentials, and mint the final record to your wallet.",
+    icon: GraduationCap,
+    label: "Graduate workspace",
+  },
+  {
+    to: "/batch-upload",
+    title: "Batch upload",
+    description:
+      "Upload a CSV of graduates and prepare a complete cohort in a single pass.",
+    icon: Upload,
+    label: "Cohort intake",
+  },
+  {
+    to: "/verify",
+    title: "Verification",
+    description:
+      "Inspect an issuer, a degree, and its on-chain record without an account.",
+    icon: ShieldCheck,
+    label: "Public registry",
+  },
+  {
+    to: "/faucet",
+    title: "Devnet faucet",
+    description:
+      "Request test SOL when you need fees for issuing or claiming credentials.",
+    icon: Droplets,
+    label: "Developer tools",
+  },
+  {
+    to: "/profile",
+    title: "My profile",
+    description:
+      "Manage identity details, linked wallets, and the password that protects the account.",
+    icon: UserRound,
+    label: "Account",
+  },
+];
+
+function Ticker() {
+  return (
+    <div className="overflow-hidden border-y border-ink/20 bg-cobalt py-3 text-paper">
+      <div className="marquee-track flex w-max whitespace-nowrap">
+        {[0, 1].map((copy) => (
+          <div key={copy} className="flex" aria-hidden={copy === 1}>
+            {tickerItems.map((item) => (
+              <span
+                key={item}
+                className="mx-6 font-mono text-[9px] uppercase tracking-[0.2em]"
+              >
+                {item}
+                <span className="ml-6 text-acid">+</span>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function Home() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [walletConnected, setWalletConnected] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(null);
-  const [publicKey, setPublicKey] = useState(null);
+  const { connected, publicKey } = useWallet();
+  const { isAuthenticated, user, roleName } = useAuth();
 
-  useEffect(() => {
-    // Check if wallet is connected when component mounts
-    const checkWalletConnection = async () => {
-      const { solana } = window;
-      if (solana && solana.isPhantom) {
-        try {
-          // Check if already connected
-          if (solana.isConnected) {
-            setWalletConnected(true);
-            setPublicKey(solana.publicKey);
-            await updateWalletBalance(solana.publicKey);
-          }
-        } catch (error) {
-          console.error("Error checking wallet connection:", error);
-        }
-      }
-    };
-    
-    checkWalletConnection();
-  }, []);
-
-  const updateWalletBalance = async (pubKey) => {
-    try {
-      const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-      const balance = await connection.getBalance(pubKey);
-      setWalletBalance(balance / LAMPORTS_PER_SOL);
-    } catch (error) {
-      console.error("Error fetching wallet balance:", error);
-    }
-  };
-
-
-  const connectWallet = async () => {
-    try {
-      setIsLoading(true);
-      const { solana } = window;
-  
-      if (!solana || !solana.isPhantom) {
-
-        toast.error("Please install Phantom wallet first" , { duration: 2000 });
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        toast.loading("Redirecting to Phantom wallet...", { duration: 3000 });
-
-        // Wait for 5 seconds before redirecting to Phantom wallet
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        window.open("https://phantom.app/", "_blank");
-        return;
-      }
-  
-      const response = await solana.connect();
-      setWalletConnected(true);
-      setPublicKey(response.publicKey);
-      await updateWalletBalance(response.publicKey);
-      toast.success("Wallet connected successfully!");
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
-      toast.error("Failed to connect wallet: " + error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  const handleAirdrop = async () => {
-    let toastId;
-    try {
-      setIsLoading(true);
-  
-      const { solana } = window;
-      if (!solana || !solana.isPhantom) {
-        toast.error("Please install Phantom wallet to receive the airdrop" , { duration: 2000 });
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        
-        toast.loading("Redirecting to Phantom wallet...", { duration: 3000 });
-
-        // Wait for 5 seconds before redirecting to Phantom wallet
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        window.open("https://phantom.app/", "_blank");
-        return;
-      }
-  
-      if (!solana.isConnected) {
-        await connectWallet();
-      }
-  
-      const userPublicKey = solana.publicKey;
-      const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-  
-      toastId = toast.loading("Requesting airdrop...");
-  
-      const signature = await connection.requestAirdrop(
-        userPublicKey,
-        LAMPORTS_PER_SOL
-      );
-  
-      toast.loading("Confirming transaction...", { id: toastId });
-  
-      await connection.confirmTransaction(signature, "confirmed");
-      await updateWalletBalance(userPublicKey);
-  
-      toast.success("Success! 1 SOL has been airdropped to your wallet", {
-        id: toastId,
-      });
-  
-    } catch (error) {
-      console.error("Airdrop failed:", error);
-      const message = error.message.includes("429") || error.message.includes("limit")
-        ? "Airdrop limit reached. Please try again later or use a new wallet."
-        : "Airdrop failed: " + error.message;
-    
-      if (toastId) {
-        toast.error(message, { id: toastId });
-      } else {
-        toast.error(message);
-      }
-    }
-     finally {
-      setIsLoading(false);
-    }
-  };
-  
-
+  const walletLabel = connected && publicKey
+    ? shortenAddress(publicKey.toBase58(), 4)
+    : "Not connected";
+  const roleLabel = roleName
+    ? `${roleName.charAt(0).toUpperCase()}${roleName.slice(1)}`
+    : "Guest";
+  const deskPath = roleName === "university" ? "/university" : "/student";
 
   return (
-    <div className="space-y-10 min-h-screen">
+    <div className="space-y-12">
+      <section className="relative overflow-hidden border border-ink/20">
+        <div
+          className="pointer-events-none absolute inset-0 hero-grid"
+          aria-hidden="true"
+        />
 
-      {/* Wallet status bar */}
-      <div className="fixed top-0 right-0 left-0 bg-gray-900/80 backdrop-blur-sm p-2 z-10 flex justify-end items-center">
-
-        {walletConnected ? (
-          <div className="flex items-center space-x-3 bg-gray-800 rounded-full py-1 px-3">
-            <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
-            <span className="text-xs text-gray-300">
-              {publicKey?.toString().slice(0, 4)}...{publicKey?.toString().slice(-4)}
-            </span>
-            {walletBalance !== null && (
-              <span className="text-xs bg-indigo-900/50 py-1 px-2 rounded-full">
-                {walletBalance.toFixed(2)} SOL
+        <div className="relative grid lg:grid-cols-[1.35fr_0.65fr]">
+          <div className="border-b border-ink/20 px-5 pb-10 pt-8 sm:px-8 sm:pb-12 sm:pt-10 lg:border-b-0 lg:border-r lg:px-10 lg:pb-12 lg:pt-12">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/20 pb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/55">
+              <span className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 bg-cobalt" />
+                On-chain credential registry
               </span>
-            )}
-          </div>
-        ) : (
-          <Button 
-            onClick={connectWallet} 
-            disabled={isLoading}
-            className="py-1 px-3 text-xs flex items-center gap-1"
-          >
-            <Wallet className="h-3 w-3" />
-            {isLoading ? "Connecting..." : "Connect Wallet"}
-          </Button>
-        )}
-      </div>
-      
-      <section className="py-16 text-center relative overflow-hidden">
-        { /* Background gradient effects */}
-         <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/20 to-purple-900/20 pointer-events-none"></div>
-        <div className="absolute -top-40 -right-40 h-80 w-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div className="relative z-1">
-          <div className="relative inline-block">
-            <GraduationCap className="mx-auto h-20 w-20 text-indigo-500" />
-            <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse"></div>
-          </div>
-          
-          <h1 className="mt-8 text-4xl font-bold sm:text-6xl">
-            Secure Academic Credentials
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">
-              on the Solana Blockchain
-            </span>
-          </h1>
-          
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">
-            A decentralized platform for universities to issue and verify academic
-            credentials using non-transferable NFTs on the Solana blockchain.
-          </p>
-          
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Link to="/university">
-              <Button className="text-lg hover:cursor-pointer transition transform hover:scale-105 hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-600/20">
-                For Universities
-              </Button>
-            </Link>
-            <Link to="/student">
-              <Button className="text-lg hover:cursor-pointer transition transform hover:scale-105 hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-600/20">
-                For Students
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+              <span>Solana / Devnet</span>
+            </div>
 
+            <h1 className="mt-9 max-w-[13ch] font-serif text-[clamp(3.6rem,7vw,7rem)] leading-[0.86] tracking-[-0.04em]">
+              Degrees that{" "}
+              <em className="italic text-cobalt">prove</em> themselves.
+            </h1>
 
-      <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mx-auto max-w-7xl px-4">
-        <div className="rounded-xl border border-gray-700 bg-gray-800/50 p-6 transition-all duration-300 hover:border-indigo-500/50 hover:bg-gray-800/80 hover:shadow-lg hover:shadow-indigo-500/10 group">
-          <div className="bg-gray-700/50 rounded-lg p-3 inline-block group-hover:bg-indigo-500/20 transition-all">
-            <School className="h-12 w-12 text-indigo-500" />
-          </div>
-          <h3 className="mt-4 text-xl font-semibold">For Universities</h3>
-          <p className="mt-2 text-gray-400">
-            Issue tamper-proof digital credentials as non-transferable NFTs on
-            the Solana blockchain.
-          </p>
-          <div className="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all duration-300">
-            <Link to="/university" className="text-indigo-400 hover:text-indigo-300 text-sm inline-flex items-center">
-              Learn more <ExternalLink className="ml-1 h-3 w-3" />
-            </Link>
-          </div>
-        </div>
+            <p className="mt-7 max-w-2xl text-sm leading-7 text-ink/65 sm:text-base sm:leading-8">
+              This is the working registry for universities, graduates, and
+              verification teams. Issue, claim, verify, and manage everything
+              from one place.
+            </p>
 
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link to={isAuthenticated ? deskPath : "/login"} className="btn-primary">
+                {isAuthenticated ? "Open workspace" : "Sign in to the registry"}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to="/verify" className="btn-outline">
+                Verify a credential
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
 
-        <div className="rounded-xl border border-gray-700 bg-gray-800/50 p-6 transition-all duration-300 hover:border-indigo-500/50 hover:bg-gray-800/80 hover:shadow-lg hover:shadow-indigo-500/10 group">
-          <div className="bg-gray-700/50 rounded-lg p-3 inline-block group-hover:bg-indigo-500/20 transition-all">
-            <UserCheck className="h-12 w-12 text-indigo-500" />
-          </div>
-          <h3 className="mt-4 text-xl font-semibold">For Students</h3>
-          <p className="mt-2 text-gray-400">
-            Receive and manage your academic credentials in your Solana wallet.
-          </p>
-          <div className="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all duration-300">
-            <Link to="/student" className="text-indigo-400 hover:text-indigo-300 text-sm inline-flex items-center">
-              Learn more <ExternalLink className="ml-1 h-3 w-3" />
-            </Link>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-gray-700 bg-gray-800/50 p-6 transition-all duration-300 hover:border-indigo-500/50 hover:bg-gray-800/80 hover:shadow-lg hover:shadow-indigo-500/10">
-          <div className="bg-gray-700/50 rounded-lg p-3 inline-block">
-            <Wallet className="h-12 w-12 text-indigo-500" />
-          </div>
-          <h3 className="mt-4 text-xl font-semibold">1 SOL Airdrop</h3>
-          <p className="mt-2 text-gray-400">
-            Need SOL to get started? Receive 1 SOL airdrop from the Solana devnet.
-          </p>
-          <div className="mt-4 relative">
-            <Button 
-              className=" hover:cursor-pointer w-full flex items-center justify-center gap-2 group transition transform hover:scale-[1.02]" 
-              onClick={handleAirdrop} 
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </>
-              ) : (
-                <>Get Airdrop</>
-              )}
-            </Button>
-            {!walletConnected && (
-              <div className="absolute -bottom-8 left-0 right-0 text-xs text-center text-indigo-400">
-                Connect wallet first
+            <dl className="mt-10 grid max-w-2xl grid-cols-3 border-t border-ink/20 pt-5">
+              <div className="pr-4">
+                <dt className="stat-value">100%</dt>
+                <dd className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45 sm:text-[9px]">
+                  Student owned
+                </dd>
               </div>
+              <div className="border-l border-ink/20 px-4">
+                <dt className="stat-value">0</dt>
+                <dd className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45 sm:text-[9px]">
+                  Middlemen
+                </dd>
+              </div>
+              <div className="border-l border-ink/20 pl-4">
+                <dt className="stat-value">&lt;1 min</dt>
+                <dd className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45 sm:text-[9px]">
+                  To verify
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <aside className="flex flex-col justify-between bg-paper-deep px-5 py-7 sm:px-7 lg:px-8">
+            <div className="flex items-center justify-between border-b border-ink/20 pb-4 font-mono text-[8px] uppercase tracking-[0.18em] text-ink/50">
+              <span>Registry status</span>
+              <span className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-cobalt" />
+                Live
+              </span>
+            </div>
+
+            <div className="my-7 border border-ink/25 bg-paper-soft p-5 shadow-[12px_12px_0_0_rgba(17,16,14,0.08)]">
+              <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-ink/45">
+                Current session
+              </p>
+              <p className="mt-3 font-serif text-4xl leading-none tracking-tight">
+                {isAuthenticated ? user?.name : "Guest access"}
+              </p>
+
+              <dl className="mt-6 space-y-3 border-t border-ink/15 pt-4 text-sm">
+                <div className="flex items-center justify-between gap-4">
+                  <dt className="text-ink/50">Role</dt>
+                  <dd className="font-medium">{roleLabel}</dd>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt className="text-ink/50">Wallet</dt>
+                  <dd className="font-mono text-[10px] uppercase tracking-[0.1em]">
+                    {walletLabel}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt className="text-ink/50">Profile</dt>
+                  <dd className="flex items-center gap-1.5 text-xs">
+                    {isAuthenticated ? (
+                      <>
+                        <BadgeCheck className="h-3.5 w-3.5 text-cobalt" />
+                        Active
+                      </>
+                    ) : (
+                      "Not signed in"
+                    )}
+                  </dd>
+                </div>
+              </dl>
+
+              <Link
+                to={isAuthenticated ? "/profile" : "/login"}
+                className="mt-6 flex items-center justify-between border-t border-ink/15 pt-4 font-mono text-[9px] uppercase tracking-[0.16em] text-cobalt"
+              >
+                {isAuthenticated ? "Manage profile" : "Sign in or create account"}
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+            <div className="flex items-center justify-between border-t border-ink/20 pt-4 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">
+              <span>{isAuthenticated ? "Registry connected" : "Public view"}</span>
+              <Wallet className="h-3.5 w-3.5" />
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <Ticker />
+
+      <section className="grid border border-ink/20 bg-paper-soft lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="border-b border-ink/20 px-5 py-8 sm:px-7 lg:border-b-0 lg:border-r">
+          <p className="eyebrow">01 / Workspaces</p>
+          <p className="mt-5 max-w-[18ch] font-serif text-2xl leading-tight tracking-tight">
+            One credential. Every point of view.
+          </p>
+          <p className="mt-4 text-sm leading-6 text-ink/55">
+            Move between issuing, claiming, and verifying without leaving the
+            registry.
+          </p>
+        </div>
+
+        <div>
+          {MODULES.map((module, index) => {
+            const Icon = module.icon;
+
+            return (
+              <Link
+                key={module.to}
+                to={module.to}
+                className="group grid gap-3 border-b border-ink/15 px-5 py-6 transition-colors last:border-b-0 hover:bg-cobalt hover:text-paper sm:px-7 lg:grid-cols-[3rem_1fr_auto] lg:items-center lg:gap-6"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-[9px] tracking-[0.16em] text-ink/35 transition-colors group-hover:text-paper/50">
+                    0{index + 1}
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center border border-ink/20 transition-colors group-hover:border-paper/40 group-hover:bg-paper group-hover:text-ink">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                </div>
+
+                <div className="grid gap-1 sm:grid-cols-[0.9fr_1.1fr] sm:items-center sm:gap-6">
+                  <div>
+                    <p className="font-serif text-2xl leading-none tracking-tight sm:text-3xl">
+                      {module.title}
+                    </p>
+                    <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.14em] text-ink/40 transition-colors group-hover:text-paper/50">
+                      {module.label}
+                    </p>
+                  </div>
+                  <p className="text-sm leading-6 text-ink/60 transition-colors group-hover:text-paper/70">
+                    {module.description}
+                  </p>
+                </div>
+
+                <span className="hidden h-9 w-9 items-center justify-center border border-ink/25 transition-colors group-hover:border-paper/40 group-hover:bg-paper group-hover:text-ink lg:flex">
+                  <ArrowUpRight className="h-4 w-4" />
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="grid overflow-hidden border border-ink/20 bg-acid lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="px-5 py-9 sm:px-8 sm:py-10">
+          <p className="font-mono text-[9px] uppercase tracking-[0.2em]">
+            02 / Account
+          </p>
+          <h2 className="mt-5 max-w-[16ch] font-serif text-4xl leading-[0.92] tracking-[-0.03em] sm:text-5xl">
+            {isAuthenticated ? (
+              <>
+                Keep your registry{" "}
+                <em className="italic text-cobalt">current.</em>
+              </>
+            ) : (
+              <>
+                Two ways in. One{" "}
+                <em className="italic text-cobalt">profile.</em>
+              </>
+            )}
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-6 text-ink/65">
+            {isAuthenticated
+              ? "Update your name, contact details, avatar, linked wallets, and password whenever things change."
+              : "Activate an email account or connect a Solana wallet. Once you are in, profile details and wallets live in one place."}
+          </p>
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            {isAuthenticated ? (
+              <Link to="/profile" className="btn-primary">
+                Manage profile
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                <Link to="/login?mode=signup" className="btn-primary">
+                  Create account
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/login"
+                  className="inline-flex h-11 items-center gap-2 border border-ink bg-transparent px-5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-ink hover:text-acid"
+                >
+                  Sign in with wallet
+                  <Wallet className="h-4 w-4" />
+                </Link>
+              </>
             )}
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-700 bg-gray-800/50 p-6 transition-all duration-300 hover:border-indigo-500/50 hover:bg-gray-800/80 hover:shadow-lg hover:shadow-indigo-500/10 group">
-          <div className="bg-gray-700/50 rounded-lg p-3 inline-block group-hover:bg-indigo-500/20 transition-all">
-            <Shield className="h-12 w-12 text-indigo-500" />
-          </div>
-          <h3 className="mt-4 text-xl font-semibold">Verification</h3>
-          <p className="mt-2 text-gray-400">
-            Instantly verify the authenticity of academic credentials on the
-            blockchain.
+        <div className="border-t border-ink/30 bg-ink px-5 py-9 text-paper sm:px-8 lg:border-l lg:border-t-0">
+          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-paper/45">
+            Registry notes
           </p>
-          <div className="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all duration-300">
-            <Link to="/verify" className="text-indigo-400 hover:text-indigo-300 text-sm inline-flex items-center">
-              Verify credentials <ExternalLink className="ml-1 h-3 w-3" />
-            </Link>
-          </div>
+          <ul className="mt-5 space-y-3 text-sm leading-6 text-paper/65">
+            <li className="flex gap-3 border-b border-paper/15 pb-3">
+              <span className="font-mono text-[9px] text-acid">01</span>
+              Email accounts must be activated before the first sign in.
+            </li>
+            <li className="flex gap-3 border-b border-paper/15 pb-3">
+              <span className="font-mono text-[9px] text-acid">02</span>
+              Wallet sign-in is free and never moves funds.
+            </li>
+            <li className="flex gap-3">
+              <span className="font-mono text-[9px] text-acid">03</span>
+              Credentials stay yours. The registry only proves them.
+            </li>
+          </ul>
         </div>
       </section>
-      
-      <footer className="py-6 text-center text-gray-500 text-sm mt-20">
-        <p>© {new Date().getFullYear()} DegreeNFT - Powered by Solana</p>
-      </footer>
     </div>
   );
 }

@@ -101,15 +101,15 @@ export function AdminReports() {
             {reports.map((report) => (
               <div
                 key={report._id}
-                className="rounded-lg border border-gray-700 bg-gray-800/50 p-4"
+                className="rounded-none border border-ink/20 bg-paper-soft p-4"
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="font-medium">{report.reportType}</p>
-                    <p className="mt-1 text-sm text-gray-300">
+                    <p className="mt-1 text-sm text-ink/70">
                       {report.reportDetails}
                     </p>
-                    <p className="mt-2 text-xs text-gray-400">
+                    <p className="mt-2 text-xs text-ink/60">
                       Student: {shortenAddress(report.studentWallet || "")} ·
                       University:{" "}
                       {shortenAddress(report.universityWallet || "")} · Reported{" "}
@@ -122,12 +122,12 @@ export function AdminReports() {
                 </div>
 
                 {report.resolved ? (
-                  <div className="mt-3 rounded-md bg-gray-700/40 p-3 text-sm text-gray-300">
-                    <p className="text-xs font-medium uppercase text-gray-400">
+                  <div className="mt-3 rounded-none bg-paper-deep p-3 text-sm text-ink/70">
+                    <p className="text-xs font-medium uppercase text-ink/60">
                       Resolution
                     </p>
                     <p className="mt-1">{report.solutionDetails}</p>
-                    <p className="mt-1 text-xs text-gray-400">
+                    <p className="mt-1 text-xs text-ink/60">
                       Resolved {formatDate(report.resolvedDate)}
                     </p>
                   </div>
@@ -143,7 +143,7 @@ export function AdminReports() {
                           [report._id]: event.target.value,
                         }))
                       }
-                      className="flex-1 rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="flex-1 rounded-none border border-ink/25 bg-paper-deep px-3 py-2 text-sm text-ink placeholder:text-ink/60 focus:outline-none focus:ring-2 focus:ring-cobalt"
                     />
                     <Button
                       size="sm"
@@ -157,7 +157,7 @@ export function AdminReports() {
               </div>
             ))}
             {reports.length === 0 && (
-              <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-8 text-center text-gray-400">
+              <div className="rounded-none border border-ink/20 bg-paper-soft p-8 text-center text-ink/60">
                 No reports found
               </div>
             )}

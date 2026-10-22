@@ -20,4 +20,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export const getErrorMessage = (error, fallback = "Something went wrong") =>
+  error.response?.data?.message || error.message || fallback;
+
 export default api;

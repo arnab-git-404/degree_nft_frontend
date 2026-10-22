@@ -1,14 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import api from "../lib/api";
 
-export function useAdminList({ endpoint, listKey, filterParam }) {
+export function useAdminList({
+  endpoint,
+  listKey,
+  filterParam,
+  initialFilter = "all",
+}) {
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(initialFilter);
   const [page, setPage] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../lib/api";
 import { useAdminList } from "../../hooks/useAdminList";
@@ -16,6 +17,7 @@ import {
 } from "../../components/admin/AdminUI";
 
 export function AdminUsers() {
+  const [searchParams] = useSearchParams();
   const [roles, setRoles] = useState([]);
   const [busyId, setBusyId] = useState("");
   const {
@@ -35,6 +37,7 @@ export function AdminUsers() {
     endpoint: "/admin/users",
     listKey: "users",
     filterParam: "role",
+    initialFilter: searchParams.get("role") || "all",
   });
 
   useEffect(() => {
@@ -119,9 +122,9 @@ export function AdminUsers() {
         <AdminLoading />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border border-gray-700">
+          <div className="overflow-x-auto rounded-none border border-ink/20">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-800 text-gray-400">
+              <thead className="bg-paper-soft text-ink/60">
                 <tr>
                   <th className="px-4 py-3">User</th>
                   <th className="px-4 py-3">Wallet</th>
@@ -133,10 +136,10 @@ export function AdminUsers() {
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user._id} className="border-t border-gray-700/60">
+                  <tr key={user._id} className="border-t border-ink/15">
                     <td className="px-4 py-3">
                       <p className="font-medium">{user.name}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-ink/60">
                         {user.email || "No email"}
                       </p>
                     </td>
@@ -154,7 +157,7 @@ export function AdminUsers() {
                         onChange={(event) =>
                           updateUserRole(user._id, event.target.value)
                         }
-                        className="h-8 rounded border border-gray-600 bg-gray-700 px-2 text-xs text-white disabled:opacity-50"
+                        className="h-8 rounded border border-ink/25 bg-paper-deep px-2 text-xs text-ink disabled:opacity-50"
                       >
                         {roles.length === 0 && user.roleId?.name && (
                           <option value={user.roleId.name}>
@@ -173,7 +176,7 @@ export function AdminUsers() {
                         {user.isActive ? "Active" : "Inactive"}
                       </StatusBadge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-400">
+                    <td className="px-4 py-3 text-xs text-ink/60">
                       {formatDate(user.createdAt)}
                     </td>
                     <td className="px-4 py-3">

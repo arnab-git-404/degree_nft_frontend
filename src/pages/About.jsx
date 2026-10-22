@@ -62,29 +62,34 @@ export function About() {
   return (
     <div className="space-y-16 pb-16">
       {/* Hero Section */}
-      <div className="text-center space-y-4">
-        <div className="flex justify-center mb-6">
-          <div className="p-4 bg-indigo-600/20 rounded-full">
-            <GraduationCap className="h-16 w-16 text-indigo-400" />
-          </div>
+      <div className="grid gap-8 border-b border-ink/15 pb-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div>
+          <p className="eyebrow flex items-center gap-2">
+            <GraduationCap className="h-3 w-3" />
+            About the platform
+          </p>
+          <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[0.98] tracking-tight sm:text-6xl">
+            Academic credentials, owned by the people who earn them.
+          </h1>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white">
-          About DegreeNFT
-        </h1>
-        <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-          Revolutionizing Academic Credentials with Blockchain Technology
-        </p>
+        <div className="border border-ink/20 bg-acid p-5">
+          <p className="eyebrow">Our position</p>
+          <p className="mt-3 text-sm leading-6 text-ink/70">
+            DegreeNFT turns degree records into verifiable on-chain assets,
+            removing intermediaries from issuance and verification.
+          </p>
+        </div>
       </div>
 
       {/* Project Description */}
-      <section className="rounded-lg border border-gray-700 bg-gray-800/50 p-8">
-        <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
-          <Award className="mr-3 h-8 w-8 text-indigo-400" />
+      <section className="rounded-none border border-ink/20 bg-paper-soft p-8">
+        <h2 className="font-serif text-3xl tracking-tight text-ink mb-6 flex items-center">
+          <Award className="mr-3 h-8 w-8 text-cobalt" />
           Project Overview
         </h2>
-        <div className="space-y-4 text-gray-300 leading-relaxed">
+        <div className="space-y-4 text-ink/70 leading-relaxed">
           <p>
-            <span className="font-semibold text-indigo-400">DegreeNFT</span> is a cutting-edge decentralized platform 
+            <span className="font-semibold text-cobalt">DegreeNFT</span> is a cutting-edge decentralized platform 
             that transforms traditional academic credentials into secure, verifiable NFTs on the Solana blockchain. 
             Our mission is to eliminate credential fraud, streamline verification processes, and give students true 
             ownership of their academic achievements.
@@ -104,22 +109,22 @@ export function About() {
 
       {/* Key Features */}
       <section>
-        <h2 className="text-3xl font-bold text-white mb-8 text-center">
+        <h2 className="font-serif text-3xl tracking-tight text-ink mb-8 text-center">
           Key Features
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="rounded-lg border border-gray-700 bg-gray-800/50 p-6 hover:border-indigo-600 hover:shadow-lg transition-all"
+              className="rounded-none border border-ink/20 bg-paper-soft p-6 hover:border-cobalt hover:shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] transition-all"
             >
-              <div className="flex items-center justify-center w-12 h-12 bg-indigo-600/20 rounded-lg mb-4 text-indigo-400">
+              <div className="flex items-center justify-center w-12 h-12 bg-cobalt/10 rounded-none mb-4 text-cobalt">
                 {feature.icon}
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
+              <h3 className="text-lg font-semibold text-ink mb-2">
                 {feature.title}
               </h3>
-              <p className="text-gray-400 text-sm">
+              <p className="text-ink/60 text-sm">
                 {feature.description}
               </p>
             </div>
@@ -128,15 +133,15 @@ export function About() {
       </section>
 
       {/* Platform Components */}
-      <section className="rounded-lg border border-gray-700 bg-gray-800/50 p-8">
-        <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
-          <Users className="mr-3 h-8 w-8 text-indigo-400" />
+      <section className="rounded-none border border-ink/20 bg-paper-soft p-8">
+        <h2 className="font-serif text-3xl tracking-tight text-ink mb-6 flex items-center">
+          <Users className="mr-3 h-8 w-8 text-cobalt" />
           Platform Components
         </h2>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="space-y-3">
-            <div className="text-indigo-400 font-semibold text-lg">University Dashboard</div>
-            <ul className="space-y-2 text-gray-400 text-sm">
+            <div className="text-cobalt font-semibold text-lg">University Dashboard</div>
+            <ul className="space-y-2 text-ink/60 text-sm">
               <li>• Batch credential upload via CSV</li>
               <li>• Student authorization management</li>
               <li>• Issue tracking and reporting</li>
@@ -144,8 +149,8 @@ export function About() {
             </ul>
           </div>
           <div className="space-y-3">
-            <div className="text-indigo-400 font-semibold text-lg">Student Dashboard</div>
-            <ul className="space-y-2 text-gray-400 text-sm">
+            <div className="text-cobalt font-semibold text-lg">Student Dashboard</div>
+            <ul className="space-y-2 text-ink/60 text-sm">
               <li>• Review credential details</li>
               <li>• Confirm or report issues</li>
               <li>• Mint NFT credentials</li>
@@ -153,8 +158,8 @@ export function About() {
             </ul>
           </div>
           <div className="space-y-3">
-            <div className="text-indigo-400 font-semibold text-lg">Verification Portal</div>
-            <ul className="space-y-2 text-gray-400 text-sm">
+            <div className="text-cobalt font-semibold text-lg">Verification Portal</div>
+            <ul className="space-y-2 text-ink/60 text-sm">
               <li>• Instant credential verification</li>
               <li>• Blockchain-backed authenticity</li>
               <li>• Detailed credential information</li>
@@ -165,19 +170,19 @@ export function About() {
       </section>
 
       {/* Technology Stack */}
-      <section className="rounded-lg border border-gray-700 bg-gray-800/50 p-8">
-        <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
-          <Code className="mr-3 h-8 w-8 text-indigo-400" />
+      <section className="rounded-none border border-ink/20 bg-paper-soft p-8">
+        <h2 className="font-serif text-3xl tracking-tight text-ink mb-6 flex items-center">
+          <Code className="mr-3 h-8 w-8 text-cobalt" />
           Technology Stack
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {technologies.map((tech, index) => (
             <div 
               key={index}
-              className="p-4 rounded-lg border border-gray-700 bg-gray-800/30 hover:border-indigo-600 transition-all"
+              className="p-4 rounded-none border border-ink/20 bg-paper-soft hover:border-cobalt transition-all"
             >
-              <div className="font-semibold text-white mb-1">{tech.name}</div>
-              <div className="text-sm text-gray-400">{tech.description}</div>
+              <div className="font-semibold text-ink mb-1">{tech.name}</div>
+              <div className="text-sm text-ink/60">{tech.description}</div>
             </div>
           ))}
         </div>
@@ -185,25 +190,25 @@ export function About() {
 
       {/* Developer Section */}
       <section>
-        <h2 className="text-3xl font-bold text-white mb-8 text-center">
+        <h2 className="font-serif text-3xl tracking-tight text-ink mb-8 text-center">
           Development Team
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {developers.map((dev, index) => (
             <div 
               key={index}
-              className="rounded-lg border border-gray-700 bg-gray-800/50 p-6 hover:border-indigo-600 hover:shadow-lg transition-all"
+              className="rounded-none border border-ink/20 bg-paper-soft p-6 hover:border-cobalt hover:shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] transition-all"
             >
-              <div className="flex items-center justify-center w-20 h-20 bg-indigo-600/20 rounded-full mb-4 mx-auto">
-                <Users className="h-10 w-10 text-indigo-400" />
+              <div className="flex items-center justify-center w-20 h-20 bg-cobalt/10 rounded-full mb-4 mx-auto">
+                <Users className="h-10 w-10 text-cobalt" />
               </div>
-              <h3 className="text-xl font-semibold text-white text-center mb-1">
+              <h3 className="text-xl font-semibold text-ink text-center mb-1">
                 {dev.name}
               </h3>
-              <p className="text-indigo-400 text-sm text-center mb-3">
+              <p className="text-cobalt text-sm text-center mb-3">
                 {dev.role}
               </p>
-              <p className="text-gray-400 text-sm text-center mb-6">
+              <p className="text-ink/60 text-sm text-center mb-6">
                 {dev.description}
               </p>
               <div className="flex justify-center space-x-4">
@@ -211,26 +216,26 @@ export function About() {
                   href={dev.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                  className="p-2 bg-paper-deep hover:bg-paper rounded-full transition-colors"
                   title="GitHub"
                 >
-                  <Github className="h-5 w-5 text-gray-300" />
+                  <Github className="h-5 w-5 text-ink/70" />
                 </a>
                 <a 
                   href={dev.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                  className="p-2 bg-paper-deep hover:bg-paper rounded-full transition-colors"
                   title="LinkedIn"
                 >
-                  <Linkedin className="h-5 w-5 text-gray-300" />
+                  <Linkedin className="h-5 w-5 text-ink/70" />
                 </a>
                 <a 
                   href={`mailto:${dev.email}`}
-                  className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                  className="p-2 bg-paper-deep hover:bg-paper rounded-full transition-colors"
                   title="Email"
                 >
-                  <Mail className="h-5 w-5 text-gray-300" />
+                  <Mail className="h-5 w-5 text-ink/70" />
                 </a>
               </div>
             </div>
@@ -239,11 +244,11 @@ export function About() {
       </section>
 
       {/* Vision & Mission */}
-      <section className="rounded-lg border border-indigo-600 bg-indigo-900/20 p-8">
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">
+      <section className="rounded-none border border-cobalt bg-cobalt/5 p-8">
+        <h2 className="font-serif text-3xl tracking-tight text-ink mb-6 text-center">
           Our Vision
         </h2>
-        <p className="text-gray-300 text-center max-w-3xl mx-auto leading-relaxed">
+        <p className="text-ink/70 text-center max-w-3xl mx-auto leading-relaxed">
           We envision a future where academic credentials are universally accessible, instantly verifiable, 
           and completely owned by the individuals who earned them. By leveraging blockchain technology, 
           we're building a trustless system that benefits students, universities, and employers alike, 
@@ -253,16 +258,16 @@ export function About() {
 
       {/* Call to Action */}
       <section className="text-center space-y-6">
-        <h2 className="text-3xl font-bold text-white">
+        <h2 className="font-serif text-3xl tracking-tight text-ink">
           Ready to Transform Academic Credentials?
         </h2>
-        <p className="text-gray-400 max-w-2xl mx-auto">
+        <p className="text-ink/60 max-w-2xl mx-auto">
           Join us in revolutionizing how educational achievements are verified and shared in the digital age.
         </p>
         <div className="flex justify-center gap-4">
           <a 
             href="/contact"
-            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors inline-flex items-center"
+            className="px-6 py-3 bg-cobalt hover:bg-ink text-paper rounded-none transition-colors inline-flex items-center"
           >
             <Mail className="mr-2 h-4 w-4" />
             Contact Us
@@ -271,7 +276,7 @@ export function About() {
             href="https://github.com/yourusername/DegreeNFT"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-3 border border-gray-700 hover:border-indigo-600 text-white rounded-lg transition-colors inline-flex items-center"
+            className="px-6 py-3 border border-ink/20 hover:border-cobalt text-ink rounded-none transition-colors inline-flex items-center"
           >
             <Github className="mr-2 h-4 w-4" />
             View on GitHub

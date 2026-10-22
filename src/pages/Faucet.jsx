@@ -83,10 +83,10 @@ export function Faucet() {
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       {/* Header */}
       <div className="text-center">
-        <Droplet className="mx-auto h-12 w-12 text-indigo-400" />
+        <Droplet className="mx-auto h-12 w-12 text-cobalt" />
         
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Solana Devnet Faucet</h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-400">
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">Solana Devnet Faucet</h1>
+        <p className="mt-4 max-w-2xl mx-auto text-lg text-ink/60">
           Get free devnet SOL to pay for transaction fees while testing the application in a development environment.
         </p>
       </div>
@@ -94,21 +94,21 @@ export function Faucet() {
       {/* Main Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column: Info */}
-        <div className="space-y-6 p-6 rounded-lg border border-gray-700 bg-gray-800/50">
+        <div className="space-y-6 p-6 rounded-none border border-ink/20 bg-paper-soft">
           <div className="flex items-start">
-            <Info className="h-6 w-6 text-blue-400 flex-shrink-0 mr-3 mt-1" />
+            <Info className="h-6 w-6 text-blue-700 flex-shrink-0 mr-3 mt-1" />
             <div>
-              <h3 className="text-lg font-semibold text-white">What is a Faucet?</h3>
-              <p className="mt-1 text-gray-400">
+              <h3 className="text-lg font-semibold text-ink">What is a Faucet?</h3>
+              <p className="mt-1 text-ink/60">
                 A faucet provides developers with a small amount of free cryptocurrency for testing on non-production networks like 'devnet'. It mimics real network transactions without using real money.
               </p>
             </div>
           </div>
           <div className="flex items-start">
-            <CheckCircle className="h-6 w-6 text-green-400 flex-shrink-0 mr-3 mt-1" />
+            <CheckCircle className="h-6 w-6 text-green-700 flex-shrink-0 mr-3 mt-1" />
             <div>
-              <h3 className="text-lg font-semibold text-white">How to Use</h3>
-              <p className="mt-1 text-gray-400">
+              <h3 className="text-lg font-semibold text-ink">How to Use</h3>
+              <p className="mt-1 text-ink/60">
                 1. Connect your Solana wallet.<br/>
                 2. Click the "Request 1 Devnet SOL" button.<br/>
                 3. Wait for the transaction to be confirmed.<br/>
@@ -117,10 +117,10 @@ export function Faucet() {
             </div>
           </div>
           <div className="flex items-start">
-            <AlertTriangle className="h-6 w-6 text-yellow-400 flex-shrink-0 mr-3 mt-1" />
+            <AlertTriangle className="h-6 w-6 text-yellow-700 flex-shrink-0 mr-3 mt-1" />
             <div>
-              <h3 className="text-lg font-semibold text-white">Faucet Not Working?</h3>
-              <p className="mt-1 text-gray-400">
+              <h3 className="text-lg font-semibold text-ink">Faucet Not Working?</h3>
+              <p className="mt-1 text-ink/60">
                 Devnet faucets can sometimes be slow or unavailable due to high demand. If you encounter an error, please wait a few minutes before trying again.
               </p>
             </div>
@@ -128,23 +128,23 @@ export function Faucet() {
         </div>
 
         {/* Right Column: Interaction */}
-        <div className="p-6 rounded-lg border border-gray-700 bg-gray-800/50">
+        <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
           {connected && publicKey ? (
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold text-white">Your Wallet</h3>
-                <div className="mt-2 p-3 bg-gray-900/50 rounded-md space-y-2">
+                <h3 className="font-semibold text-ink">Your Wallet</h3>
+                <div className="mt-2 p-3 bg-paper-deep rounded-none space-y-2">
                   <div>
-                    <p className="text-sm text-gray-400">Status</p>
-                    <p className="font-medium text-green-400">Connected</p>
+                    <p className="text-sm text-ink/60">Status</p>
+                    <p className="font-medium text-green-700">Connected</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Address</p>
-                    <p className="font-mono text-white break-all text-sm">{publicKey.toBase58()}</p>
+                    <p className="text-sm text-ink/60">Address</p>
+                    <p className="font-mono text-ink break-all text-sm">{publicKey.toBase58()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Balance</p>
-                    <p className="font-mono text-white">
+                    <p className="text-sm text-ink/60">Balance</p>
+                    <p className="font-mono text-ink">
                       {isBalanceLoading ? 'Loading...' : balance !== null ? `${balance.toFixed(4)} SOL` : 'N/A'}
                     </p>
                   </div>
@@ -164,13 +164,13 @@ export function Faucet() {
               </Button>
 
               {signature && (
-                <div className="mt-4 p-3 bg-green-900/30 border border-green-600 rounded-md animate-fadeIn">
-                  <p className="text-green-300 font-medium">Airdrop Confirmed!</p>
+                <div className="mt-4 p-3 bg-green-600/10 border border-green-600 rounded-none animate-fadeIn">
+                  <p className="text-green-700 font-medium">Airdrop Confirmed!</p>
                   <a
                     href={getExplorerLink(signature)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-green-400 hover:text-green-300 underline break-all flex items-center"
+                    className="text-sm text-green-700 hover:text-green-800 underline break-all flex items-center"
                   >
                     View Transaction <ExternalLink className="ml-1.5 h-4 w-4" />
                   </a>
@@ -179,9 +179,9 @@ export function Faucet() {
             </div>
           ) : (
             <div className="text-center flex flex-col items-center justify-center h-full">
-              <AlertTriangle className="h-10 w-10 text-yellow-400" />
-              <p className="mt-4 text-lg font-medium text-white">Wallet Not Connected</p>
-              <p className="mt-1 text-gray-400">Please connect your wallet to use the faucet.</p>
+              <AlertTriangle className="h-10 w-10 text-yellow-700" />
+              <p className="mt-4 text-lg font-medium text-ink">Wallet Not Connected</p>
+              <p className="mt-1 text-ink/60">Please connect your wallet to use the faucet.</p>
             </div>
           )}
         </div>
@@ -296,30 +296,30 @@ export function Faucet() {
 //   return (
 //     <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
 //       <div className="text-center">
-//         <Droplet className="mx-auto h-12 w-12 text-indigo-400" />
-//         <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Solana Devnet Faucet</h1>
-//         <p className="mt-4 text-gray-400">Get free devnet SOL for testing purposes.</p>
+//         <Droplet className="mx-auto h-12 w-12 text-cobalt" />
+//         <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">Solana Devnet Faucet</h1>
+//         <p className="mt-4 text-ink/60">Get free devnet SOL for testing purposes.</p>
 //       </div>
 
 //       {connected && publicKey ? (
 //         <div className="space-y-8">
 //           {/* Wallet Status */}
-//           <div className="p-6 rounded-lg border border-gray-700 bg-gray-800/50">
-//             <h3 className="font-semibold text-white mb-4 text-lg">Wallet Status</h3>
+//           <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
+//             <h3 className="font-semibold text-ink mb-4 text-lg">Wallet Status</h3>
 //             <div className="space-y-3">
 //               <div className="flex justify-between items-center">
-//                 <span className="text-sm text-gray-400">Address</span>
+//                 <span className="text-sm text-ink/60">Address</span>
 //                 <div className="flex items-center gap-2">
-//                   <span className="font-mono text-sm text-white">{`${publicKey.toBase58().slice(0, 6)}...${publicKey.toBase58().slice(-6)}`}</span>
-//                   <Copy className="h-4 w-4 text-gray-400 hover:text-white cursor-pointer" onClick={handleCopyToClipboard} />
+//                   <span className="font-mono text-sm text-ink">{`${publicKey.toBase58().slice(0, 6)}...${publicKey.toBase58().slice(-6)}`}</span>
+//                   <Copy className="h-4 w-4 text-ink/60 hover:text-ink cursor-pointer" onClick={handleCopyToClipboard} />
 //                 </div>
 //               </div>
 //               <div className="flex justify-between items-center">
-//                 <span className="text-sm text-gray-400">Balance</span>
+//                 <span className="text-sm text-ink/60">Balance</span>
 //                 <div className="flex items-center gap-2">
-//                   <span className="font-mono text-white">{balance !== null ? `${balance.toFixed(4)} SOL` : 'N/A'}</span>
+//                   <span className="font-mono text-ink">{balance !== null ? `${balance.toFixed(4)} SOL` : 'N/A'}</span>
 //                   <RefreshCw 
-//                     className={`h-4 w-4 text-gray-400 hover:text-white cursor-pointer ${isBalanceLoading ? 'animate-spin' : ''}`} 
+//                     className={`h-4 w-4 text-ink/60 hover:text-ink cursor-pointer ${isBalanceLoading ? 'animate-spin' : ''}`} 
 //                     onClick={() => fetchBalance(true)} 
 //                   />
 //                 </div>
@@ -328,13 +328,13 @@ export function Faucet() {
 //           </div>
 
 //           {/* Faucet Controls */}
-//           <div className="p-6 rounded-lg border border-gray-700 bg-gray-800/50">
-//             <h3 className="font-semibold text-white mb-4 text-lg">Request Funds</h3>
+//           <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
+//             <h3 className="font-semibold text-ink mb-4 text-lg">Request Funds</h3>
 //             <div className="mb-4">
-//               <label className="text-sm text-gray-400 mb-2 block">Amount</label>
-//               <div className="flex bg-gray-900/70 rounded-md p-1">
+//               <label className="text-sm text-ink/60 mb-2 block">Amount</label>
+//               <div className="flex bg-ink/60 rounded-none p-1">
 //                 {AirdropAmountOptions.map(amount => (
-//                   <button key={amount} onClick={() => setAirdropAmount(amount)} className={`w-full text-center text-sm font-medium py-2 rounded-md transition-colors ${airdropAmount === amount ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}>
+//                   <button key={amount} onClick={() => setAirdropAmount(amount)} className={`w-full text-center text-sm font-medium py-2 rounded-none transition-colors ${airdropAmount === amount ? 'bg-cobalt text-paper' : 'text-ink/70 hover:bg-paper-deep'}`}>
 //                     {amount} SOL
 //                   </button>
 //                 ))}
@@ -353,14 +353,14 @@ export function Faucet() {
 
 //           {/* Transaction History */}
 //           {txHistory.length > 0 && (
-//             <div className="p-6 rounded-lg border border-gray-700 bg-gray-800/50">
-//               <h3 className="font-semibold text-white mb-4 text-lg flex items-center"><History className="mr-2 h-5 w-5"/>Recent Airdrops</h3>
+//             <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
+//               <h3 className="font-semibold text-ink mb-4 text-lg flex items-center"><History className="mr-2 h-5 w-5"/>Recent Airdrops</h3>
 //               <div className="space-y-3">
 //                 {txHistory.map(({ sig, time }) => (
-//                   <a key={sig} href={getExplorerLink(sig)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between text-sm font-mono text-blue-400 hover:text-blue-300 transition-colors">
+//                   <a key={sig} href={getExplorerLink(sig)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between text-sm font-mono text-blue-700 hover:text-blue-700 transition-colors">
 //                     <div className="truncate pr-4">
 //                       <p className="truncate">{sig}</p>
-//                       <p className="text-xs text-gray-500">{new Date(time).toLocaleString()}</p>
+//                       <p className="text-xs text-ink/45">{new Date(time).toLocaleString()}</p>
 //                     </div>
 //                     <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0"/>
 //                   </a>
@@ -370,10 +370,10 @@ export function Faucet() {
 //           )}
 //         </div>
 //       ) : (
-//         <div className="text-center flex flex-col items-center justify-center h-full p-10 rounded-lg border border-dashed border-gray-600 bg-gray-800/50">
-//           <AlertTriangle className="h-10 w-10 text-yellow-400" />
-//           <p className="mt-4 text-lg font-medium text-white">Wallet Not Connected</p>
-//           <p className="mt-1 text-gray-400">Please connect your wallet to use the faucet.</p>
+//         <div className="text-center flex flex-col items-center justify-center h-full p-10 rounded-none border border-dashed border-ink/25 bg-paper-soft">
+//           <AlertTriangle className="h-10 w-10 text-yellow-700" />
+//           <p className="mt-4 text-lg font-medium text-ink">Wallet Not Connected</p>
+//           <p className="mt-1 text-ink/60">Please connect your wallet to use the faucet.</p>
 //         </div>
 //       )}
 //     </div>

@@ -61,7 +61,7 @@ export function SolanaProvider({ children }) {
 
 
   // Create NFT using the IPFS hash
-  const createNftFromIpfs = async (nftname, description) => {
+  const createNftFromIpfs = async (nftname) => {
 
     if (!currentIpfsHash || !wallet.publicKey) {
       setError("IPFS hash or wallet not available");

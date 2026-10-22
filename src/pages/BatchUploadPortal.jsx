@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "../components/Button";
 import { useSolana } from "../context/SolanaContext";
 import { Input } from "../components/Input";
@@ -30,9 +30,10 @@ export function BatchUploadPortal() {
 
 
   const { connected, publicKey } = useWallet();
-  const { isLoading, setCurrentIpfsHash } = useSolana();
-  const { isAuthenticated, hasRole, roleName } = useAuth();
+  const { setCurrentIpfsHash } = useSolana();
+  const { isAuthenticated, hasPermission, roleName } = useAuth();
   const navigate = useNavigate();
+  const canUploadBatches = hasPermission("batch:upload");
 
   // Add Pinata API configuration
   const PINATA_API_KEY = import.meta.env.VITE_APP_PINATA_API_KEY;
@@ -331,9 +332,9 @@ export function BatchUploadPortal() {
       return;
     }
 
-    if (!hasRole("university", "admin")) {
+    if (!canUploadBatches) {
       toast.error(
-        `This wallet is registered as '${roleName || "unknown"}'. A university account is required for batch uploads.`
+        `This wallet is registered as '${roleName || "unknown"}'. Batch upload permission is required.`
       );
       return;
     }
@@ -417,9 +418,9 @@ export function BatchUploadPortal() {
   if (!connected) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <FileSpreadsheet className="h-16 w-16 text-indigo-500" />
+        <FileSpreadsheet className="h-16 w-16 text-cobalt" />
         <h2 className="mt-4 text-2xl font-bold">Batch Upload Portal</h2>
-        <p className="mt-2 text-gray-400">
+        <p className="mt-2 text-ink/60">
           Connect your wallet to issue academic credentials
         </p>
       </div>
@@ -431,7 +432,7 @@ export function BatchUploadPortal() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">University Batch Upload Portal</h2>
-          <p className="mt-1 text-gray-400">
+          <p className="mt-1 text-ink/60">
             Connected as: {shortenAddress(publicKey?.toBase58() || "")}
           </p>
         </div>
@@ -445,22 +446,22 @@ export function BatchUploadPortal() {
         </Button>
       </div>
 
-      <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+      <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
         {uploadStep === "upload" && (
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold">Batch Degree Issuance</h3>
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="mt-1 text-sm text-ink/60">
                 Upload a CSV file with multiple student records (max 200)
               </p>
             </div>
 
-            <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-lg p-12 text-center hover:border-gray-500 transition-all">
-              <Upload className="h-12 w-12 text-gray-400 mb-3" />
+            <div className="flex flex-col items-center justify-center border-2 border-dashed border-ink/25 rounded-none p-12 text-center hover:border-ink/40 transition-all">
+              <Upload className="h-12 w-12 text-ink/60 mb-3" />
               <p className="text-lg font-medium">
                 Drag & drop your CSV file here
               </p>
-              <p className="text-sm text-gray-400 mt-1 mb-4">
+              <p className="text-sm text-ink/60 mt-1 mb-4">
                 or click to browse files
               </p>
 
@@ -490,9 +491,9 @@ export function BatchUploadPortal() {
               </Button>
             </div>
 
-            <div className="mt-6 rounded-md bg-gray-700/40 p-4">
-              <p className="flex items-start text-sm text-gray-300">
-                <Info className="mr-2 h-4 w-4 flex-shrink-0 mt-0.5 text-indigo-400" />
+            <div className="mt-6 rounded-none bg-paper-deep p-4">
+              <p className="flex items-start text-sm text-ink/70">
+                <Info className="mr-2 h-4 w-4 flex-shrink-0 mt-0.5 text-cobalt" />
                 <span>
                   The CSV file should contain columns for universityName,
                   studentName, studentAddress, degreeType, issueDate,
@@ -509,14 +510,14 @@ export function BatchUploadPortal() {
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold">Review Data</h3>
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="mt-1 text-sm text-ink/60">
                 {parsedData.length} records found in {file?.name}
               </p>
             </div>
 
             {validationErrors.length > 0 && (
-              <div className="rounded-md bg-red-900/20 border border-red-700 p-4 mb-4">
-                <h4 className="font-medium text-red-400 flex items-center">
+              <div className="rounded-none bg-red-600/10 border border-red-700 p-4 mb-4">
+                <h4 className="font-medium text-red-700 flex items-center">
                   <AlertCircle className="h-4 w-4 mr-2" />
                   Validation Issues ({validationErrors.length})
                 </h4>
@@ -527,7 +528,7 @@ export function BatchUploadPortal() {
                       className="py-2 border-t border-red-800 first:border-0"
                     >
                       <p className="font-medium">{error.studentName}</p>
-                      <ul className="list-disc list-inside text-sm text-red-300">
+                      <ul className="list-disc list-inside text-sm text-red-700">
                         {error.errors.map((err, i) => (
                           <li key={i}>{err}</li>
                         ))}
@@ -538,90 +539,90 @@ export function BatchUploadPortal() {
               </div>
             )}
 
-            <div className="border border-gray-700 rounded-lg overflow-hidden">
+            <div className="border border-ink/20 rounded-none overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-700">
-                  <thead className="bg-gray-800">
+                <table className="min-w-full divide-y divide-ink/15">
+                  <thead className="bg-paper-soft">
                     <tr>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         SL No.
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Student Name
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Wallet Address
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Degree
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Major
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         CGPA
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Program Duration
                       </th>
 
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Graduation Year
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-gray-800/50 divide-y divide-gray-700">
+                  <tbody className="bg-paper-soft divide-y divide-ink/15">
                     {parsedData.slice(0, 10).map((student, index) => (
                       <tr
                         key={index}
-                        className={index % 2 === 0 ? "bg-gray-800/30" : ""}
+                        className={index % 2 === 0 ? "bg-paper-soft" : ""}
                       >
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {index + 1}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {student.studentName}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {shortenAddress(student.studentAddress)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {student.degreeType}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {student.major}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {student.cgpa}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {student.programDuration}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink/70">
                           {student.graduationYear}
                         </td>
                       </tr>
@@ -630,7 +631,7 @@ export function BatchUploadPortal() {
                 </table>
               </div>
               {parsedData.length > 10 && (
-                <div className="px-6 py-3 bg-gray-800 border-t border-gray-700 text-sm text-gray-400">
+                <div className="px-6 py-3 bg-paper-soft border-t border-ink/20 text-sm text-ink/60">
                   Showing 10 of {parsedData.length} records...
                 </div>
               )}
@@ -664,16 +665,16 @@ export function BatchUploadPortal() {
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold">Processing Certificates</h3>
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="mt-1 text-sm text-ink/60">
                 Please wait while we process all certificates. This may take
                 several minutes.
               </p>
             </div>
 
             <div className="flex flex-col items-center justify-center py-8">
-              <div className="w-full max-w-md bg-gray-700 rounded-full h-4 mb-6">
+              <div className="w-full max-w-md bg-paper-deep rounded-full h-4 mb-6">
                 <div
-                  className="bg-indigo-500 h-4 rounded-full transition-all duration-300"
+                  className="bg-cobalt h-4 rounded-full transition-all duration-300"
                   style={{
                     width: `${(currentIndex / parsedData.length) * 100}%`,
                   }}
@@ -681,18 +682,18 @@ export function BatchUploadPortal() {
               </div>
 
               <div className="text-center mb-8">
-                <p className="text-2xl font-bold text-indigo-400">
-                  {currentIndex + 1} <span className="text-gray-400">of</span>{" "}
+                <p className="text-2xl font-bold text-cobalt">
+                  {currentIndex + 1} <span className="text-ink/60">of</span>{" "}
                   {parsedData.length}
                 </p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-ink/60 mt-1">
                   Certificates Processed
                 </p>
               </div>
 
               <div className="flex items-center justify-center space-x-2 mb-4">
-                <Loader className="h-5 w-5 animate-spin text-indigo-400" />
-                <p className="text-gray-300">
+                <Loader className="h-5 w-5 animate-spin text-cobalt" />
+                <p className="text-ink/70">
                   {isProcessing && currentIndex < parsedData.length
                     ? `Processing: ${
                         parsedData[currentIndex]?.studentName || ""
@@ -702,54 +703,54 @@ export function BatchUploadPortal() {
               </div>
             </div>
 
-            <div className="border border-gray-700 rounded-lg overflow-hidden max-h-60">
+            <div className="border border-ink/20 rounded-none overflow-hidden max-h-60">
               <div className="overflow-y-auto">
-                <table className="min-w-full divide-y divide-gray-700">
-                  <thead className="bg-gray-800 sticky top-0">
+                <table className="min-w-full divide-y divide-ink/15">
+                  <thead className="bg-paper-soft sticky top-0">
                     <tr>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Status
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Student
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Degree
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Time
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-gray-800/50 divide-y divide-gray-700">
+                  <tbody className="bg-paper-soft divide-y divide-ink/15">
                     {processingResults.map((result, index) => (
                       <tr key={index}>
                         <td className="px-4 py-3 whitespace-nowrap">
                           {result.success ? (
-                            <CheckCircle className="h-5 w-5 text-green-500" />
+                            <CheckCircle className="h-5 w-5 text-green-700" />
                           ) : (
-                            <AlertCircle className="h-5 w-5 text-red-500" />
+                            <AlertCircle className="h-5 w-5 text-red-700" />
                           )}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-ink/70">
                           {result.studentName}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-ink/70">
                           {result.degreeType || "-"}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-ink/60">
                           {result.timestamp
                             ? new Date(result.timestamp).toLocaleTimeString()
                             : "-"}
@@ -767,7 +768,7 @@ export function BatchUploadPortal() {
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold">Processing Complete</h3>
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="mt-1 text-sm text-ink/60">
                 {processingResults.filter((r) => r.success).length} of{" "}
                 {parsedData.length} certificates processed successfully
               </p>
@@ -775,94 +776,94 @@ export function BatchUploadPortal() {
 
             <div className="flex justify-center py-6">
               <div className="text-center">
-                <div className="inline-flex items-center justify-center h-24 w-24 rounded-full bg-green-900/20 text-green-500 mb-4">
+                <div className="inline-flex items-center justify-center h-24 w-24 rounded-full bg-green-600/10 text-green-700 mb-4">
                   <CheckCircle className="h-12 w-12" />
                 </div>
                 <h4 className="text-xl font-bold">
                   Batch Processing Completed
                 </h4>
-                <p className="text-gray-400 mt-1">
+                <p className="text-ink/60 mt-1">
                   {new Date().toLocaleString()}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
-              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                <p className="text-sm text-gray-400">Total Processed</p>
+              <div className="bg-paper-soft rounded-none p-4 border border-ink/20">
+                <p className="text-sm text-ink/60">Total Processed</p>
                 <p className="text-2xl font-bold">{parsedData.length}</p>
               </div>
-              <div className="bg-gray-800/50 rounded-lg p-4 border border-green-900/30">
-                <p className="text-sm text-gray-400">Successful</p>
-                <p className="text-2xl font-bold text-green-500">
+              <div className="bg-paper-soft rounded-none p-4 border border-green-700/30">
+                <p className="text-sm text-ink/60">Successful</p>
+                <p className="text-2xl font-bold text-green-700">
                   {processingResults.filter((r) => r.success).length}
                 </p>
               </div>
-              <div className="bg-gray-800/50 rounded-lg p-4 border border-red-900/30">
-                <p className="text-sm text-gray-400">Failed</p>
-                <p className="text-2xl font-bold text-red-500">
+              <div className="bg-paper-soft rounded-none p-4 border border-red-700/30">
+                <p className="text-sm text-ink/60">Failed</p>
+                <p className="text-2xl font-bold text-red-700">
                   {processingResults.filter((r) => !r.success).length}
                 </p>
               </div>
             </div>
 
-            <div className="border border-gray-700 rounded-lg overflow-hidden">
+            <div className="border border-ink/20 rounded-none overflow-hidden">
               <div className="overflow-x-auto max-h-80">
-                <table className="min-w-full divide-y divide-gray-700">
-                  <thead className="bg-gray-800 sticky top-0">
+                <table className="min-w-full divide-y divide-ink/15">
+                  <thead className="bg-paper-soft sticky top-0">
                     <tr>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Status
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Student
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Degree
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         IPFS Hash
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
                       >
                         Details
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-gray-800/50 divide-y divide-gray-700">
+                  <tbody className="bg-paper-soft divide-y divide-ink/15">
                     {processingResults.map((result, index) => (
                       <tr
                         key={index}
-                        className={index % 2 === 0 ? "bg-gray-800/30" : ""}
+                        className={index % 2 === 0 ? "bg-paper-soft" : ""}
                       >
                         <td className="px-4 py-3 whitespace-nowrap">
                           {result.success ? (
-                            <CheckCircle className="h-5 w-5 text-green-500" />
+                            <CheckCircle className="h-5 w-5 text-green-700" />
                           ) : (
-                            <AlertCircle className="h-5 w-5 text-red-500" />
+                            <AlertCircle className="h-5 w-5 text-red-700" />
                           )}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-ink/70">
                           {result.studentName}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-ink/70">
                           {result.degreeType || "-"}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-ink/60">
                           {result.ipfsHash
                             ? shortenAddress(result.ipfsHash)
                             : "-"}
@@ -873,12 +874,12 @@ export function BatchUploadPortal() {
                               href={`https://ipfs.io/ipfs/${result.ipfsHash}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-indigo-400 hover:text-indigo-300 inline-flex items-center"
+                              className="text-cobalt hover:text-cobalt inline-flex items-center"
                             >
                               View Metadata
                             </a>
                           ) : (
-                            <span className="text-red-400">{result.error}</span>
+                            <span className="text-red-700">{result.error}</span>
                           )}
                         </td>
                       </tr>
@@ -909,37 +910,37 @@ export function BatchUploadPortal() {
       </div>
 
       {/* Help section */}
-      <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+      <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0">
-            <HelpCircle className="h-6 w-6 text-indigo-400" />
+            <HelpCircle className="h-6 w-6 text-cobalt" />
           </div>
           <div>
             <h3 className="text-lg font-medium">Need Help?</h3>
-            <p className="mt-1 text-sm text-gray-400">
+            <p className="mt-1 text-sm text-ink/60">
               The batch upload feature allows you to issue multiple degree
               certificates at once. Here's how it works:
             </p>
-            <ul className="mt-3 space-y-2 text-sm text-gray-400">
+            <ul className="mt-3 space-y-2 text-sm text-ink/60">
               <li className="flex items-start gap-2">
-                <Clock className="h-4 w-4 text-indigo-400 mt-0.5" />
+                <Clock className="h-4 w-4 text-cobalt mt-0.5" />
                 <span>Processing takes ~5-10 seconds per certificate</span>
               </li>
               <li className="flex items-start gap-2">
-                <Info className="h-4 w-4 text-indigo-400 mt-0.5" />
+                <Info className="h-4 w-4 text-cobalt mt-0.5" />
                 <span>
                   Each student must have a valid Solana wallet address
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-indigo-400 mt-0.5" />
+                <CheckCircle className="h-4 w-4 text-cobalt mt-0.5" />
                 <span>
                   Certificates are stored permanently on IPFS and Solana
                   blockchain
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <AlertCircle className="h-4 w-4 text-indigo-400 mt-0.5" />
+                <AlertCircle className="h-4 w-4 text-cobalt mt-0.5" />
                 <span>Failed uploads can be retried individually later</span>
               </li>
             </ul>

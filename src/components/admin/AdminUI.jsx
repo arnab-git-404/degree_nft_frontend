@@ -3,11 +3,11 @@ import { Button } from "../Button";
 import { Input } from "../Input";
 
 const BADGE_TONES = {
-  success: "bg-green-500/15 text-green-300",
-  danger: "bg-red-500/15 text-red-300",
-  warning: "bg-yellow-500/15 text-yellow-200",
-  info: "bg-indigo-500/15 text-indigo-300",
-  neutral: "bg-gray-500/15 text-gray-300",
+  success: "bg-green-600/10 text-green-700",
+  danger: "bg-red-600/10 text-red-700",
+  warning: "bg-yellow-500/15 text-yellow-800",
+  info: "bg-cobalt/10 text-cobalt",
+  neutral: "bg-ink/5 text-ink/70",
 };
 
 export function StatusBadge({ tone = "neutral", children }) {
@@ -27,24 +27,37 @@ export function AdminPageHeader({
   description,
   onRefresh,
   isRefreshing = false,
+  actions,
 }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <p className="eyebrow">Administration</p>
+        <h1 className="mt-2 font-serif text-4xl leading-tight tracking-tight">
+          {title}
+        </h1>
         {description && (
-          <p className="mt-1 text-sm text-gray-400">{description}</p>
+          <p className="mt-2 text-sm leading-6 text-ink/60">{description}</p>
         )}
       </div>
-      {onRefresh && (
-        <Button variant="secondary" onClick={onRefresh} disabled={isRefreshing}>
-          {isRefreshing ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <RefreshCw className="mr-2 h-4 w-4" />
+      {(actions || onRefresh) && (
+        <div className="flex flex-wrap gap-2">
+          {actions}
+          {onRefresh && (
+            <Button
+              variant="secondary"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+            >
+              {isRefreshing ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-4 w-4" />
+              )}
+              Refresh
+            </Button>
           )}
-          Refresh
-        </Button>
+        </div>
       )}
     </div>
   );
@@ -74,7 +87,7 @@ export function AdminToolbar({
       <select
         value={filter}
         onChange={(event) => onFilterChange(event.target.value)}
-        className="h-10 rounded-md border border-gray-600 bg-gray-700 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-10 rounded-none border border-ink/25 bg-paper-deep px-3 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
       >
         {filterOptions.map(([value, label]) => (
           <option key={value} value={value}>
@@ -92,7 +105,7 @@ export function AdminPagination({ pagination, onPage }) {
   }
 
   return (
-    <div className="mt-4 flex items-center justify-between text-sm text-gray-400">
+    <div className="mt-4 flex items-center justify-between text-sm text-ink/60">
       <span>
         Page {pagination.page} of {pagination.pages} · {pagination.total} total
       </span>
@@ -121,7 +134,7 @@ export function AdminPagination({ pagination, onPage }) {
 export function AdminLoading() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center">
-      <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
+      <Loader2 className="h-10 w-10 animate-spin text-cobalt" />
     </div>
   );
 }
@@ -130,7 +143,7 @@ export function AdminError({ message }) {
   if (!message) return null;
 
   return (
-    <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+    <div className="rounded-none border border-red-500/30 bg-red-600/5 p-4 text-sm text-red-800">
       {message}
     </div>
   );
@@ -139,7 +152,7 @@ export function AdminError({ message }) {
 export function AdminEmpty({ colSpan, message }) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-4 py-8 text-center text-gray-400">
+      <td colSpan={colSpan} className="px-4 py-8 text-center text-ink/60">
         {message}
       </td>
     </tr>

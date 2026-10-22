@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { Loader2, RefreshCw, Shield, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
@@ -7,27 +6,16 @@ import { Button } from "../components/Button";
 import { SignInRequired } from "../components/SignInRequired";
 
 export function AdminLayout() {
-  const { connected } = useWallet();
   const { isAuthenticated, isRestoring, hasRole, refreshUser } = useAuth();
   const isAdmin = hasRole("admin");
-
-  if (!connected) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <Shield className="h-16 w-16 text-indigo-500" />
-        <h2 className="mt-4 text-2xl font-bold">Admin Panel</h2>
-        <p className="mt-2 text-gray-400">
-          Connect your admin wallet to manage the platform
-        </p>
-      </div>
-    );
-  }
 
   if (isRestoring) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-indigo-500" />
-        <p className="mt-4 text-gray-400">Restoring your session...</p>
+        <Loader2 className="h-10 w-10 animate-spin text-cobalt" />
+        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-ink/45">
+          Restoring your session
+        </p>
       </div>
     );
   }
@@ -36,22 +24,26 @@ export function AdminLayout() {
     return (
       <SignInRequired
         title="Sign in to access the admin panel"
-        description="Sign a free message with your admin wallet to continue."
+        description="Use your administrator email and password or a Solana wallet to continue."
       />
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="mx-auto max-w-xl space-y-4 rounded-lg border border-red-500/30 bg-red-500/10 p-6 text-center">
-        <XCircle className="mx-auto h-12 w-12 text-red-400" />
-        <h2 className="text-2xl font-bold">Access denied</h2>
-        <p className="text-sm text-red-100/80">
-          This wallet does not have admin access. Add its address to
-          ADMIN_WALLET_ADDRESSES on the backend and sign in again.
+      <div className="mx-auto max-w-xl border border-red-700/30 bg-paper-soft p-8 text-center">
+        <XCircle className="mx-auto h-12 w-12 text-red-700" />
+        <p className="eyebrow mt-6 text-red-700">Access restricted</p>
+        <h2 className="mt-3 font-serif text-4xl leading-tight tracking-tight">
+          Administrator only
+        </h2>
+        <p className="mt-3 text-sm leading-6 text-ink/60">
+          This account does not have admin access. Ask a platform owner to grant
+          the role, then refresh.
         </p>
         <Button
           variant="secondary"
+          className="mt-6"
           onClick={async () => {
             try {
               await refreshUser();
@@ -68,5 +60,18 @@ export function AdminLayout() {
     );
   }
 
-  return <Outlet />;
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/15 pb-4">
+        <p className="eyebrow flex items-center gap-2">
+          <Shield className="h-3 w-3" />
+          Registry control room
+        </p>
+        <p className="text-xs text-ink/45">
+          Institutions, credentials and moderation queues.
+        </p>
+      </div>
+      <Outlet />
+    </div>
+  );
 }
