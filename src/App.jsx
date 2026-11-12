@@ -6,22 +6,17 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import "@solana/wallet-adapter-react-ui/styles.css";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
 import { Layout } from "./components/Layout";
-import "@solana/wallet-adapter-react-ui/styles.css";
 import AppRoutes from "./AppRoutes";
-import { Toaster } from "react-hot-toast";
 import { SolanaProvider } from "./context/SolanaContext.jsx";
-import { Buffer } from "buffer";
-
-if (typeof window !== "undefined") {
-  window.Buffer = Buffer;
-}
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 const App = () => {
   // Set up Solana testnet connection
-  const network = WalletAdapterNetwork.Testnet;
+  const network = WalletAdapterNetwork.Devnet;
   const endpoint = clusterApiUrl(network);
   const wallets = [new PhantomWalletAdapter()];
 
@@ -30,15 +25,14 @@ const App = () => {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-            <Toaster />
-
             <SolanaProvider>
-              <Router>
-                <Toaster />
-                <Layout>
-                  <AppRoutes />
-                </Layout>
-              </Router>
+              <AuthProvider>
+                <Router>
+                  <Layout>
+                    <AppRoutes />
+                  </Layout>
+                </Router>
+              </AuthProvider>
             </SolanaProvider>
           </WalletModalProvider>
         </WalletProvider>

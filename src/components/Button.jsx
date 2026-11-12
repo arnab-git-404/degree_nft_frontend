@@ -1,39 +1,49 @@
-import React from 'react';
-// import { cn } from '@/lib/utils';
-import { cn } from '../lib/utils';
+import React from "react";
+import { cn } from "../lib/utils";
 
 const Button = React.forwardRef(
-  ({ className, variant = 'default', size = 'md', isLoading, children, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
-    
+  (
+    {
+      className,
+      variant = "default",
+      size = "md",
+      isLoading,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const variants = {
-      default: 'bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:ring-indigo-500',
-      secondary: 'bg-gray-700 text-white hover:bg-gray-600 focus-visible:ring-gray-500',
-      outline: 'border border-gray-600 bg-transparent hover:bg-gray-700 focus-visible:ring-gray-500',
-      ghost: 'hover:bg-gray-700 hover:text-white focus-visible:ring-gray-500',
+      default: "btn-primary",
+      secondary: "btn-outline",
+      outline: "btn-outline",
+      ghost: "btn-ghost",
+      acid:
+        "inline-flex items-center justify-center gap-2 bg-acid px-5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink transition-colors hover:bg-ink hover:text-acid disabled:pointer-events-none disabled:opacity-50",
+      ink: "inline-flex items-center justify-center gap-2 bg-ink px-5 font-mono text-[10px] uppercase tracking-[0.16em] text-paper transition-colors hover:bg-cobalt disabled:pointer-events-none disabled:opacity-50",
     };
 
     const sizes = {
-      sm: 'h-8 px-3 text-sm',
-      md: 'h-10 px-4',
-      lg: 'h-12 px-6 text-lg',
+      sm: "h-8 px-3",
+      md: "h-11",
+      lg: "h-12 px-6 text-[11px]",
     };
 
     return (
       <button
         ref={ref}
         className={cn(
-          baseStyles,
-          variants[variant],
+          "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors disabled:cursor-not-allowed",
+          variants[variant] || variants.default,
           sizes[size],
-          isLoading && 'opacity-70 cursor-not-allowed',
+          isLoading && "cursor-not-allowed opacity-70",
           className
         )}
-        disabled={isLoading}
+        disabled={isLoading || props.disabled}
         {...props}
       >
         {isLoading ? (
-          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
         ) : null}
         {children}
       </button>
@@ -41,6 +51,6 @@ const Button = React.forwardRef(
   }
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
 export { Button };

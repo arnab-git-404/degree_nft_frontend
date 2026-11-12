@@ -1,33 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
-export const NotFound = () => {
+export function NotFound() {
   return (
-    <div className="flex items-center justify-center min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-gray-100 rounded-xl shadow-xl overflow-hidden p-10">
-        <div className="text-center">
-          <h1 className="text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-teal-400">
-            404
-          </h1>
-          
-          <div className="h-1 w-16 bg-gradient-to-r from-blue-500 to-teal-400 mx-auto my-6"></div>
-          
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">
-            Page Not Found
-          </h2>
-          
-          <p className="text-gray-600 text-lg mb-8">
-            Oops! The page you're looking for doesn't seem to exist in our Platform.
-          </p>
-          
-          <Link
-            to="/"
-            className=" pointer-events-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-blue-500 to-teal-400 hover:from-blue-600 hover:to-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
-          >
-            Return to Home
+    <div className="flex min-h-[70vh] items-center justify-center">
+      <div className="w-full max-w-xl border border-ink/20 bg-paper-soft p-10 sm:p-14">
+        <p className="eyebrow">Error 404</p>
+        <p className="mt-6 font-serif text-[7rem] leading-none tracking-tight text-cobalt sm:text-[9rem]">
+          404
+        </p>
+        <h1 className="mt-4 font-serif text-4xl leading-tight tracking-tight">
+          Page not found
+        </h1>
+        <p className="mt-3 max-w-sm text-sm leading-6 text-ink/60">
+          The page you are looking for does not exist, was moved, or is only
+          available to signed-in accounts.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link to="/" className="btn-primary">
+            Return home
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link to="/verify" className="btn-outline">
+            Verify a credential
           </Link>
         </div>
       </div>
     </div>
   );
-};
+}
