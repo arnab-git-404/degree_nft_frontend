@@ -62,7 +62,6 @@ export function AuthProvider({ children }) {
     }
 
     let cancelled = false;
-
     const restoreSession = async () => {
       try {
         const { data } = await api.get("/auth/me");
