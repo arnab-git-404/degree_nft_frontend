@@ -2,32 +2,24 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { WalletButton } from "./WalletButton";
 import { useAuth } from "../context/AuthContext";
-import {
-  ADMIN_MODULES,
-  MAIN_MODULES,
-  UNIVERSITY_MODULES,
-  getInitials,
-} from "./AppSidebar";
+import { SECTIONS, getInitials } from "./AppSidebar";
 
-const TITLES = Object.fromEntries(
-  [
-    ...MAIN_MODULES,
-    ...UNIVERSITY_MODULES,
-    ...ADMIN_MODULES,
-    { to: "/profile", label: "My profile" },
-  ].map((module) => [module.to, module.label])
+// path -> { section, title }
+const PAGES = Object.fromEntries(
+  SECTIONS.flatMap((section) =>
+    section.modules.map((module) => [
+      module.to,
+      { section: section.label, title: module.label },
+    ])
+  )
 );
-const UNIVERSITY_PATHS = UNIVERSITY_MODULES.map((module) => module.to);
 
 export function Navbar({ onMenuClick }) {
   const { isAuthenticated, user, roleName } = useAuth();
   const { pathname } = useLocation();
-  const section = pathname.startsWith("/admin")
-    ? "Administration"
-    : UNIVERSITY_PATHS.includes(pathname)
-      ? "University"
-      : "Operations";
-  const title = TITLES[pathname.replace(/\/+$/, "") || "/"] || "Workspace";
+  const page = PAGES[pathname.replace(/\/+$/, "") || "/"];
+  const section = page?.section || "Workspace";
+  const title = page?.title || "Workspace";
 
   return (
     <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-4 border-b border-ink/10 bg-paper-soft px-4 sm:px-6">

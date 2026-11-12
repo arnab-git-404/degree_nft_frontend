@@ -2,6 +2,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   BadgeCheck,
+  Building2,
   Droplets,
   FileWarning,
   GraduationCap,
@@ -20,39 +21,54 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { shortenAddress } from "../lib/utils";
 
-export const MAIN_MODULES = [
+// Single source for the sidebar and the top-bar breadcrumb. A section hides when none of its modules are visible.
+export const SECTIONS = [
   {
-    to: "/student",
-    label: "Student desk",
-    icon: Users,
-    permissions: ["nft:read", "nft:confirm", "report:create"],
+    label: "Operations",
+    modules: [{ to: "/verify", label: "Verify credentials", icon: BadgeCheck }],
   },
-  { to: "/verify", label: "Verify credentials", icon: BadgeCheck },
-  { to: "/faucet", label: "Devnet faucet", icon: Droplets },
-];
-
-// No permissions on the desk: it is where an applicant registers, before any role exists.
-export const UNIVERSITY_MODULES = [
-  { to: "/university", label: "Registration & desk", icon: School },
   {
-    to: "/batch-upload",
-    label: "Batch upload",
-    icon: Upload,
-    permissions: ["batch:upload"],
+    label: "Student",
+    modules: [
+      {
+        to: "/student",
+        label: "Student desk",
+        icon: GraduationCap,
+        permissions: ["nft:read", "nft:confirm", "report:create"],
+      },
+      { to: "/faucet", label: "Devnet faucet", icon: Droplets },
+    ],
+  },
+  {
+    label: "University",
+    modules: [
+      // No permissions on the desk: it is where an applicant registers, before any role exists.
+      { to: "/university", label: "Registration & desk", icon: School },
+      {
+        to: "/batch-upload",
+        label: "Batch upload",
+        icon: Upload,
+        permissions: ["batch:upload"],
+      },
+      { to: "/admin/universities", label: "Universities", icon: Building2, adminOnly: true },
+      { to: "/admin/registration-links", label: "Registration links", icon: Link2, adminOnly: true },
+    ],
+  },
+  {
+    label: "Administration",
+    modules: [
+      { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true, adminOnly: true },
+      { to: "/admin/users", label: "Users", icon: Users, adminOnly: true },
+      { to: "/admin/roles", label: "Roles & permissions", icon: KeyRound, adminOnly: true },
+      { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck, adminOnly: true },
+      { to: "/admin/reports", label: "Reports", icon: FileWarning, adminOnly: true },
+    ],
+  },
+  {
+    label: "Account",
+    modules: [{ to: "/profile", label: "My profile", icon: UserRound }],
   },
 ];
-
-export const ADMIN_MODULES = [
-  { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
-  { to: "/admin/universities", label: "Universities", icon: School },
-  { to: "/admin/registration-links", label: "Registration links", icon: Link2 },
-  { to: "/admin/users", label: "Users", icon: Users },
-  { to: "/admin/roles", label: "Roles & permissions", icon: KeyRound },
-  { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck },
-  { to: "/admin/reports", label: "Reports", icon: FileWarning },
-];
-
-const PROFILE_MODULE = { to: "/profile", label: "My profile", icon: UserRound };
 
 function SidebarLink({ module, onNavigate }) {
   const Icon = module.icon;
@@ -116,9 +132,12 @@ export function AppSidebar({ onNavigate, onClose }) {
     ? `${roleName.charAt(0).toUpperCase()}${roleName.slice(1)}`
     : "Not signed in";
   const canSee = (module) =>
-    !module.permissions || hasAnyPermission(...module.permissions);
-  const visibleMainModules = MAIN_MODULES.filter(canSee);
-  const visibleUniversityModules = UNIVERSITY_MODULES.filter(canSee);
+    (!module.adminOnly || hasRole("admin")) &&
+    (!module.permissions || hasAnyPermission(...module.permissions));
+  const visibleSections = SECTIONS.map((section) => ({
+    ...section,
+    modules: section.modules.filter(canSee),
+  })).filter((section) => section.modules.length > 0);
 
   const handleSignOut = () => {
     signOut();
@@ -156,31 +175,14 @@ export function AppSidebar({ onNavigate, onClose }) {
       </div>
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
-        <SectionLabel>Operations</SectionLabel>
-        {visibleMainModules.map((module) => (
-          <SidebarLink key={module.to} module={module} onNavigate={onNavigate} />
-        ))}
-
-        <SectionLabel>University</SectionLabel>
-        {visibleUniversityModules.map((module) => (
-          <SidebarLink key={module.to} module={module} onNavigate={onNavigate} />
-        ))}
-
-        {hasRole("admin") ? (
-          <>
-            <SectionLabel>Administration</SectionLabel>
-            {ADMIN_MODULES.map((module) => (
-              <SidebarLink
-                key={module.to}
-                module={module}
-                onNavigate={onNavigate}
-              />
+        {visibleSections.map((section) => (
+          <div key={section.label}>
+            <SectionLabel>{section.label}</SectionLabel>
+            {section.modules.map((module) => (
+              <SidebarLink key={module.to} module={module} onNavigate={onNavigate} />
             ))}
-          </>
-        ) : null}
-
-        <SectionLabel>Account</SectionLabel>
-        <SidebarLink module={PROFILE_MODULE} onNavigate={onNavigate} />
+          </div>
+        ))}
       </nav>
 
       <div className="border-t border-white/10 p-3">
