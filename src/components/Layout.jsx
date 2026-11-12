@@ -5,7 +5,7 @@ import { Navbar } from "./Navbar";
 import { AuthBanner } from "./AuthBanner";
 import { AppSidebar } from "./AppSidebar";
 
-const FULL_WIDTH_PATHS = ["/login", "/activate"];
+const FULL_WIDTH_PATHS = ["/login", "/activate", "/apply"];
 
 export function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

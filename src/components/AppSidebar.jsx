@@ -7,6 +7,7 @@ import {
   GraduationCap,
   KeyRound,
   LayoutDashboard,
+  Link2,
   Loader2,
   LogOut,
   School,
@@ -21,30 +22,30 @@ import { shortenAddress } from "../lib/utils";
 
 export const MAIN_MODULES = [
   {
-    to: "/university",
-    label: "University desk",
-    icon: School,
-    permissions: ["nft:create", "batch:upload", "student:read"],
-  },
-  {
     to: "/student",
     label: "Student desk",
     icon: Users,
     permissions: ["nft:read", "nft:confirm", "report:create"],
   },
   { to: "/verify", label: "Verify credentials", icon: BadgeCheck },
+  { to: "/faucet", label: "Devnet faucet", icon: Droplets },
+];
+
+// No permissions on the desk: it is where an applicant registers, before any role exists.
+export const UNIVERSITY_MODULES = [
+  { to: "/university", label: "Registration & desk", icon: School },
   {
     to: "/batch-upload",
     label: "Batch upload",
     icon: Upload,
     permissions: ["batch:upload"],
   },
-  { to: "/faucet", label: "Devnet faucet", icon: Droplets },
 ];
 
 export const ADMIN_MODULES = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/admin/universities", label: "Universities", icon: School },
+  { to: "/admin/registration-links", label: "Registration links", icon: Link2 },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/roles", label: "Roles & permissions", icon: KeyRound },
   { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck },
@@ -114,10 +115,10 @@ export function AppSidebar({ onNavigate, onClose }) {
   const roleLabel = roleName
     ? `${roleName.charAt(0).toUpperCase()}${roleName.slice(1)}`
     : "Not signed in";
-  const visibleMainModules = MAIN_MODULES.filter(
-    (module) =>
-      !module.permissions || hasAnyPermission(...module.permissions)
-  );
+  const canSee = (module) =>
+    !module.permissions || hasAnyPermission(...module.permissions);
+  const visibleMainModules = MAIN_MODULES.filter(canSee);
+  const visibleUniversityModules = UNIVERSITY_MODULES.filter(canSee);
 
   const handleSignOut = () => {
     signOut();
@@ -157,6 +158,11 @@ export function AppSidebar({ onNavigate, onClose }) {
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
         <SectionLabel>Operations</SectionLabel>
         {visibleMainModules.map((module) => (
+          <SidebarLink key={module.to} module={module} onNavigate={onNavigate} />
+        ))}
+
+        <SectionLabel>University</SectionLabel>
+        {visibleUniversityModules.map((module) => (
           <SidebarLink key={module.to} module={module} onNavigate={onNavigate} />
         ))}
 
@@ -214,22 +220,13 @@ export function AppSidebar({ onNavigate, onClose }) {
             </button>
           </div>
         ) : (
-          <div className="space-y-2">
-            <Link
-              to="/login"
-              onClick={onNavigate}
-              className="flex h-9 w-full items-center justify-center rounded-md bg-cobalt text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/login?mode=signup"
-              onClick={onNavigate}
-              className="flex h-9 w-full items-center justify-center rounded-md border border-white/15 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
-            >
-              Create account
-            </Link>
-          </div>
+          <Link
+            to="/login"
+            onClick={onNavigate}
+            className="flex h-9 w-full items-center justify-center rounded-md bg-cobalt text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Sign in
+          </Link>
         )}
       </div>
     </div>

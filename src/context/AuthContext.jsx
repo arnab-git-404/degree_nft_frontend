@@ -166,31 +166,6 @@ export function AuthProvider({ children }) {
     [persistSession]
   );
 
-  const registerWithEmail = useCallback(
-    async ({ name, email, password, role }) => {
-      setIsAuthenticating(true);
-      setAuthError("");
-
-      try {
-        const { data } = await api.post("/auth/register", {
-          name,
-          email,
-          password,
-          role,
-        });
-
-        return data;
-      } catch (error) {
-        const message = getErrorMessage(error, "Failed to create account");
-        setAuthError(message);
-        throw error;
-      } finally {
-        setIsAuthenticating(false);
-      }
-    },
-    []
-  );
-
   const activateAccount = useCallback(
     async (activationToken) => {
       setIsAuthenticating(true);
@@ -317,7 +292,7 @@ export function AuthProvider({ children }) {
       signIn,
       signOut,
       loginWithEmail,
-      registerWithEmail,
+
       activateAccount,
       resendActivation,
       updateProfile,
@@ -344,7 +319,7 @@ export function AuthProvider({ children }) {
       signIn,
       signOut,
       loginWithEmail,
-      registerWithEmail,
+
       activateAccount,
       resendActivation,
       updateProfile,

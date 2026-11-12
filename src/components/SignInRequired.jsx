@@ -55,16 +55,6 @@ export function SignInRequired({
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
-
-      <p className="mt-5 text-xs text-ink/45">
-        New here?{" "}
-        <Link
-          to="/login?mode=signup"
-          className="border-b border-ink/40 text-ink transition-colors hover:border-cobalt hover:text-cobalt"
-        >
-          Create an account
-        </Link>
-      </p>
     </div>
   );
 }

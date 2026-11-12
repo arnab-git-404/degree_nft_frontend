@@ -2,18 +2,31 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { WalletButton } from "./WalletButton";
 import { useAuth } from "../context/AuthContext";
-import { ADMIN_MODULES, MAIN_MODULES, getInitials } from "./AppSidebar";
+import {
+  ADMIN_MODULES,
+  MAIN_MODULES,
+  UNIVERSITY_MODULES,
+  getInitials,
+} from "./AppSidebar";
 
 const TITLES = Object.fromEntries(
-  [...MAIN_MODULES, ...ADMIN_MODULES, { to: "/profile", label: "My profile" }].map(
-    (module) => [module.to, module.label]
-  )
+  [
+    ...MAIN_MODULES,
+    ...UNIVERSITY_MODULES,
+    ...ADMIN_MODULES,
+    { to: "/profile", label: "My profile" },
+  ].map((module) => [module.to, module.label])
 );
+const UNIVERSITY_PATHS = UNIVERSITY_MODULES.map((module) => module.to);
 
 export function Navbar({ onMenuClick }) {
   const { isAuthenticated, user, roleName } = useAuth();
   const { pathname } = useLocation();
-  const section = pathname.startsWith("/admin") ? "Administration" : "Operations";
+  const section = pathname.startsWith("/admin")
+    ? "Administration"
+    : UNIVERSITY_PATHS.includes(pathname)
+      ? "University"
+      : "Operations";
   const title = TITLES[pathname.replace(/\/+$/, "") || "/"] || "Workspace";
 
   return (
