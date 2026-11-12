@@ -33,7 +33,7 @@ export function AdminPageHeader({
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <p className="eyebrow">Administration</p>
-        <h1 className="mt-2 font-serif text-4xl leading-tight tracking-tight">
+        <h1 className="mt-2 text-xl font-semibold">
           {title}
         </h1>
         {description && (
@@ -87,7 +87,7 @@ export function AdminToolbar({
       <select
         value={filter}
         onChange={(event) => onFilterChange(event.target.value)}
-        className="h-10 rounded-none border border-ink/25 bg-paper-deep px-3 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
+        className="h-10 rounded-lg border border-ink/15 bg-paper-deep px-3 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
       >
         {filterOptions.map(([value, label]) => (
           <option key={value} value={value}>
@@ -143,7 +143,7 @@ export function AdminError({ message }) {
   if (!message) return null;
 
   return (
-    <div className="rounded-none border border-red-500/30 bg-red-600/5 p-4 text-sm text-red-800">
+    <div className="rounded-lg border border-red-500/30 bg-red-600/5 p-4 text-sm text-red-800">
       {message}
     </div>
   );

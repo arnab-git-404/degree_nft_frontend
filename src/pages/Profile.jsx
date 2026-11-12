@@ -240,15 +240,15 @@ export function Profile() {
 
   return (
     <div className="space-y-10">
-      <header className="flex flex-col gap-5 border-b border-ink/20 pb-7 lg:flex-row lg:items-end lg:justify-between">
+      <header className="flex flex-col gap-5 border-b border-ink/15 pb-7 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="flex items-center gap-3">
             <span className="h-1.5 w-1.5 bg-cobalt" />
             <p className="eyebrow">Account / Profile</p>
           </div>
-          <h1 className="mt-5 font-serif text-[clamp(2.8rem,5vw,4.6rem)] leading-[0.9] tracking-[-0.03em]">
+          <h1 className="mt-5 text-xl font-semibold">
             Your registry{" "}
-            <em className="italic text-cobalt">identity.</em>
+            identity.
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-ink/60">
             Manage how you appear in the registry, which wallets are attached,
@@ -270,8 +270,8 @@ export function Profile() {
 
       <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
         <aside className="space-y-6">
-          <div className="panel relative overflow-hidden p-6 shadow-[12px_12px_0_0_rgba(17,16,14,0.07)]">
-            <div className="flex items-center justify-between border-b border-ink/15 pb-4 font-mono text-[8px] uppercase leading-4 tracking-[0.16em] text-ink/45">
+          <div className="panel relative overflow-hidden p-6 shadow-sm">
+            <div className="flex items-center justify-between border-b border-ink/15 pb-4 text-xs leading-4 text-ink/45">
               <span>
                 DegreeNFT
                 <br />
@@ -299,13 +299,13 @@ export function Profile() {
               )}
 
               <div className="min-w-0">
-                <h2 className="font-serif text-3xl leading-none tracking-tight">
+                <h2 className="text-xl font-semibold">
                   {user.name}
                 </h2>
                 <p className="mt-2 text-xs text-ink/55">
                   {user.email || "Wallet account"}
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 border border-cobalt/30 bg-cobalt/5 px-2 py-1 font-mono text-[8px] uppercase tracking-[0.14em] text-cobalt">
+                <span className="rounded-lg mt-3 inline-flex items-center gap-1.5 border border-cobalt/30 bg-cobalt/5 px-2 py-1 text-xs text-cobalt">
                   <BadgeCheck className="h-3 w-3" />
                   {roleLabel}
                 </span>
@@ -318,13 +318,13 @@ export function Profile() {
 
             <dl className="mt-6 grid grid-cols-2 border-t border-ink/15 pt-4">
               <div>
-                <dt className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">
+                <dt className=" text-xs text-ink/40">
                   Wallets
                 </dt>
-                <dd className="mt-1 font-serif text-2xl">{wallets.length}</dd>
+                <dd className="mt-1 text-xl font-semibold">{wallets.length}</dd>
               </div>
               <div className="border-l border-ink/15 pl-4">
-                <dt className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">
+                <dt className=" text-xs text-ink/40">
                   Email
                 </dt>
                 <dd className="mt-1 text-sm font-medium">
@@ -333,7 +333,7 @@ export function Profile() {
               </div>
             </dl>
 
-            <div className="mt-6 flex items-center justify-between border-t border-ink/15 pt-4 font-mono text-[8px] uppercase tracking-[0.14em] text-ink/35">
+            <div className="mt-6 flex items-center justify-between border-t border-ink/15 pt-4 text-xs text-ink/35">
               <span>Member since {formatDate(user.createdAt)}</span>
               <span>Registry copy</span>
             </div>
@@ -352,7 +352,7 @@ export function Profile() {
               </div>
               <div className="flex items-center justify-between gap-4">
                 <dt className="text-ink/50">Network</dt>
-                <dd className="font-mono text-[10px] uppercase tracking-[0.12em]">
+                <dd className=" text-xs">
                   Solana devnet
                 </dd>
               </div>
@@ -411,7 +411,7 @@ export function Profile() {
                   placeholder="A short note about your work or studies."
                   className="textarea-field"
                 />
-                <p className="text-right font-mono text-[9px] uppercase tracking-[0.12em] text-ink/35">
+                <p className="text-right text-xs text-ink/35">
                   {form.bio.length} / 280
                 </p>
               </div>
@@ -459,7 +459,7 @@ export function Profile() {
 
             <div className="mt-4 space-y-2">
               {wallets.length === 0 ? (
-                <div className="border border-dashed border-ink/20 p-5 text-center text-sm text-ink/50">
+                <div className="border border-dashed border-ink/15 p-5 text-center text-sm text-ink/50">
                   No wallets linked yet.
                 </div>
               ) : (
@@ -476,7 +476,7 @@ export function Profile() {
                         <p className="flex items-center gap-2 font-mono text-xs">
                           {shortenAddress(wallet.address, 6)}
                           {wallet.isPrimary ? (
-                            <span className="bg-cobalt px-1.5 py-0.5 font-mono text-[7px] uppercase tracking-[0.12em] text-paper">
+                            <span className="bg-cobalt px-1.5 py-0.5 text-xs text-paper">
                               Primary
                             </span>
                           ) : null}
@@ -509,7 +509,7 @@ export function Profile() {
                           type="button"
                           onClick={() => handlePrimaryWallet(wallet._id)}
                           disabled={walletBusyId === wallet._id}
-                          className="h-8 border border-ink/15 px-2.5 font-mono text-[8px] uppercase tracking-[0.12em] text-ink/55 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-50"
+                          className="h-8 border border-ink/15 px-2.5 text-xs text-ink/55 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-50"
                         >
                           Make primary
                         </button>
@@ -586,7 +586,7 @@ export function Profile() {
                 </dt>
                 <dd>
                   <span
-                    className={`inline-flex items-center gap-1.5 px-2 py-1 font-mono text-[8px] uppercase tracking-[0.12em] ${
+                    className={`inline-flex items-center gap-1.5 px-2 py-1 text-sm font-medium ${
                       user.emailVerified
                         ? "bg-cobalt/10 text-cobalt"
                         : "bg-paper-deep text-ink/50"

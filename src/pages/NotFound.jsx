@@ -4,12 +4,12 @@ import { ArrowRight } from "lucide-react";
 export function NotFound() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center">
-      <div className="w-full max-w-xl border border-ink/20 bg-paper-soft p-10 sm:p-14">
+      <div className="rounded-lg w-full max-w-xl border border-ink/15 bg-paper-soft p-10 sm:p-14">
         <p className="eyebrow">Error 404</p>
-        <p className="mt-6 font-serif text-[7rem] leading-none tracking-tight text-cobalt sm:text-[9rem]">
+        <p className="mt-6 text-cobalt text-6xl font-bold">
           404
         </p>
-        <h1 className="mt-4 font-serif text-4xl leading-tight tracking-tight">
+        <h1 className="mt-4 text-xl font-semibold">
           Page not found
         </h1>
         <p className="mt-3 max-w-sm text-sm leading-6 text-ink/60">

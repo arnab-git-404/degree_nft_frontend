@@ -14,6 +14,8 @@ import { AdminUsers } from "./pages/admin/AdminUsers";
 import { AdminRoles } from "./pages/admin/AdminRoles";
 import { AdminCredentials } from "./pages/admin/AdminCredentials";
 import { AdminReports } from "./pages/admin/AdminReports";
+import { AdminRegistrationLinks } from "./pages/admin/AdminRegistrationLinks";
+import { Apply } from "./pages/Apply";
 import { Faucet } from "./pages/Faucet";
 import { Login } from "./pages/Login";
 import { Activate } from "./pages/Activate";
@@ -43,6 +45,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/activate" element={<Activate />} />
       <Route path="/activate/:token" element={<Activate />} />
+      <Route path="/apply/:token" element={<Apply />} />
       <Route
         path="/profile"
         element={
@@ -62,6 +65,7 @@ const AppRoutes = () => {
         <Route path="roles" element={<AdminRoles />} />
         <Route path="credentials" element={<AdminCredentials />} />
         <Route path="reports" element={<AdminReports />} />
+        <Route path="registration-links" element={<AdminRegistrationLinks />} />
       </Route>
       <Route path="/faucet" element={<Faucet />} />
 

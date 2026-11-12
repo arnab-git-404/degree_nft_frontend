@@ -446,7 +446,7 @@ export function BatchUploadPortal() {
         </Button>
       </div>
 
-      <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
+      <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
         {uploadStep === "upload" && (
           <div className="space-y-6">
             <div>
@@ -456,7 +456,7 @@ export function BatchUploadPortal() {
               </p>
             </div>
 
-            <div className="flex flex-col items-center justify-center border-2 border-dashed border-ink/25 rounded-none p-12 text-center hover:border-ink/40 transition-all">
+            <div className="flex flex-col items-center justify-center border-2 border-dashed border-ink/15 rounded-lg p-12 text-center hover:border-ink/40 transition-all">
               <Upload className="h-12 w-12 text-ink/60 mb-3" />
               <p className="text-lg font-medium">
                 Drag & drop your CSV file here
@@ -491,7 +491,7 @@ export function BatchUploadPortal() {
               </Button>
             </div>
 
-            <div className="mt-6 rounded-none bg-paper-deep p-4">
+            <div className="mt-6 rounded-lg bg-paper-deep p-4">
               <p className="flex items-start text-sm text-ink/70">
                 <Info className="mr-2 h-4 w-4 flex-shrink-0 mt-0.5 text-cobalt" />
                 <span>
@@ -516,7 +516,7 @@ export function BatchUploadPortal() {
             </div>
 
             {validationErrors.length > 0 && (
-              <div className="rounded-none bg-red-600/10 border border-red-700 p-4 mb-4">
+              <div className="rounded-lg bg-red-600/10 border border-red-700 p-4 mb-4">
                 <h4 className="font-medium text-red-700 flex items-center">
                   <AlertCircle className="h-4 w-4 mr-2" />
                   Validation Issues ({validationErrors.length})
@@ -539,57 +539,57 @@ export function BatchUploadPortal() {
               </div>
             )}
 
-            <div className="border border-ink/20 rounded-none overflow-hidden">
+            <div className="border border-ink/15 rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-ink/15">
                   <thead className="bg-paper-soft">
                     <tr>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         SL No.
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Student Name
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Wallet Address
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Degree
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Major
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         CGPA
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Program Duration
                       </th>
 
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Graduation Year
                       </th>
@@ -631,7 +631,7 @@ export function BatchUploadPortal() {
                 </table>
               </div>
               {parsedData.length > 10 && (
-                <div className="px-6 py-3 bg-paper-soft border-t border-ink/20 text-sm text-ink/60">
+                <div className="px-6 py-3 bg-paper-soft border-t border-ink/15 text-sm text-ink/60">
                   Showing 10 of {parsedData.length} records...
                 </div>
               )}
@@ -703,32 +703,32 @@ export function BatchUploadPortal() {
               </div>
             </div>
 
-            <div className="border border-ink/20 rounded-none overflow-hidden max-h-60">
+            <div className="border border-ink/15 rounded-lg overflow-hidden max-h-60">
               <div className="overflow-y-auto">
                 <table className="min-w-full divide-y divide-ink/15">
                   <thead className="bg-paper-soft sticky top-0">
                     <tr>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Status
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Student
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Degree
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Time
                       </th>
@@ -789,17 +789,17 @@ export function BatchUploadPortal() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
-              <div className="bg-paper-soft rounded-none p-4 border border-ink/20">
+              <div className="bg-paper-soft rounded-lg p-4 border border-ink/15">
                 <p className="text-sm text-ink/60">Total Processed</p>
                 <p className="text-2xl font-bold">{parsedData.length}</p>
               </div>
-              <div className="bg-paper-soft rounded-none p-4 border border-green-700/30">
+              <div className="bg-paper-soft rounded-lg p-4 border border-green-700/30">
                 <p className="text-sm text-ink/60">Successful</p>
                 <p className="text-2xl font-bold text-green-700">
                   {processingResults.filter((r) => r.success).length}
                 </p>
               </div>
-              <div className="bg-paper-soft rounded-none p-4 border border-red-700/30">
+              <div className="bg-paper-soft rounded-lg p-4 border border-red-700/30">
                 <p className="text-sm text-ink/60">Failed</p>
                 <p className="text-2xl font-bold text-red-700">
                   {processingResults.filter((r) => !r.success).length}
@@ -807,38 +807,38 @@ export function BatchUploadPortal() {
               </div>
             </div>
 
-            <div className="border border-ink/20 rounded-none overflow-hidden">
+            <div className="border border-ink/15 rounded-lg overflow-hidden">
               <div className="overflow-x-auto max-h-80">
                 <table className="min-w-full divide-y divide-ink/15">
                   <thead className="bg-paper-soft sticky top-0">
                     <tr>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Status
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Student
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Degree
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         IPFS Hash
                       </th>
                       <th
                         scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-ink/70 tracking-wider"
                       >
                         Details
                       </th>
@@ -910,7 +910,7 @@ export function BatchUploadPortal() {
       </div>
 
       {/* Help section */}
-      <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
+      <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0">
             <HelpCircle className="h-6 w-6 text-cobalt" />

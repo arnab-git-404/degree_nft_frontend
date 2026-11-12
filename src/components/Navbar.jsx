@@ -1,105 +1,76 @@
-import { Link, useNavigate } from "react-router-dom";
-import { LogOut, Menu, UserRound } from "lucide-react";
-import toast from "react-hot-toast";
-import { Brand } from "./Brand";
+import { Link, useLocation } from "react-router-dom";
+import { Menu } from "lucide-react";
 import { WalletButton } from "./WalletButton";
 import { useAuth } from "../context/AuthContext";
+import { SECTIONS, getInitials } from "./AppSidebar";
 
-const getInitials = (name) => {
-  const initials = String(name || "")
-    .split(" ")
-    .filter(Boolean)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-
-  return initials || "?";
-};
+// path -> { section, title }
+const PAGES = Object.fromEntries(
+  SECTIONS.flatMap((section) =>
+    section.modules.map((module) => [
+      module.to,
+      { section: section.label, title: module.label },
+    ])
+  )
+);
 
 export function Navbar({ onMenuClick }) {
-  const { isAuthenticated, user, roleName, signOut } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSignOut = () => {
-    signOut();
-    toast.success("Signed out");
-    navigate("/login");
-  };
+  const { isAuthenticated, user, roleName } = useAuth();
+  const { pathname } = useLocation();
+  const page = PAGES[pathname.replace(/\/+$/, "") || "/"];
+  const section = page?.section || "Workspace";
+  const title = page?.title || "Workspace";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ink/20 bg-paper/90 backdrop-blur-md">
-      <div className="flex h-16 w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-3">
-          {onMenuClick ? (
-            <button
-              type="button"
-              onClick={onMenuClick}
-              className="flex h-9 w-9 items-center justify-center border border-ink/25 text-ink transition-colors hover:border-cobalt hover:text-cobalt lg:hidden"
-              aria-label="Open navigation"
-            >
-              <Menu className="h-4 w-4" />
-            </button>
-          ) : null}
-
-          <Brand />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="hidden sm:block">
-            <WalletButton />
-          </div>
-
-          {isAuthenticated ? (
-            <>
-              <Link
-                to="/profile"
-                className="group flex items-center gap-2 border border-ink/25 px-2 py-1.5 transition-colors hover:border-cobalt sm:px-3"
-                title="Manage profile"
-              >
-                <span className="flex h-6 w-6 items-center justify-center bg-cobalt font-mono text-[9px] font-medium text-paper">
-                  {getInitials(user?.name)}
-                </span>
-                <span className="hidden max-w-28 truncate text-xs font-medium sm:block">
-                  {user?.name || "Profile"}
-                </span>
-                <UserRound className="h-3.5 w-3.5 text-ink/40 transition-colors group-hover:text-cobalt" />
-              </Link>
-
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="flex h-9 w-9 items-center justify-center border border-ink/25 text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt"
-                aria-label="Sign out"
-                title="Sign out"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="hidden h-9 items-center border border-ink/25 px-3 font-mono text-[10px] uppercase tracking-[0.14em] transition-colors hover:border-cobalt hover:text-cobalt sm:inline-flex"
-              >
-                Sign in
-              </Link>
-              <Link
-                to="/login?mode=signup"
-                className="inline-flex h-9 items-center bg-cobalt px-3 font-mono text-[10px] uppercase tracking-[0.14em] text-paper transition-colors hover:bg-ink"
-              >
-                Create account
-              </Link>
-            </>
-          )}
-        </div>
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-4 border-b border-ink/10 bg-paper-soft px-4 sm:px-6">
+      <div className="flex min-w-0 items-center gap-3">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="flex h-8 w-8 items-center justify-center rounded-md text-ink/70 hover:bg-paper lg:hidden"
+          aria-label="Open navigation"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2 text-sm">
+          <span className="hidden text-ink/45 sm:inline">{section}</span>
+          <span className="hidden text-ink/25 sm:inline">/</span>
+          <span className="truncate font-semibold">{title}</span>
+        </nav>
       </div>
 
-      {isAuthenticated && roleName ? (
-        <div className="hidden border-t border-ink/10 px-8 py-1.5 font-mono text-[8px] uppercase tracking-[0.18em] text-ink/40 lg:block">
-          Signed in as {roleName}
+      <div className="flex items-center gap-2">
+        <span className="hidden rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800 md:inline">
+          Devnet
+        </span>
+        <div className="hidden sm:block">
+          <WalletButton />
         </div>
-      ) : null}
+
+        {isAuthenticated ? (
+          <Link
+            to="/profile"
+            className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-paper"
+            title="Manage profile"
+          >
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-cobalt text-[11px] font-semibold text-white">
+              {getInitials(user?.name)}
+            </span>
+            <span className="hidden text-left leading-tight md:block">
+              <span className="block max-w-32 truncate text-xs font-medium">
+                {user?.name || "Profile"}
+              </span>
+              <span className="block text-[11px] capitalize text-ink/50">
+                {roleName}
+              </span>
+            </span>
+          </Link>
+        ) : (
+          <Link to="/login" className="btn-primary h-8 px-3">
+            Sign in
+          </Link>
+        )}
+      </div>
     </header>
   );
 }
