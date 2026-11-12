@@ -25,10 +25,10 @@ export function CredentialCard({ nft, getNftExplorerLink }) {
   }, [nft.uri]);
 
   return (
-    <div className="rounded-none border border-ink/20 bg-paper-soft p-5 hover:border-cobalt hover:shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] transition-all cursor-pointer group">
+    <div className="rounded-lg border border-ink/15 bg-paper-soft p-5 hover:border-cobalt hover:shadow-md transition-all cursor-pointer group">
       {/* NFT Image */}
       {(nft.image || metadata?.image) && (
-        <div className="h-48 w-full overflow-hidden rounded-none mb-4 bg-paper-deep relative">
+        <div className="h-48 w-full overflow-hidden rounded-lg mb-4 bg-paper-deep relative">
           <img
             src={nft.image || metadata?.image}
             alt={nft.name}
@@ -104,7 +104,7 @@ export function CredentialCard({ nft, getNftExplorerLink }) {
             href={getNftExplorerLink(nft.nftAddress, nft.signature, "address")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 text-center px-3 py-2 bg-cobalt/10 hover:bg-cobalt/20 border border-cobalt/50 rounded-none text-xs text-cobalt hover:text-cobalt transition-colors flex items-center justify-center gap-1.5"
+            className="flex-1 text-center px-3 py-2 bg-cobalt/10 hover:bg-cobalt/20 border border-cobalt/50 rounded-lg text-xs text-cobalt hover:text-cobalt transition-colors flex items-center justify-center gap-1.5"
           >
             View on Explorer
             <ExternalLink className="h-3 w-3" />

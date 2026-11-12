@@ -56,7 +56,7 @@ export function VerificationPortal() {
             <Shield className="h-3 w-3" />
             Public registry
           </p>
-          <h1 className="mt-4 font-serif text-5xl leading-[0.98] tracking-tight sm:text-6xl">
+          <h1 className="mt-4 text-xl font-semibold">
             Verify a credential
           </h1>
           <p className="mt-5 max-w-lg text-base leading-7 text-ink/60">
@@ -65,7 +65,7 @@ export function VerificationPortal() {
           </p>
         </div>
 
-        <div className="border border-ink/20 bg-acid p-5">
+        <div className="rounded-lg border border-ink/15 bg-acid p-5">
           <p className="eyebrow">No login required</p>
           <p className="mt-3 text-sm leading-6 text-ink/70">
             Verification reads public registry data. It never connects a wallet
@@ -77,7 +77,7 @@ export function VerificationPortal() {
       <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <form
           onSubmit={handleVerify}
-          className="border border-ink/20 bg-paper-soft p-6 sm:p-8"
+          className="rounded-lg border border-ink/15 bg-paper-soft p-6 sm:p-8"
         >
           <p className="eyebrow">Lookup</p>
           <label className="field-label mt-5" htmlFor="verify-address">
@@ -114,7 +114,7 @@ export function VerificationPortal() {
           <button
             type="button"
             onClick={copySample}
-            className="mt-4 flex w-full items-center justify-between gap-3 border border-ink/15 bg-paper-deep px-3 py-2 text-left font-mono text-[10px] text-ink/55 transition-colors hover:border-cobalt hover:text-cobalt"
+            className="rounded-lg mt-4 flex w-full items-center justify-between gap-3 border border-ink/15 bg-paper-deep px-3 py-2 text-left font-mono text-[10px] text-ink/55 transition-colors hover:border-cobalt hover:text-cobalt"
           >
             <span className="truncate">Try: {SAMPLE_ADDRESS}</span>
             <Copy className="h-3.5 w-3.5 shrink-0" />
@@ -149,7 +149,7 @@ export function VerificationPortal() {
                     href={getExplorerUrl(result.address)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1.5 border-b border-ink/30 pb-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink transition-colors hover:border-cobalt hover:text-cobalt"
+                    className="mt-3 inline-flex items-center gap-1.5 border-b border-ink/15 pb-0.5 text-xs text-ink transition-colors hover:border-cobalt hover:text-cobalt"
                   >
                     View on Solana Explorer
                     <ExternalLink className="h-3 w-3" />
@@ -160,7 +160,7 @@ export function VerificationPortal() {
           ) : null}
         </form>
 
-        <aside className="border border-ink/20 bg-paper-soft p-6 sm:p-8">
+        <aside className="rounded-lg border border-ink/15 bg-paper-soft p-6 sm:p-8">
           <p className="eyebrow">How it works</p>
           <ol className="mt-5 space-y-5">
             {[
@@ -178,7 +178,7 @@ export function VerificationPortal() {
               ],
             ].map(([title, copy], index) => (
               <li key={title} className="flex gap-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-ink/25 font-mono text-[10px]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-ink/15 font-mono text-[10px]">
                   0{index + 1}
                 </span>
                 <div>

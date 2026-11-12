@@ -80,7 +80,7 @@ export function AdminCredentials() {
         <AdminLoading />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-none border border-ink/20">
+          <div className="overflow-x-auto rounded-lg border border-ink/15">
             <table className="w-full text-left text-sm">
               <thead className="bg-paper-soft text-ink/60">
                 <tr>

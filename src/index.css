@@ -1,50 +1,40 @@
 @import "tailwindcss";
 
+/* Token names kept from the old theme so every page picks up the ERP palette without edits. */
 @theme {
-  --color-paper: #f3efe6;
-  --color-paper-soft: #fffdf8;
-  --color-paper-deep: #e7e1d3;
-  --color-ink: #11100e;
-  --color-cobalt: #2b2bea;
-  --color-acid: #d9ff43;
-  --font-sans: "Geist", Arial, Helvetica, sans-serif;
-  --font-mono: "Geist Mono", "Courier New", monospace;
-  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --color-paper: #f1f5f9;
+  --color-paper-soft: #ffffff;
+  --color-paper-deep: #e2e8f0;
+  --color-ink: #0f172a;
+  --color-cobalt: #2563eb;
+  --color-acid: #dbeafe;
+  --font-sans: "Inter", system-ui, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-serif: "Inter", system-ui, Arial, sans-serif;
 }
 
 :root {
   color-scheme: light;
-  --paper: #f3efe6;
-  --paper-soft: #fffdf8;
-  --paper-deep: #e7e1d3;
-  --ink: #11100e;
-  --cobalt: #2b2bea;
-  --acid: #d9ff43;
+  --paper: #f1f5f9;
+  --paper-soft: #ffffff;
+  --paper-deep: #e2e8f0;
+  --ink: #0f172a;
+  --cobalt: #2563eb;
+  --acid: #dbeafe;
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     background: var(--paper);
   }
 
   body {
-    @apply bg-paper font-sans text-ink antialiased;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 80;
-    pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    @apply bg-paper font-sans text-sm text-ink antialiased;
   }
 
   ::selection {
-    background: var(--cobalt);
-    color: var(--paper);
+    background: var(--acid);
+    color: var(--ink);
   }
 
   :focus-visible {
@@ -55,59 +45,59 @@
 
 @layer components {
   .eyebrow {
-    @apply font-mono text-[9px] uppercase tracking-[0.2em] text-ink/55;
+    @apply text-xs font-medium text-ink/55;
   }
 
   .eyebrow-cobalt {
-    @apply font-mono text-[9px] uppercase tracking-[0.2em] text-cobalt;
+    @apply text-xs font-semibold text-cobalt;
   }
 
   .field-label {
-    @apply font-mono text-[9px] uppercase tracking-[0.18em] text-ink/60;
+    @apply text-xs font-medium text-ink/70;
   }
 
   .input-field {
-    @apply h-11 w-full border border-ink/25 bg-paper-soft px-3.5 text-sm text-ink placeholder:text-ink/35 transition-colors focus:border-cobalt focus:outline-none;
+    @apply h-9 w-full rounded-md border border-ink/20 bg-paper-soft px-3 text-sm text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
   }
 
   .textarea-field {
-    @apply min-h-24 w-full resize-y border border-ink/25 bg-paper-soft px-3.5 py-3 text-sm text-ink placeholder:text-ink/35 transition-colors focus:border-cobalt focus:outline-none;
+    @apply min-h-24 w-full resize-y rounded-md border border-ink/20 bg-paper-soft px-3 py-2 text-sm text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
   }
 
   .select-field {
-    @apply h-11 w-full appearance-none border border-ink/25 bg-paper-soft px-3.5 text-sm text-ink transition-colors focus:border-cobalt focus:outline-none;
+    @apply h-9 w-full appearance-none rounded-md border border-ink/20 bg-paper-soft px-3 text-sm text-ink shadow-xs transition-colors focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
   }
 
   .btn-primary {
-    @apply inline-flex h-11 items-center justify-center gap-2 bg-cobalt px-5 font-mono text-[10px] uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md bg-cobalt px-4 text-sm font-medium text-white shadow-xs transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-outline {
-    @apply inline-flex h-11 items-center justify-center gap-2 border border-ink/30 px-5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink transition-colors hover:border-cobalt hover:text-cobalt disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md border border-ink/20 bg-paper-soft px-4 text-sm font-medium text-ink shadow-xs transition-colors hover:bg-paper disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/60 transition-colors hover:text-cobalt disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-ink/70 transition-colors hover:bg-paper-deep hover:text-ink disabled:pointer-events-none disabled:opacity-50;
   }
 
   .panel {
-    @apply border border-ink/20 bg-paper-soft;
+    @apply rounded-lg border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   .panel-deep {
-    @apply border border-ink/20 bg-paper-deep;
+    @apply rounded-lg border border-ink/10 bg-paper;
   }
 
   .link-underline {
-    @apply border-b border-ink/40 pb-1 transition-colors hover:border-cobalt hover:text-cobalt;
+    @apply text-cobalt hover:underline;
   }
 
   .stat-value {
-    @apply font-serif text-3xl leading-none tracking-tight sm:text-4xl;
+    @apply text-2xl font-semibold tabular-nums;
   }
 
   .app-card {
-    @apply border border-ink/20 bg-paper-soft transition-colors hover:border-cobalt/60;
+    @apply rounded-lg border border-ink/10 bg-paper-soft shadow-xs transition-colors hover:border-cobalt/40;
   }
 }
 
@@ -117,64 +107,41 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #e7e1d3;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(17, 16, 14, 0.25);
+  border-radius: 4px;
+  background-color: rgba(15, 23, 42, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(17, 16, 14, 0.4);
+  background-color: rgba(15, 23, 42, 0.35);
 }
 
 .hero-grid {
   background-image:
-    linear-gradient(to right, rgba(17, 16, 14, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(17, 16, 14, 0.055) 1px, transparent 1px);
-  background-size: 56px 56px;
+    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
   mask-image: linear-gradient(to bottom, black, transparent 92%);
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.marquee-track {
-  animation: marquee 32s linear infinite;
-}
-
-.marquee-track:hover {
-  animation-play-state: paused;
-}
-
 .wallet-adapter-button {
-  font-family: var(--font-mono) !important;
-  font-size: 10px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
   font-weight: 500 !important;
-  letter-spacing: 0.14em !important;
-  text-transform: uppercase !important;
-  border-radius: 0 !important;
-  height: 36px !important;
-  line-height: 36px !important;
-  padding: 0 14px !important;
-  background: var(--ink) !important;
-  color: var(--paper) !important;
-  transition: background-color 150ms ease !important;
+  border-radius: 6px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 12px !important;
+  background: var(--paper-soft) !important;
+  color: var(--ink) !important;
+  border: 1px solid rgba(15, 23, 42, 0.2) !important;
 }
 
 .wallet-adapter-button:not([disabled]):hover {
-  background: var(--cobalt) !important;
-}
-
-.wallet-adapter-button-trigger {
-  background: var(--ink) !important;
-  color: var(--paper) !important;
+  background: var(--paper) !important;
 }
 
 .wallet-adapter-button-start-icon,
@@ -184,61 +151,42 @@
 }
 
 .wallet-adapter-dropdown-list,
-.wallet-adapter-modal,
-.wallet-adapter-modal-list {
-  border-radius: 0 !important;
+.wallet-adapter-modal {
+  border-radius: 8px !important;
+  background: var(--paper-soft) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12) !important;
 }
 
 .wallet-adapter-dropdown-list {
-  border: 1px solid var(--ink) !important;
-  background: var(--paper) !important;
-  box-shadow: 8px 8px 0 0 rgba(17, 16, 14, 0.12) !important;
   padding: 6px !important;
 }
 
 .wallet-adapter-dropdown-list-item {
-  border-radius: 0 !important;
-  font-family: var(--font-mono) !important;
-  font-size: 10px !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase !important;
+  border-radius: 6px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
   color: var(--ink) !important;
 }
 
 .wallet-adapter-dropdown-list-item:not([disabled]):hover {
-  background: var(--cobalt) !important;
-  color: var(--paper) !important;
+  background: var(--paper) !important;
 }
 
 .wallet-adapter-modal-wrapper {
-  background: rgba(17, 16, 14, 0.55) !important;
-  backdrop-filter: blur(3px);
-}
-
-.wallet-adapter-modal {
-  background: var(--paper) !important;
-  border: 1px solid var(--ink) !important;
-  box-shadow: 16px 16px 0 0 rgba(17, 16, 14, 0.15) !important;
+  background: rgba(15, 23, 42, 0.45) !important;
 }
 
 .wallet-adapter-modal-title {
-  font-family: var(--font-serif) !important;
-  font-size: 2rem !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.02em !important;
+  font-family: var(--font-sans) !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
   color: var(--ink) !important;
 }
 
 .wallet-adapter-modal-list .wallet-adapter-button {
-  background: var(--paper-soft) !important;
-  color: var(--ink) !important;
-  border: 1px solid rgba(17, 16, 14, 0.18) !important;
-  height: 48px !important;
-  line-height: 48px !important;
-}
-
-.wallet-adapter-modal-list .wallet-adapter-button:hover {
-  background: var(--paper-deep) !important;
+  height: 44px !important;
+  line-height: 44px !important;
 }
 
 .wallet-adapter-modal-list-more {
@@ -246,19 +194,9 @@
 }
 
 .wallet-adapter-modal-button-close {
-  background: var(--ink) !important;
+  background: var(--paper) !important;
 }
 
 .wallet-adapter-modal-button-close svg {
-  fill: var(--paper) !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .marquee-track {
-    animation: none;
-  }
+  fill: var(--ink) !important;
 }

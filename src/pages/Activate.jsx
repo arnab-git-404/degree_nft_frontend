@@ -73,10 +73,10 @@ export function Activate() {
         aria-hidden="true"
       />
 
-      <div className="relative w-full max-w-lg border border-ink/20 bg-paper-soft p-6 shadow-[16px_16px_0_0_rgba(17,16,14,0.08)] sm:p-9">
+      <div className="rounded-lg relative w-full max-w-lg border border-ink/15 bg-paper-soft p-6 shadow-sm sm:p-9">
         <div className="flex items-center justify-between border-b border-ink/15 pb-4">
           <p className="eyebrow">Account activation</p>
-          <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink/35">
+          <p className=" text-xs text-ink/35">
             One-time link
           </p>
         </div>
@@ -84,7 +84,7 @@ export function Activate() {
         {status === "loading" ? (
           <div className="flex flex-col items-center py-12 text-center">
             <Loader2 className="h-9 w-9 animate-spin text-cobalt" />
-            <h1 className="mt-6 font-serif text-4xl tracking-tight">
+            <h1 className="mt-6 text-xl font-semibold">
               Activating account.
             </h1>
             <p className="mt-3 text-sm text-ink/55">
@@ -95,12 +95,12 @@ export function Activate() {
 
         {status === "success" ? (
           <div className="py-8">
-            <span className="flex h-14 w-14 items-center justify-center border border-cobalt/30 bg-cobalt/5 text-cobalt">
+            <span className="rounded-lg flex h-14 w-14 items-center justify-center border border-cobalt/30 bg-cobalt/5 text-cobalt">
               <CheckCircle2 className="h-7 w-7" />
             </span>
-            <h1 className="mt-6 font-serif text-5xl leading-[0.92] tracking-[-0.03em]">
+            <h1 className="mt-6 text-xl font-semibold">
               Account{" "}
-              <em className="italic text-cobalt">activated.</em>
+              activated.
             </h1>
             <p className="mt-4 text-sm leading-6 text-ink/60">
               {activatedUser?.email || user?.email
@@ -108,7 +108,7 @@ export function Activate() {
                 : "Your registry account is ready to use."}
             </p>
 
-            <div className="mt-6 flex items-center gap-3 border border-ink/15 bg-paper-deep p-3 text-xs text-ink/60">
+            <div className="rounded-lg mt-6 flex items-center gap-3 border border-ink/15 bg-paper-deep p-3 text-xs text-ink/60">
               <BadgeCheck className="h-4 w-4 shrink-0 text-cobalt" />
               You are signed in. Your profile is where identity, wallets, and
               security are managed.
@@ -129,12 +129,12 @@ export function Activate() {
 
         {status === "idle" ? (
           <div className="py-8">
-            <span className="flex h-14 w-14 items-center justify-center border border-ink/20 bg-paper-deep text-ink/55">
+            <span className="rounded-lg flex h-14 w-14 items-center justify-center border border-ink/15 bg-paper-deep text-ink/55">
               <MailWarning className="h-7 w-7" />
             </span>
-            <h1 className="mt-6 font-serif text-5xl leading-[0.92] tracking-[-0.03em]">
+            <h1 className="mt-6 text-xl font-semibold">
               Activate your{" "}
-              <em className="italic text-cobalt">account.</em>
+              account.
             </h1>
             <p className="mt-4 text-sm leading-6 text-ink/60">
               Open the link from the activation email, or paste the token from
@@ -162,9 +162,9 @@ export function Activate() {
             <span className="flex h-14 w-14 items-center justify-center border border-red-600/30 bg-red-600/5 text-red-700">
               <MailWarning className="h-7 w-7" />
             </span>
-            <h1 className="mt-6 font-serif text-5xl leading-[0.92] tracking-[-0.03em]">
+            <h1 className="mt-6 text-xl font-semibold">
               Link not{" "}
-              <em className="italic text-cobalt">valid.</em>
+              valid.
             </h1>
             <p className="mt-4 border border-red-600/20 bg-red-600/5 p-3 text-sm leading-6 text-red-700">
               {error}
@@ -180,7 +180,7 @@ export function Activate() {
           </div>
         ) : null}
 
-        <div className="mt-8 flex items-center justify-between border-t border-ink/15 pt-4 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/35">
+        <div className="mt-8 flex items-center justify-between border-t border-ink/15 pt-4 text-xs text-ink/35">
           <span>DegreeNFT / Activation</span>
           {isAuthenticated ? (
             <Link

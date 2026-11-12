@@ -437,7 +437,7 @@ export function UniversityDashboard() {
 
         <form
           onSubmit={handleCreateProfile}
-          className="space-y-4 rounded-none border border-ink/20 bg-paper-soft p-6"
+          className="space-y-4 rounded-lg border border-ink/15 bg-paper-soft p-6"
         >
           <Input
             label="University or Institution Name"
@@ -493,7 +493,7 @@ export function UniversityDashboard() {
             onChange={handleProfileInputChange}
           />
 
-          <div className="rounded-none bg-paper-deep p-3">
+          <div className="rounded-lg bg-paper-deep p-3">
             <p className="text-sm text-ink/70">
               Profile wallet:{" "}
               <span className="font-mono">
@@ -574,7 +574,7 @@ export function UniversityDashboard() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-none border border-ink/20 bg-paper-soft p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-lg border border-ink/15 bg-paper-soft p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="font-semibold">{universityProfile.name}</h3>
           <p className="mt-1 text-sm text-ink/60">
@@ -596,7 +596,7 @@ export function UniversityDashboard() {
       </div>
 
       {!canIssueCredentials && (
-        <div className="rounded-none border border-yellow-600/40 bg-yellow-500/10 p-4">
+        <div className="rounded-lg border border-yellow-600/40 bg-yellow-500/10 p-4">
           <p className="font-medium text-yellow-800">
             University account required
           </p>
@@ -607,7 +607,7 @@ export function UniversityDashboard() {
         </div>
       )}
 
-      <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
+      <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
         <h3 className="text-xl font-semibold">Issue New Degree Credential</h3>
         <p className="mt-1 text-sm text-ink/60">
           Fill in all the required information to mint a degree certificate NFT
@@ -801,7 +801,7 @@ export function UniversityDashboard() {
               )}
             </Button>
 
-            <div className="mt-2 rounded-none bg-paper-deep p-3">
+            <div className="mt-2 rounded-lg bg-paper-deep p-3">
               <p className="flex items-start text-sm text-ink/70">
                 <Info className="mr-2 h-4 w-4 flex-shrink-0 mt-0.5 text-cobalt" />
                 <span>
@@ -816,7 +816,7 @@ export function UniversityDashboard() {
         </form>
       </div>
 
-      {/* <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
+      {/* <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
         <h3 className="text-xl font-semibold">Recent Credentials</h3>
         <div className="mt-4 space-y-4">
           {recentCredentials.length > 0 ? (
@@ -824,7 +824,7 @@ export function UniversityDashboard() {
               {recentCredentials.map((credential) => (
                 <div
                   key={credential.id}
-                  className="border border-ink/15 rounded-none p-3"
+                  className="border border-ink/15 rounded-lg p-3"
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -862,7 +862,7 @@ export function UniversityDashboard() {
           )}
 
           {mintedNft && (
-            <div className="mt-8 p-4 bg-green-50 rounded-none border border-green-200">
+            <div className="mt-8 p-4 bg-green-50 rounded-lg border border-green-200">
               <h4 className="font-medium text-green-800 flex items-center">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Latest NFT Created

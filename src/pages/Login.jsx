@@ -192,20 +192,20 @@ export function Login() {
           <Brand showTag={false} to="/login" />
         </div>
 
-        <div className="mt-8 border border-ink/20 bg-paper-soft p-6 shadow-[12px_12px_0_0_rgba(17,16,14,0.06)] sm:p-8">
-          <div className="flex items-center justify-between border-b border-ink/20 pb-4">
+        <div className="rounded-lg mt-8 border border-ink/15 bg-paper-soft p-6 shadow-sm sm:p-8">
+          <div className="flex items-center justify-between border-b border-ink/15 pb-4">
             <p className="eyebrow">Account access</p>
-            <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink/35">
+            <p className=" text-xs text-ink/35">
               Step 01 / 01
             </p>
           </div>
 
           {registered ? (
             <div className="mt-8">
-              <span className="flex h-12 w-12 items-center justify-center border border-cobalt/30 bg-cobalt/5 text-cobalt">
+              <span className="rounded-lg flex h-12 w-12 items-center justify-center border border-cobalt/30 bg-cobalt/5 text-cobalt">
                 <Mail className="h-6 w-6" />
               </span>
-              <h2 className="mt-6 font-serif text-4xl leading-none tracking-tight">
+              <h2 className="mt-6 text-xl font-semibold">
                 Check your inbox.
               </h2>
               <p className="mt-4 text-sm leading-6 text-ink/65">
@@ -222,7 +222,7 @@ export function Login() {
                   check spam or send a fresh link below.
                 </p>
               ) : (
-                <div className="mt-4 border border-ink/15 bg-paper-deep p-3 text-xs leading-5 text-ink/65">
+                <div className="rounded-lg mt-4 border border-ink/15 bg-paper-deep p-3 text-xs leading-5 text-ink/65">
                   Email delivery is not configured in this environment. Use the
                   development activation link below.
                 </div>
@@ -231,7 +231,7 @@ export function Login() {
               {registered.activationUrl ? (
                 <a
                   href={registered.activationUrl}
-                  className="mt-5 inline-flex items-center gap-2 border-b border-cobalt pb-1 font-mono text-[10px] uppercase tracking-[0.14em] text-cobalt"
+                  className="mt-5 inline-flex items-center gap-2 border-b border-cobalt pb-1 text-xs text-cobalt"
                 >
                   Open activation link
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -264,11 +264,11 @@ export function Login() {
             </div>
           ) : (
             <>
-              <div className="mt-8 grid grid-cols-2 border border-ink/20">
+              <div className="mt-8 grid grid-cols-2 border border-ink/15">
                 <button
                   type="button"
                   onClick={() => switchMode("login")}
-                  className={`h-11 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
+                  className={`h-11 text-sm font-medium transition-colors ${
                     mode === "login"
                       ? "bg-ink text-paper"
                       : "bg-paper-soft text-ink/55 hover:text-cobalt"
@@ -279,7 +279,7 @@ export function Login() {
                 <button
                   type="button"
                   onClick={() => switchMode("signup")}
-                  className={`h-11 border-l border-ink/20 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
+                  className={`h-11 border-l border-ink/15 text-sm font-medium transition-colors ${
                     mode === "signup"
                       ? "bg-ink text-paper"
                       : "bg-paper-soft text-ink/55 hover:text-cobalt"
@@ -290,14 +290,14 @@ export function Login() {
               </div>
 
               <div className="mt-8">
-                <h2 className="font-serif text-4xl leading-none tracking-[-0.02em] sm:text-5xl">
+                <h2 className="text-xl font-semibold">
                   {mode === "login" ? (
                     <>
-                      Welcome <em className="italic text-cobalt">back.</em>
+                      Welcome back.
                     </>
                   ) : (
                     <>
-                      Join the <em className="italic text-cobalt">registry.</em>
+                      Join the registry.
                     </>
                   )}
                 </h2>
@@ -394,7 +394,7 @@ export function Login() {
                             className={`flex flex-col items-start gap-2 border p-3 text-left transition-colors ${
                               isSelected
                                 ? "border-cobalt bg-cobalt/5"
-                                : "border-ink/20 bg-paper-soft hover:border-cobalt/50"
+                                : "border-ink/15 bg-paper-soft hover:border-cobalt/50"
                             }`}
                           >
                             <span
@@ -506,7 +506,7 @@ export function Login() {
 
               <div className="my-7 flex items-center gap-3">
                 <span className="h-px flex-1 bg-ink/15" />
-                <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-ink/35">
+                <span className=" text-xs text-ink/35">
                   or continue with
                 </span>
                 <span className="h-px flex-1 bg-ink/15" />
@@ -540,7 +540,7 @@ export function Login() {
             </>
           )}
 
-          <div className="mt-10 flex items-center justify-between border-t border-ink/15 pt-4 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/35">
+          <div className="mt-10 flex items-center justify-between border-t border-ink/15 pt-4 text-xs text-ink/35">
             <span>DegreeNFT / Access</span>
             <Link to="/verify" className="transition-colors hover:text-cobalt">
               Public verification

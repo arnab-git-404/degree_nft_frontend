@@ -26,72 +26,68 @@ export function Layout({ children }) {
     };
   }, [isSidebarOpen]);
 
+  const toaster = (
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        style: {
+          background: "#ffffff",
+          color: "#0f172a",
+          border: "1px solid rgba(15, 23, 42, 0.1)",
+          borderRadius: 8,
+          fontSize: "13px",
+          boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
+        },
+      }}
+    />
+  );
+
+  if (isFullWidth) {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        {toaster}
+        <main>{children}</main>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen flex-col bg-paper text-ink">
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: "#11100e",
-            color: "#f3efe6",
-            borderRadius: 0,
-            fontSize: "12px",
-            letterSpacing: "0.02em",
-          },
-          success: { iconTheme: { primary: "#d9ff43", secondary: "#11100e" } },
-        }}
-      />
+    <div className="flex min-h-screen bg-paper text-ink">
+      {toaster}
 
-      {isFullWidth ? null : (
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 lg:block">
+        <AppSidebar />
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
         <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
-      )}
+        <AuthBanner />
+        <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-6">
+          {children}
+        </main>
+        <footer className="flex justify-between border-t border-ink/10 px-4 py-3 text-xs text-ink/45 sm:px-6">
+          <span>DegreeNFT Registry</span>
+          <span>Solana devnet</span>
+        </footer>
+      </div>
 
-      {isFullWidth ? (
-        <main className="flex-1">{children}</main>
-      ) : (
-        <div className="mx-auto flex w-full max-w-[1680px] flex-1">
-          <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-72 shrink-0 border-r border-ink/15 lg:block">
-            <AppSidebar />
-          </aside>
-
-          <div className="flex min-w-0 flex-1 flex-col">
-            <AuthBanner />
-            <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-              {children}
-            </main>
-
-            <footer className="flex flex-col gap-1 border-t border-ink/15 px-4 py-4 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-              <span>DegreeNFT / Registry console</span>
-              <span>Solana devnet · Credentials, not PDFs</span>
-            </footer>
-          </div>
-        </div>
-      )}
-
-      {!isFullWidth ? (
-        <>
-          <div
-            className={`fixed inset-0 top-16 z-30 bg-ink/50 transition-opacity lg:hidden ${
-              isSidebarOpen
-                ? "opacity-100"
-                : "pointer-events-none opacity-0"
-            }`}
-            onClick={() => setIsSidebarOpen(false)}
-            aria-hidden="true"
-          />
-
-          <aside
-            className={`fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-72 max-w-[85vw] border-r border-ink/20 bg-paper shadow-[12px_0_0_0_rgba(17,16,14,0.08)] transition-transform duration-300 lg:hidden ${
-              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
-          >
-            <AppSidebar
-              onClose={() => setIsSidebarOpen(false)}
-              onNavigate={() => setIsSidebarOpen(false)}
-            />
-          </aside>
-        </>
-      ) : null}
+      <div
+        className={`fixed inset-0 z-40 bg-ink/50 transition-opacity lg:hidden ${
+          isSidebarOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setIsSidebarOpen(false)}
+        aria-hidden="true"
+      />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[85vw] shadow-xl transition-transform duration-200 lg:hidden ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <AppSidebar
+          onClose={() => setIsSidebarOpen(false)}
+          onNavigate={() => setIsSidebarOpen(false)}
+        />
+      </aside>
     </div>
   );
 }

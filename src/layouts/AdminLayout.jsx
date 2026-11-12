@@ -13,7 +13,7 @@ export function AdminLayout() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
         <Loader2 className="h-10 w-10 animate-spin text-cobalt" />
-        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-ink/45">
+        <p className="mt-4 text-xs text-ink/45">
           Restoring your session
         </p>
       </div>
@@ -31,10 +31,10 @@ export function AdminLayout() {
 
   if (!isAdmin) {
     return (
-      <div className="mx-auto max-w-xl border border-red-700/30 bg-paper-soft p-8 text-center">
+      <div className="rounded-lg mx-auto max-w-xl border border-red-700/30 bg-paper-soft p-8 text-center">
         <XCircle className="mx-auto h-12 w-12 text-red-700" />
         <p className="eyebrow mt-6 text-red-700">Access restricted</p>
-        <h2 className="mt-3 font-serif text-4xl leading-tight tracking-tight">
+        <h2 className="mt-3 text-xl font-semibold">
           Administrator only
         </h2>
         <p className="mt-3 text-sm leading-6 text-ink/60">

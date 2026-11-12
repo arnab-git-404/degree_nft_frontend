@@ -94,7 +94,7 @@ function RoleEditor({
         role="dialog"
         aria-modal="true"
         aria-labelledby="role-editor-title"
-        className="my-6 w-full max-w-3xl border border-ink/25 bg-paper-soft shadow-2xl"
+        className="rounded-lg my-6 w-full max-w-3xl border border-ink/15 bg-paper-soft shadow-2xl"
       >
         <form onSubmit={handleSubmit}>
           <div className="flex items-start justify-between gap-4 border-b border-ink/15 px-5 py-4">
@@ -104,7 +104,7 @@ function RoleEditor({
               </p>
               <h2
                 id="role-editor-title"
-                className="mt-1 font-serif text-3xl leading-tight tracking-tight"
+                className="mt-1 text-xl font-semibold"
               >
                 {isEditing ? role.displayName : "Create a role"}
               </h2>
@@ -113,7 +113,7 @@ function RoleEditor({
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="flex h-8 w-8 items-center justify-center border border-ink/20 text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center border border-ink/15 text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-40"
               aria-label="Close role editor"
             >
               <X className="h-4 w-4" />
@@ -171,7 +171,7 @@ function RoleEditor({
               />
             </div>
 
-            <div className="flex items-center justify-between gap-4 border border-ink/20 bg-paper-deep px-4 py-3">
+            <div className="rounded-lg flex items-center justify-between gap-4 border border-ink/15 bg-paper-deep px-4 py-3">
               <div>
                 <p className="text-sm font-medium">Active role</p>
                 <p className="mt-0.5 text-xs text-ink/55">
@@ -238,7 +238,7 @@ function RoleEditor({
               </div>
 
               {isAdminRole ? (
-                <div className="mt-3 border border-cobalt/25 bg-cobalt/5 px-4 py-3 text-sm text-ink/70">
+                <div className="rounded-lg mt-3 border border-cobalt/25 bg-cobalt/5 px-4 py-3 text-sm text-ink/70">
                   The system admin role always has full access. It cannot be
                   restricted or deactivated.
                 </div>
@@ -246,7 +246,7 @@ function RoleEditor({
                 <div className="mt-3 space-y-4">
                   {groups.map((group) => (
                     <fieldset key={group.key}>
-                      <legend className="mb-2 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/50">
+                      <legend className="mb-2 text-xs text-ink/50">
                         {group.label}
                       </legend>
                       <div className="grid gap-2 sm:grid-cols-2">
@@ -276,7 +276,7 @@ function RoleEditor({
                                 <span className="block text-sm font-medium">
                                   {permission.label}
                                 </span>
-                                <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.14em] text-ink/40">
+                                <span className="mt-0.5 block text-xs text-ink/40">
                                   {permission.key}
                                 </span>
                                 <span className="mt-1 block text-xs leading-5 text-ink/55">
@@ -500,7 +500,7 @@ export function AdminRoles() {
       {isLoading ? (
         <AdminLoading />
       ) : (
-        <div className="overflow-x-auto border border-ink/20">
+        <div className="overflow-x-auto border border-ink/15">
           <table className="w-full text-left text-sm">
             <thead className="bg-paper-soft text-ink/60">
               <tr>
@@ -594,7 +594,7 @@ function RoleRows({
                   <StatusBadge tone="info">System</StatusBadge>
                 )}
               </span>
-              <span className="mt-0.5 block font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+              <span className="mt-0.5 block text-xs text-ink/45">
                 {role.name}
               </span>
             </span>
@@ -646,12 +646,12 @@ function RoleRows({
                         <span
                           key={permissionKey}
                           title={permission?.description || permissionKey}
-                          className="inline-flex flex-col border border-ink/15 bg-paper-soft px-2.5 py-1.5"
+                          className="rounded-lg inline-flex flex-col border border-ink/15 bg-paper-soft px-2.5 py-1.5"
                         >
                           <span className="text-xs font-medium">
                             {permission?.label || permissionKey}
                           </span>
-                          <span className="font-mono text-[8px] uppercase tracking-[0.12em] text-ink/40">
+                          <span className=" text-xs text-ink/40">
                             {permissionKey}
                           </span>
                         </span>
@@ -673,7 +673,7 @@ function RoleRows({
                   </p>
                   <Link
                     to={`/admin/users?role=${encodeURIComponent(role.name)}`}
-                    className="font-mono text-[9px] uppercase tracking-[0.14em] text-cobalt hover:underline"
+                    className=" text-xs text-cobalt hover:underline"
                   >
                     Manage users
                   </Link>
@@ -688,7 +688,7 @@ function RoleRows({
                   <p className="mt-3 text-xs text-red-700">{assigned.error}</p>
                 ) : assigned?.users?.length ? (
                   <>
-                    <div className="mt-3 divide-y divide-ink/10 border border-ink/15 bg-paper-soft">
+                    <div className="rounded-lg mt-3 divide-y divide-ink/10 border border-ink/15 bg-paper-soft">
                       {assigned.users.map((user) => (
                         <div
                           key={user._id}

@@ -85,7 +85,7 @@ export function Faucet() {
       <div className="text-center">
         <Droplet className="mx-auto h-12 w-12 text-cobalt" />
         
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">Solana Devnet Faucet</h1>
+        <h1 className="mt-1 text-xl font-semibold text-ink">Solana Devnet Faucet</h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-ink/60">
           Get free devnet SOL to pay for transaction fees while testing the application in a development environment.
         </p>
@@ -94,7 +94,7 @@ export function Faucet() {
       {/* Main Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column: Info */}
-        <div className="space-y-6 p-6 rounded-none border border-ink/20 bg-paper-soft">
+        <div className="space-y-6 p-6 rounded-lg border border-ink/15 bg-paper-soft">
           <div className="flex items-start">
             <Info className="h-6 w-6 text-blue-700 flex-shrink-0 mr-3 mt-1" />
             <div>
@@ -128,12 +128,12 @@ export function Faucet() {
         </div>
 
         {/* Right Column: Interaction */}
-        <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
+        <div className="p-6 rounded-lg border border-ink/15 bg-paper-soft">
           {connected && publicKey ? (
             <div className="space-y-6">
               <div>
                 <h3 className="font-semibold text-ink">Your Wallet</h3>
-                <div className="mt-2 p-3 bg-paper-deep rounded-none space-y-2">
+                <div className="mt-2 p-3 bg-paper-deep rounded-lg space-y-2">
                   <div>
                     <p className="text-sm text-ink/60">Status</p>
                     <p className="font-medium text-green-700">Connected</p>
@@ -164,7 +164,7 @@ export function Faucet() {
               </Button>
 
               {signature && (
-                <div className="mt-4 p-3 bg-green-600/10 border border-green-600 rounded-none animate-fadeIn">
+                <div className="mt-4 p-3 bg-green-600/10 border border-green-600 rounded-lg animate-fadeIn">
                   <p className="text-green-700 font-medium">Airdrop Confirmed!</p>
                   <a
                     href={getExplorerLink(signature)}
@@ -304,7 +304,7 @@ export function Faucet() {
 //       {connected && publicKey ? (
 //         <div className="space-y-8">
 //           {/* Wallet Status */}
-//           <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
+//           <div className="p-6 rounded-lg border border-ink/15 bg-paper-soft">
 //             <h3 className="font-semibold text-ink mb-4 text-lg">Wallet Status</h3>
 //             <div className="space-y-3">
 //               <div className="flex justify-between items-center">
@@ -328,13 +328,13 @@ export function Faucet() {
 //           </div>
 
 //           {/* Faucet Controls */}
-//           <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
+//           <div className="p-6 rounded-lg border border-ink/15 bg-paper-soft">
 //             <h3 className="font-semibold text-ink mb-4 text-lg">Request Funds</h3>
 //             <div className="mb-4">
 //               <label className="text-sm text-ink/60 mb-2 block">Amount</label>
-//               <div className="flex bg-ink/60 rounded-none p-1">
+//               <div className="flex bg-ink/60 rounded-lg p-1">
 //                 {AirdropAmountOptions.map(amount => (
-//                   <button key={amount} onClick={() => setAirdropAmount(amount)} className={`w-full text-center text-sm font-medium py-2 rounded-none transition-colors ${airdropAmount === amount ? 'bg-cobalt text-paper' : 'text-ink/70 hover:bg-paper-deep'}`}>
+//                   <button key={amount} onClick={() => setAirdropAmount(amount)} className={`w-full text-center text-sm font-medium py-2 rounded-lg transition-colors ${airdropAmount === amount ? 'bg-cobalt text-paper' : 'text-ink/70 hover:bg-paper-deep'}`}>
 //                     {amount} SOL
 //                   </button>
 //                 ))}
@@ -353,7 +353,7 @@ export function Faucet() {
 
 //           {/* Transaction History */}
 //           {txHistory.length > 0 && (
-//             <div className="p-6 rounded-none border border-ink/20 bg-paper-soft">
+//             <div className="p-6 rounded-lg border border-ink/15 bg-paper-soft">
 //               <h3 className="font-semibold text-ink mb-4 text-lg flex items-center"><History className="mr-2 h-5 w-5"/>Recent Airdrops</h3>
 //               <div className="space-y-3">
 //                 {txHistory.map(({ sig, time }) => (
@@ -370,7 +370,7 @@ export function Faucet() {
 //           )}
 //         </div>
 //       ) : (
-//         <div className="text-center flex flex-col items-center justify-center h-full p-10 rounded-none border border-dashed border-ink/25 bg-paper-soft">
+//         <div className="text-center flex flex-col items-center justify-center h-full p-10 rounded-lg border border-dashed border-ink/15 bg-paper-soft">
 //           <AlertTriangle className="h-10 w-10 text-yellow-700" />
 //           <p className="mt-4 text-lg font-medium text-ink">Wallet Not Connected</p>
 //           <p className="mt-1 text-ink/60">Please connect your wallet to use the faucet.</p>

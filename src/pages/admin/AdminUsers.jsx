@@ -122,7 +122,7 @@ export function AdminUsers() {
         <AdminLoading />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-none border border-ink/20">
+          <div className="overflow-x-auto rounded-lg border border-ink/15">
             <table className="w-full text-left text-sm">
               <thead className="bg-paper-soft text-ink/60">
                 <tr>
@@ -157,7 +157,7 @@ export function AdminUsers() {
                         onChange={(event) =>
                           updateUserRole(user._id, event.target.value)
                         }
-                        className="h-8 rounded border border-ink/25 bg-paper-deep px-2 text-xs text-ink disabled:opacity-50"
+                        className="h-8 rounded border border-ink/15 bg-paper-deep px-2 text-xs text-ink disabled:opacity-50"
                       >
                         {roles.length === 0 && user.roleId?.name && (
                           <option value={user.roleId.name}>

@@ -22,11 +22,11 @@ export function SignInRequired({
 
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center text-center">
-      <span className="flex h-16 w-16 items-center justify-center border border-ink/20 bg-paper-soft text-cobalt">
+      <span className="rounded-lg flex h-16 w-16 items-center justify-center border border-ink/15 bg-paper-soft text-cobalt">
         <ShieldCheck className="h-8 w-8" />
       </span>
       <p className="eyebrow mt-6">Access restricted</p>
-      <h2 className="mt-3 font-serif text-4xl leading-tight tracking-tight">
+      <h2 className="mt-3 text-xl font-semibold">
         {title}
       </h2>
       <p className="mt-3 max-w-md text-sm leading-6 text-ink/60">

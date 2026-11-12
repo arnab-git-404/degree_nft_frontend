@@ -604,7 +604,7 @@ export function StudentDashboard() {
 
       {/* Display Mint Success Message */}
       {mintSuccess && mintedNft && (
-        <div className="rounded-none border border-green-600 bg-green-600/10 p-4 animate-fadeIn">
+        <div className="rounded-lg border border-green-600 bg-green-600/10 p-4 animate-fadeIn">
           <div className="flex items-center space-x-3">
             <div>
               <p className="font-semibold text-2xl text-green-700 flex items-center gap-2">
@@ -641,7 +641,7 @@ export function StudentDashboard() {
       {/* Display Available NFT to Verify/Mint */}
 
       {isAuthorized && nftInfo && !mintSuccess && (
-        <div className="rounded-none border border-cobalt bg-cobalt/5 p-6 shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] hover:shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] transition-all">
+        <div className="rounded-lg border border-cobalt bg-cobalt/5 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex justify-between items-start">
             <h3 className="text-xl font-semibold text-cobalt flex items-center">
               <Award className="inline-block mr-2 h-5 w-5" />
@@ -674,7 +674,7 @@ export function StudentDashboard() {
             //       name="name"
             //       value={editedNftInfo.name || ""}
             //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
+            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
             //     />
             //   </div>
 
@@ -685,7 +685,7 @@ export function StudentDashboard() {
             //       name="symbol"
             //       value={editedNftInfo.symbol || ""}
             //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
+            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
             //     />
             //   </div>
 
@@ -696,7 +696,7 @@ export function StudentDashboard() {
             //       name="uri"
             //       value={editedNftInfo.uri || ""}
             //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
+            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
             //     />
             //   </div>
 
@@ -743,7 +743,7 @@ export function StudentDashboard() {
                 <textarea
                   value={issueDescription}
                   onChange={(e) => setIssueDescription(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-soft border border-ink/20 rounded-none text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
+                  className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
                   rows={4}
                   placeholder="Describe the issue with your credential details..."
                 />
@@ -845,7 +845,7 @@ export function StudentDashboard() {
                   <div className="mt-6 space-y-6">
                     {/* Image */}
                     {metadataDetails.image && (
-                      <div className="rounded-none overflow-hidden border border-ink/20">
+                      <div className="rounded-lg overflow-hidden border border-ink/15">
                         <img
                           src={metadataDetails.image}
                           alt={metadataDetails.name}
@@ -859,7 +859,7 @@ export function StudentDashboard() {
 
                     {/* Description */}
                     {metadataDetails.description && (
-                      <div className="bg-paper-soft rounded-none p-4">
+                      <div className="bg-paper-soft rounded-lg p-4">
                         <h4 className="text-sm font-medium text-ink mb-2">
                           Description
                         </h4>
@@ -872,7 +872,7 @@ export function StudentDashboard() {
                     {/* Attributes */}
                     {metadataDetails.attributes &&
                       metadataDetails.attributes.length > 0 && (
-                        <div className="bg-paper-soft rounded-none p-4">
+                        <div className="bg-paper-soft rounded-lg p-4">
                           <h4 className="text-sm font-medium text-ink mb-3">
                             Credential Details
                           </h4>
@@ -893,7 +893,7 @@ export function StudentDashboard() {
 
                     {/* Additional Properties */}
                     {metadataDetails.external_url && (
-                      <div className="bg-paper-soft rounded-none p-4">
+                      <div className="bg-paper-soft rounded-lg p-4">
                         <h4 className="text-sm font-medium text-ink mb-2">
                           External URL
                         </h4>
@@ -1006,7 +1006,7 @@ export function StudentDashboard() {
 
       {/* Display if not authorized or no allocation found */}
       {!isAuthorized && !isLoading && !mintSuccess && (
-        <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
+        <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
           <h3 className="text-xl font-semibold flex items-center">
             <Calendar className="mr-2 h-5 w-5 text-ink/60" />
             Pending Credentials : {nftInfo ? nftInfo.length : "None"}
@@ -1021,7 +1021,7 @@ export function StudentDashboard() {
       )}
 
       {/* Section for already minted NFTs */}
-      <div className="rounded-none border border-ink/20 bg-paper-soft p-6">
+      <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
         <h3 className="text-xl font-semibold flex items-center">
           <School className="mr-2 h-5 w-5 text-ink" />
           Total Minted Credentials : {mintedNfts.length}
