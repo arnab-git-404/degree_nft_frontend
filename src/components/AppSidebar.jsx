@@ -16,6 +16,7 @@ import {
   UserRound,
   Users,
   X,
+  History,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
@@ -62,6 +63,7 @@ export const SECTIONS = [
       { to: "/admin/roles", label: "Roles & permissions", icon: KeyRound, adminOnly: true },
       { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck, adminOnly: true },
       { to: "/admin/reports", label: "Reports", icon: FileWarning, adminOnly: true },
+      { to: "/admin/activity", label: "Activity log", icon: History, adminOnly: true },
     ],
   },
   {
