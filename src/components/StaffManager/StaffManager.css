@@ -1,0 +1,46 @@
+@reference "../../index.css";
+
+/* College members table + invite form. Scoped under .staff-manager. */
+.staff-manager {
+  @apply space-y-2;
+
+  & .invite-form {
+    @apply grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_10rem_auto];
+  }
+
+  & .invite-result {
+    @apply space-y-1 rounded-md border border-cobalt/20 bg-cobalt/5 p-2 text-xs;
+  }
+
+  & .invite-link {
+    @apply flex items-center gap-2;
+
+    & code {
+      @apply min-w-0 flex-1 truncate font-mono text-[11px];
+    }
+  }
+
+  & .head-badge {
+    @apply ml-1.5 inline-flex items-center gap-0.5 rounded bg-yellow-500/15 px-1 py-0.5 text-[10px] font-medium text-yellow-800;
+  }
+
+  & .role-select {
+    @apply h-7 w-auto py-0 text-xs;
+  }
+
+  & .col-actions {
+    @apply text-right;
+  }
+
+  & .actions {
+    @apply inline-flex flex-wrap justify-end gap-1;
+  }
+}
+
+.staff-error {
+  @apply text-xs text-red-700;
+}
+
+.staff-loading {
+  @apply mx-auto h-5 w-5 animate-spin text-cobalt;
+}

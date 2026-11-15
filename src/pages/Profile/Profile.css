@@ -127,6 +127,18 @@
   }
 
   /* ---- Wallets ---- */
+  & .invitations {
+    @apply xl:col-span-2;
+  }
+
+  & .invitation {
+    @apply flex items-center gap-2;
+  }
+
+  & .invitation-text {
+    @apply min-w-0 flex-1 text-xs;
+  }
+
   & .empty {
     @apply rounded-md border border-dashed border-ink/15 p-4 text-center text-xs text-ink/50;
   }

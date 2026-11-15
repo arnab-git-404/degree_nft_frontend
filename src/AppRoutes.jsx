@@ -8,6 +8,7 @@ import {
 } from "./lib/roles";
 import { NotFound } from "./pages/NotFound/NotFound";
 import { InstitutionDashboard } from "./pages/InstitutionDashboard/InstitutionDashboard";
+import { InstitutionStaff } from "./pages/InstitutionStaff/InstitutionStaff";
 import { VerificationPortal } from "./pages/VerificationPortal/VerificationPortal";
 import { StudentDashboard } from "./pages/StudentDashboard/StudentDashboard";
 import { BatchUploadPortal } from "./pages/BatchUploadPortal/BatchUploadPortal";
@@ -74,6 +75,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute anyOf={INSTITUTION_DESK_PERMISSIONS}>
             <InstitutionDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/staff"
+        element={
+          <ProtectedRoute anyOf={["staff:read"]}>
+            <InstitutionStaff />
           </ProtectedRoute>
         }
       />

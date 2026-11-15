@@ -23,6 +23,7 @@ import { Input } from "../../components/Input";
 import { useAuth } from "../../context/AuthContext";
 import { getDeskPath } from "../../lib/roles";
 import { shortenAddress } from "../../lib/utils";
+import { Invitations } from "./Invitations";
 import "./Profile.css";
 
 const formatDate = (value) => {
@@ -324,6 +325,7 @@ export function Profile() {
         </aside>
 
         <div className="sections">
+          <Invitations />
           {/* ---- Profile details ---- */}
           <section className="card">
             <div className="card-head">

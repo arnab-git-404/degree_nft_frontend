@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { CheckCircle, XCircle } from "lucide-react";
+import { Fragment, useState } from "react";
+import { CheckCircle, UsersRound, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../../lib/api";
 import { useAdminList } from "../../../hooks/useAdminList";
 import { statusTone } from "../../../lib/admin";
 import { shortenAddress } from "../../../lib/utils";
 import { Button } from "../../../components/Button";
+import { StaffManager } from "../../../components/StaffManager/StaffManager";
 import {
   AdminEmpty,
   AdminError,
@@ -44,6 +45,18 @@ export function AdminInstitutions() {
     filterParam: "status",
   });
   const [updatingId, setUpdatingId] = useState("");
+  const [membersOf, setMembersOf] = useState("");
+
+  // Super Admin only (P04-04): moves the primary-head pointer; the API checks the target is an ACTIVE admin.
+  const transferHead = async (institutionId, member, reason) => {
+    try {
+      const { data } = await api.post(`/admin/institutions/${institutionId}/head`, { membershipId: member._id, reason });
+      replaceItem(institutionId, { ...institutions.find((item) => item._id === institutionId), primaryAdminMembershipId: data.institution.primaryAdminMembershipId });
+      toast.success(`${member.userId?.name} is now the head`);
+    } catch (transferError) {
+      toast.error(transferError.response?.data?.message || "Failed to transfer the head");
+    }
+  };
 
   const updateInstitutionStatus = async (institutionId, verificationStatus) => {
     setUpdatingId(institutionId);
@@ -69,7 +82,7 @@ export function AdminInstitutions() {
     <div className="admin-institutions">
       <AdminPageHeader
         title="Institutions"
-        description="Review, verify, and reject institution profiles."
+        description="Review institutions and manage their members, admins and head."
         onRefresh={refresh}
         isRefreshing={isLoading}
       />
@@ -103,7 +116,8 @@ export function AdminInstitutions() {
               </thead>
               <tbody>
                 {institutions.map((institution) => (
-                  <tr key={institution._id}>
+                  <Fragment key={institution._id}>
+                  <tr>
                     <td>
                       <p className="cell-title">{institution.name}</p>
                       <p className="cell-sub">{institution.code}</p>
@@ -124,6 +138,15 @@ export function AdminInstitutions() {
                     </td>
                     <td className="col-actions">
                       <div className="actions">
+                        <Button
+                          size="sm"
+                          variant={membersOf === institution._id ? "default" : "secondary"}
+                          aria-expanded={membersOf === institution._id}
+                          onClick={() => setMembersOf(membersOf === institution._id ? "" : institution._id)}
+                        >
+                          <UsersRound className="h-3.5 w-3.5" />
+                          Members
+                        </Button>
                         <Button
                           size="sm"
                           variant="secondary"
@@ -155,6 +178,19 @@ export function AdminInstitutions() {
                       </div>
                     </td>
                   </tr>
+                  {membersOf === institution._id && (
+                    <tr className="members-row">
+                      <td colSpan={5}>
+                        <StaffManager
+                          endpoint={`/admin/institutions/${institution._id}/members`}
+                          canInvite
+                          canManage
+                          onTransferHead={(member, reason) => transferHead(institution._id, member, reason)}
+                        />
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 ))}
                 {institutions.length === 0 && (
                   <AdminEmpty colSpan={5} message="No institutions found" />

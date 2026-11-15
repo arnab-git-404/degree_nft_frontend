@@ -1,0 +1,10 @@
+@reference "../../index.css";
+
+/* Institution › Staff. Scoped under .institution-staff. */
+.institution-staff {
+  @apply space-y-3;
+
+  & .table-card {
+    @apply p-2;
+  }
+}

@@ -12,3 +12,7 @@
     @apply inline-flex gap-1;
   }
 }
+
+.admin-institutions .members-row > td {
+  @apply bg-ink/2 p-2;
+}

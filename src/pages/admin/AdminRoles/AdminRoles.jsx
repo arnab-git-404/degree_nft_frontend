@@ -42,6 +42,7 @@ function RoleEditor({
     description: role?.description || "",
     permissions: role?.permissions || [],
     isActive: role?.isActive ?? true,
+    scope: role?.scope || "PLATFORM",
   }));
 
   useEffect(() => {
@@ -79,6 +80,7 @@ function RoleEditor({
       description: form.description.trim(),
       permissions: isAdminRole ? ["*"] : selectedPermissions,
       isActive: form.isActive,
+      scope: form.scope,
     });
   };
 
@@ -168,6 +170,24 @@ function RoleEditor({
                     }))
                   }
                 />
+              </div>
+              <div className="field-wide">
+                <label htmlFor="role-scope" className="field-label block">
+                  Applies to
+                </label>
+                {/* Fixed after creation: the server ignores scope on update. */}
+                <select
+                  id="role-scope"
+                  className="select-field"
+                  value={form.scope}
+                  disabled={isEditing}
+                  onChange={(event) =>
+                    setForm((current) => ({ ...current, scope: event.target.value }))
+                  }
+                >
+                  <option value="PLATFORM">Accounts (platform role, set in Users)</option>
+                  <option value="INSTITUTION">College members (given inside one college)</option>
+                </select>
               </div>
             </div>
 
@@ -573,6 +593,7 @@ function RoleRows({
               <span className="role-name">
                 <span className="cell-title">{role.displayName}</span>
                 {role.isSystem && <StatusBadge tone="info">System</StatusBadge>}
+                {role.scope === "INSTITUTION" && <StatusBadge>College</StatusBadge>}
               </span>
               <span className="cell-mono">{role.name}</span>
             </span>

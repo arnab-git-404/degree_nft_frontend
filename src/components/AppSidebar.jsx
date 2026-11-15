@@ -15,6 +15,7 @@ import {
   Upload,
   UserRound,
   Users,
+  UsersRound,
   X,
   History,
   ClipboardCheck,
@@ -45,7 +46,8 @@ export const SECTIONS = [
     label: "Institution",
     modules: [
       // No permissions on the desk: it is where an applicant registers, before any role exists.
-      { to: "/institution", label: "Registration & desk", icon: School },
+      { to: "/institution", label: "Registration & desk", icon: School, end: true },
+      { to: "/institution/staff", label: "Staff", icon: UsersRound, permissions: ["staff:read"] },
       {
         to: "/batch-upload",
         label: "Batch upload",
