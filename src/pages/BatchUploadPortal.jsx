@@ -17,7 +17,6 @@ import {
   Info,
   HelpCircle,
 } from "lucide-react";
-import axios from "axios";
 import api from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import Papa from "papaparse";
@@ -34,10 +33,6 @@ export function BatchUploadPortal() {
   const { isAuthenticated, hasPermission, roleName } = useAuth();
   const navigate = useNavigate();
   const canUploadBatches = hasPermission("batch:upload");
-
-  // Add Pinata API configuration
-  const PINATA_API_KEY = import.meta.env.VITE_APP_PINATA_API_KEY;
-  const PINATA_SECRET_KEY = import.meta.env.VITE_APP_PINATA_API_SECRET;
 
 
   // State management
@@ -212,17 +207,7 @@ export function BatchUploadPortal() {
   // Upload metadata to Pinata
   const uploadToPinata = async (metadata) => {
     try {
-      const response = await axios.post(
-        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-        metadata,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            pinata_api_key: PINATA_API_KEY,
-            pinata_secret_api_key: PINATA_SECRET_KEY,
-          },
-        }
-      );
+      const response = await api.post("/ipfs/pin-json", metadata);
       setCurrentIpfsHash(response.data.IpfsHash);
       return response.data.IpfsHash;
     } catch (error) {

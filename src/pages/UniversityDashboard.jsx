@@ -17,13 +17,9 @@ import { useSolana } from "../context/SolanaContext";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import api from "../lib/api";
 
 export function UniversityDashboard() {
-  // Add Pinata API configuration
-  const PINATA_API_KEY = import.meta.env.VITE_APP_PINATA_API_KEY;
-  const PINATA_SECRET_KEY = import.meta.env.VITE_APP_PINATA_API_SECRET;
   const EXTERNAL_API_URL = "https://degree-nft.vercel.app/";
 
   const { publicKey } = useWallet();
@@ -227,17 +223,7 @@ export function UniversityDashboard() {
 
   const uploadToPinata = async (metadata) => {
     try {
-      const response = await axios.post(
-        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-        metadata,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            pinata_api_key: PINATA_API_KEY,
-            pinata_secret_api_key: PINATA_SECRET_KEY,
-          },
-        }
-      );
+      const response = await api.post("/ipfs/pin-json", metadata);
       setCurrentIpfsHash(response.data.IpfsHash);
       return response.data.IpfsHash;
     } catch (error) {
