@@ -4,16 +4,16 @@ import { useAuth } from "./context/AuthContext";
 import {
   getHomePath,
   STUDENT_DESK_PERMISSIONS,
-  UNIVERSITY_DESK_PERMISSIONS,
+  INSTITUTION_DESK_PERMISSIONS,
 } from "./lib/roles";
 import { NotFound } from "./pages/NotFound";
-import { UniversityDashboard } from "./pages/UniversityDashboard";
+import { InstitutionDashboard } from "./pages/InstitutionDashboard";
 import { VerificationPortal } from "./pages/VerificationPortal";
 import { StudentDashboard } from "./pages/StudentDashboard";
 import { BatchUploadPortal } from "./pages/BatchUploadPortal";
 import { AdminLayout } from "./layouts/AdminLayout";
 import { AdminOverview } from "./pages/admin/AdminOverview";
-import { AdminUniversities } from "./pages/admin/AdminUniversities";
+import { AdminInstitutions } from "./pages/admin/AdminInstitutions";
 import { AdminUsers } from "./pages/admin/AdminUsers";
 import { AdminRoles } from "./pages/admin/AdminRoles";
 import { AdminCredentials } from "./pages/admin/AdminCredentials";
@@ -68,10 +68,10 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/university"
+        path="/institution"
         element={
-          <ProtectedRoute anyOf={UNIVERSITY_DESK_PERMISSIONS}>
-            <UniversityDashboard />
+          <ProtectedRoute anyOf={INSTITUTION_DESK_PERMISSIONS}>
+            <InstitutionDashboard />
           </ProtectedRoute>
         }
       />
@@ -85,7 +85,7 @@ const AppRoutes = () => {
       />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminOverview />} />
-        <Route path="universities" element={<AdminUniversities />} />
+        <Route path="institutions" element={<AdminInstitutions />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="roles" element={<AdminRoles />} />
         <Route path="credentials" element={<AdminCredentials />} />

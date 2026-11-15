@@ -132,7 +132,7 @@ export function Login() {
             <Input
               label="Email address"
               type="email"
-              placeholder="you@university.edu"
+              placeholder="you@institution.edu"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
@@ -228,8 +228,8 @@ export function Login() {
           </div>
 
           <p className="mt-6 rounded-md bg-paper px-3 py-2.5 text-xs leading-5 text-ink/60">
-            Accounts are issued by DegreeNFT. Universities join through an
-            approved registration; students get access once a university issues
+            Accounts are issued by DegreeNFT. Institutions join through an
+            approved registration; students get access once an institution issues
             a credential to their wallet.
           </p>
 

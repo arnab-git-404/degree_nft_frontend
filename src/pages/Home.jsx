@@ -26,8 +26,8 @@ const tickerItems = [
 
 const MODULES = [
   {
-    to: "/university",
-    title: "University desk",
+    to: "/institution",
+    title: "Institution desk",
     description:
       "Build the institution profile, allocate credentials, and track the records you issue.",
     icon: School,
@@ -107,7 +107,7 @@ export function Home() {
   const roleLabel = roleName
     ? `${roleName.charAt(0).toUpperCase()}${roleName.slice(1)}`
     : "Guest";
-  const deskPath = roleName === "university" ? "/university" : "/student";
+  const deskPath = roleName === "institution" ? "/institution" : "/student";
 
   return (
     <div className="space-y-12">
@@ -133,7 +133,7 @@ export function Home() {
             </h1>
 
             <p className="mt-7 max-w-2xl text-sm leading-7 text-ink/65 sm:text-base sm:leading-8">
-              This is the working registry for universities, graduates, and
+              This is the working registry for institutions, graduates, and
               verification teams. Issue, claim, verify, and manage everything
               from one place.
             </p>

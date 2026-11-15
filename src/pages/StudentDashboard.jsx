@@ -33,7 +33,7 @@ import api from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
-const UNIVERSITY_FEES = 0.01;
+const INSTITUTION_FEES = 0.01;
 
 export function StudentDashboard() {
   const navigate = useNavigate();
@@ -417,7 +417,7 @@ export function StudentDashboard() {
   const handleReportIssue = () => {
     if (alreadyReported) {
       toast.error(
-        "You've already reported an issue about this credential. Please contact your university for further assistance.",
+        "You've already reported an issue about this credential. Please contact your institution for further assistance.",
       );
     } else {
       setIsReportingIssue(true);
@@ -446,9 +446,9 @@ export function StudentDashboard() {
       // console.log("NFT Data:", nftUriData);
 
       const response = await api.post("/report-issue", {
-        //  universityWallet: we need to extract this from the NFT uri or metadata. So Do it Later || Done (9.17PM , 19.06.2025)
-        universityWallet:
-          nftUriData.properties.creators[0].universityWalletAddress || "",
+        //  institutionWallet: we need to extract this from the NFT uri or metadata. So Do it Later || Done (9.17PM , 19.06.2025)
+        institutionWallet:
+          nftUriData.properties.creators[0].institutionWalletAddress || "",
         studentWallet: walletAddress,
         nftIpfsHash: nftInfo.uri,
         reportType: "NFT Credential Issue",
@@ -456,21 +456,21 @@ export function StudentDashboard() {
       });
 
       console.log(
-        "University Wallet:",
-        nftUriData.properties.creators[0].universityWalletAddress,
+        "Institution Wallet:",
+        nftUriData.properties.creators[0].institutionWalletAddress,
       );
 
       // Handle if the user has already reported an issue
       if (response.status === 409) {
         setAlreadyReported(true);
         toast.error(
-          "You have already reported an issue. Please contact your university for further assistance.",
+          "You have already reported an issue. Please contact your institution for further assistance.",
         );
       } else if (response.data.success) {
         setIsReportingIssue(false);
         setIssueDescription("");
         setAlreadyReported(true);
-        toast.success("Issue reported Successfully! Contact Your university.");
+        toast.success("Issue reported Successfully! Contact Your institution.");
       } else {
         toast.error(response.data.message || "Failed to report issue");
       }
@@ -734,7 +734,7 @@ export function StudentDashboard() {
             <div className="mt-4 space-y-4">
               <p className="text-ink/70">
                 Report an issue with your credential information that requires
-                university attention:
+                institution attention:
               </p>
               <div>
                 <label className="block text-sm font-medium text-ink/70 mb-1">
@@ -754,7 +754,7 @@ export function StudentDashboard() {
                   onClick={handleSubmitIssue}
                   disabled={isSendingIssue || !issueDescription.trim()}
                   className="cursor-pointer flex items-center"
-                  title="Submit issue to university"
+                  title="Submit issue to institution"
                 >
                   {isSendingIssue ? (
                     <>
@@ -922,7 +922,7 @@ export function StudentDashboard() {
                       {...(alreadyReported
                         ? {
                             title:
-                              "You have already reported an issue for this credential. Please contact your university for further assistance.",
+                              "You have already reported an issue for this credential. Please contact your institution for further assistance.",
                           }
                         : {
                             title:
@@ -949,7 +949,7 @@ export function StudentDashboard() {
                       disabled={isSendingIssue}
                     >
                       <Flag className="mr-2 h-4 w-4" />
-                      Report Issue to University
+                      Report Issue to Institution
                     </Button>
                   </>
                 )}

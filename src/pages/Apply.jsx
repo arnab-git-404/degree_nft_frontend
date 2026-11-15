@@ -126,7 +126,7 @@ export function Apply() {
             <div>
               <p className="eyebrow">{link?.label}</p>
               <h1 className="mt-1 text-xl font-semibold">
-                Apply for university registration
+                Apply for institution registration
               </h1>
               <p className="mt-1 text-sm text-ink/60">
                 Submit your institution's details. A DegreeNFT administrator

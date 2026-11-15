@@ -1,5 +1,5 @@
 // Pages are opened by permission, never by role name (custom roles can have any name).
-export const UNIVERSITY_DESK_PERMISSIONS = ["nft:create", "batch:upload", "student:read"];
+export const INSTITUTION_DESK_PERMISSIONS = ["nft:create", "batch:upload", "student:read"];
 export const STUDENT_DESK_PERMISSIONS = ["nft:read", "nft:confirm", "report:create"];
 
 export const getPermissions = (user) => {
@@ -15,7 +15,7 @@ const hasAny = (user, required) => {
 
 // The working desk for this user, or null when they have neither.
 export const getDeskPath = (user) => {
-  if (hasAny(user, UNIVERSITY_DESK_PERMISSIONS)) return "/university";
+  if (hasAny(user, INSTITUTION_DESK_PERMISSIONS)) return "/institution";
   if (hasAny(user, STUDENT_DESK_PERMISSIONS)) return "/student";
   return null;
 };

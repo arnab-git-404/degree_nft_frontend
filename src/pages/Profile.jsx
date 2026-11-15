@@ -254,7 +254,7 @@ export function Profile() {
         <div className="flex flex-wrap items-center gap-3">
           {deskPath && (
             <Link to={deskPath} className="btn-outline">
-              Open {deskPath === "/university" ? "university" : "student"} desk
+              Open {deskPath === "/institution" ? "institution" : "student"} desk
               <ArrowUpRight className="h-4 w-4" />
             </Link>
           )}

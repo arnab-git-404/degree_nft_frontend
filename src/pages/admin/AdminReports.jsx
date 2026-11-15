@@ -111,8 +111,8 @@ export function AdminReports() {
                     </p>
                     <p className="mt-2 text-xs text-ink/60">
                       Student: {shortenAddress(report.studentWallet || "")} ·
-                      University:{" "}
-                      {shortenAddress(report.universityWallet || "")} · Reported{" "}
+                      Institution:{" "}
+                      {shortenAddress(report.institutionWallet || "")} · Reported{" "}
                       {formatDate(report.reportedOn)}
                     </p>
                   </div>

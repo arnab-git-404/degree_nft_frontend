@@ -59,7 +59,7 @@ export function AdminCredentials() {
     <div className="space-y-6">
       <AdminPageHeader
         title="Credentials"
-        description="Browse every credential allocated by universities."
+        description="Browse every credential allocated by institutions."
         onRefresh={refresh}
         isRefreshing={isLoading}
       />
@@ -85,7 +85,7 @@ export function AdminCredentials() {
               <thead className="bg-paper-soft text-ink/60">
                 <tr>
                   <th className="px-4 py-3">Credential</th>
-                  <th className="px-4 py-3">University</th>
+                  <th className="px-4 py-3">Institution</th>
                   <th className="px-4 py-3">Student</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Allocated</th>
@@ -108,11 +108,11 @@ export function AdminCredentials() {
                     </td>
                     <td className="px-4 py-3">
                       <p>
-                        {allocation.universityId?.name ||
-                          shortenAddress(allocation.universityWallet || "")}
+                        {allocation.institutionId?.name ||
+                          shortenAddress(allocation.institutionWallet || "")}
                       </p>
                       <p className="text-xs text-ink/60">
-                        {allocation.universityId?.code || ""}
+                        {allocation.institutionId?.code || ""}
                       </p>
                     </td>
                     <td className="px-4 py-3">

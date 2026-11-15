@@ -23,9 +23,9 @@ const FILTER_OPTIONS = [
   ["REJECTED", "Rejected"],
 ];
 
-export function AdminUniversities() {
+export function AdminInstitutions() {
   const {
-    items: universities,
+    items: institutions,
     pagination,
     isLoading,
     error,
@@ -38,26 +38,26 @@ export function AdminUniversities() {
     replaceItem,
     handleSearch,
   } = useAdminList({
-    endpoint: "/admin/universities",
-    listKey: "universities",
+    endpoint: "/admin/institutions",
+    listKey: "institutions",
     filterParam: "status",
   });
   const [updatingId, setUpdatingId] = useState("");
 
-  const updateUniversityStatus = async (universityId, verificationStatus) => {
-    setUpdatingId(universityId);
+  const updateInstitutionStatus = async (institutionId, verificationStatus) => {
+    setUpdatingId(institutionId);
 
     try {
       const { data } = await api.patch(
-        `/admin/universities/${universityId}/status`,
+        `/admin/institutions/${institutionId}/status`,
         { verificationStatus }
       );
-      replaceItem(universityId, data.university);
-      toast.success(`University marked ${verificationStatus}`);
+      replaceItem(institutionId, data.institution);
+      toast.success(`Institution marked ${verificationStatus}`);
     } catch (updateError) {
       toast.error(
         updateError.response?.data?.message ||
-          "Failed to update university"
+          "Failed to update institution"
       );
     } finally {
       setUpdatingId("");
@@ -67,8 +67,8 @@ export function AdminUniversities() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Universities"
-        description="Review, verify, and reject university profiles."
+        title="Institutions"
+        description="Review, verify, and reject institution profiles."
         onRefresh={refresh}
         isRefreshing={isLoading}
       />
@@ -93,7 +93,7 @@ export function AdminUniversities() {
             <table className="w-full text-left text-sm">
               <thead className="bg-paper-soft text-ink/60">
                 <tr>
-                  <th className="px-4 py-3">University</th>
+                  <th className="px-4 py-3">Institution</th>
                   <th className="px-4 py-3">Wallet</th>
                   <th className="px-4 py-3">Owner</th>
                   <th className="px-4 py-3">Status</th>
@@ -101,31 +101,31 @@ export function AdminUniversities() {
                 </tr>
               </thead>
               <tbody>
-                {universities.map((university) => (
+                {institutions.map((institution) => (
                   <tr
-                    key={university._id}
+                    key={institution._id}
                     className="border-t border-ink/15"
                   >
                     <td className="px-4 py-3">
-                      <p className="font-medium">{university.name}</p>
+                      <p className="font-medium">{institution.name}</p>
                       <p className="text-xs text-ink/60">
-                        {university.code}
+                        {institution.code}
                       </p>
                     </td>
                     <td className="px-4 py-3 font-mono text-xs">
-                      {shortenAddress(university.walletAddress || "")}
+                      {shortenAddress(institution.walletAddress || "")}
                     </td>
                     <td className="px-4 py-3">
-                      <p>{university.userId?.name || "—"}</p>
+                      <p>{institution.userId?.name || "—"}</p>
                       <p className="text-xs text-ink/60">
-                        {university.userId?.email || ""}
+                        {institution.userId?.email || ""}
                       </p>
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge
-                        tone={statusTone(university.verificationStatus)}
+                        tone={statusTone(institution.verificationStatus)}
                       >
-                        {university.verificationStatus}
+                        {institution.verificationStatus}
                       </StatusBadge>
                     </td>
                     <td className="px-4 py-3">
@@ -133,10 +133,10 @@ export function AdminUniversities() {
                         <Button
                           size="sm"
                           variant="secondary"
-                          disabled={updatingId === university._id}
+                          disabled={updatingId === institution._id}
                           onClick={() =>
-                            updateUniversityStatus(
-                              university._id,
+                            updateInstitutionStatus(
+                              institution._id,
                               "VERIFIED"
                             )
                           }
@@ -147,10 +147,10 @@ export function AdminUniversities() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          disabled={updatingId === university._id}
+                          disabled={updatingId === institution._id}
                           onClick={() =>
-                            updateUniversityStatus(
-                              university._id,
+                            updateInstitutionStatus(
+                              institution._id,
                               "REJECTED"
                             )
                           }
@@ -162,8 +162,8 @@ export function AdminUniversities() {
                     </td>
                   </tr>
                 ))}
-                {universities.length === 0 && (
-                  <AdminEmpty colSpan={5} message="No universities found" />
+                {institutions.length === 0 && (
+                  <AdminEmpty colSpan={5} message="No institutions found" />
                 )}
               </tbody>
             </table>

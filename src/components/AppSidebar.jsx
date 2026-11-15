@@ -40,17 +40,17 @@ export const SECTIONS = [
     ],
   },
   {
-    label: "University",
+    label: "Institution",
     modules: [
       // No permissions on the desk: it is where an applicant registers, before any role exists.
-      { to: "/university", label: "Registration & desk", icon: School },
+      { to: "/institution", label: "Registration & desk", icon: School },
       {
         to: "/batch-upload",
         label: "Batch upload",
         icon: Upload,
         permissions: ["batch:upload"],
       },
-      { to: "/admin/universities", label: "Universities", icon: Building2, adminOnly: true },
+      { to: "/admin/institutions", label: "Institutions", icon: Building2, adminOnly: true },
       { to: "/admin/registration-links", label: "Registration links", icon: Link2, adminOnly: true },
     ],
   },

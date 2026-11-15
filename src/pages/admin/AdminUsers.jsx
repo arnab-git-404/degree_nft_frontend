@@ -53,7 +53,8 @@ export function AdminUsers() {
     api
       .get("/admin/roles")
       .then(({ data }) => {
-        if (!cancelled) setRoles(data.roles || []);
+        // College roles go on memberships, not on accounts.
+        if (!cancelled) setRoles((data.roles || []).filter((role) => role.scope !== "INSTITUTION"));
       })
       .catch(() => {});
 

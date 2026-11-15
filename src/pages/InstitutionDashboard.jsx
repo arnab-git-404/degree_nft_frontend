@@ -19,7 +19,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import api from "../lib/api";
 
-export function UniversityDashboard() {
+export function InstitutionDashboard() {
   const EXTERNAL_API_URL = "https://degree-nft.vercel.app/";
 
   const { publicKey } = useWallet();
@@ -35,7 +35,7 @@ export function UniversityDashboard() {
     hasPermission("nft:create") || hasPermission("batch:upload");
 
   const [issuingNftData, setIssuingNftData] = useState(false);
-  const [universityProfile, setUniversityProfile] = useState(null);
+  const [institutionProfile, setInstitutionProfile] = useState(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [profileError, setProfileError] = useState("");
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
@@ -58,7 +58,7 @@ export function UniversityDashboard() {
 
   // Form state
   const [formData, setFormData] = useState({
-    universityName: "",
+    institutionName: "",
     studentName: "",
     studentAddress: "",
     degreeType: "",
@@ -72,7 +72,7 @@ export function UniversityDashboard() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setUniversityProfile(null);
+      setInstitutionProfile(null);
       return;
     }
 
@@ -83,20 +83,20 @@ export function UniversityDashboard() {
       setProfileError("");
 
       try {
-        const { data } = await api.get("/university/profile");
+        const { data } = await api.get("/institution/profile");
 
         if (!cancelled) {
-          setUniversityProfile(data.university);
+          setInstitutionProfile(data.institution);
         }
       } catch (error) {
         if (cancelled) return;
 
         if (error.response?.status === 404) {
-          setUniversityProfile(null);
+          setInstitutionProfile(null);
         } else {
           setProfileError(
             error.response?.data?.message ||
-              "Failed to load your university profile"
+              "Failed to load your institution profile"
           );
         }
       } finally {
@@ -134,19 +134,19 @@ export function UniversityDashboard() {
     setProfileFormError("");
 
     try {
-      const { data } = await api.post("/university/profile", {
+      const { data } = await api.post("/institution/profile", {
         ...profileForm,
         walletAddress: publicKey.toBase58(),
       });
 
-      setUniversityProfile(data.university);
+      setInstitutionProfile(data.institution);
       await refreshUser().catch(() => {});
-      toast.success("University profile created successfully");
+      toast.success("Institution profile created successfully");
     } catch (error) {
       const message =
         error.response?.data?.message ||
         error.message ||
-        "Failed to create university profile";
+        "Failed to create institution profile";
       setProfileFormError(message);
       toast.error(message);
     } finally {
@@ -157,9 +157,9 @@ export function UniversityDashboard() {
   // Format form data into NFT metadata
   const createNftMetadata = (formData) => {
     return {
-      name: `${formData.universityName} - ${formData.degreeType}`,
+      name: `${formData.institutionName} - ${formData.degreeType}`,
       symbol: "DegreeNFT",
-      description: `${formData.degreeType} issued by ${formData.universityName} to ${formData.studentName}`,
+      description: `${formData.degreeType} issued by ${formData.institutionName} to ${formData.studentName}`,
       seller_fee_basis_points: 500,
       image:
         "https://cdn.tourradar.com/s3/tour/720x480/251218_65585c177b316.jpg", // Replace with your certificate image URL
@@ -170,8 +170,8 @@ export function UniversityDashboard() {
           value: formData.studentName,
         },
         {
-          trait_type: "University",
-          value: formData.universityName,
+          trait_type: "Institution",
+          value: formData.institutionName,
         },
         {
           trait_type: "Degree",
@@ -206,7 +206,7 @@ export function UniversityDashboard() {
       properties: {
         creators: [
           {
-            universityWalletAddress: `${publicKey.toString()}`,
+            institutionWalletAddress: `${publicKey.toString()}`,
           },
         ],
 
@@ -233,8 +233,8 @@ export function UniversityDashboard() {
   };
 
   const validateForm = () => {
-    // University information validation
-    if (!formData.universityName?.trim()) return "University name is required";
+    // Institution information validation
+    if (!formData.institutionName?.trim()) return "Institution name is required";
 
     // Student information validation
     if (!formData.studentName?.trim()) return "Student name is required";
@@ -246,7 +246,7 @@ export function UniversityDashboard() {
       return "Student wallet address is required";
 
     if (formData.studentAddress === publicKey?.toString())
-      return "Student wallet address cannot be the same as the university wallet address";
+      return "Student wallet address cannot be the same as the institution wallet address";
 
     // Degree information validation
     if (!formData.degreeType?.trim()) return "Degree type is required";
@@ -324,7 +324,7 @@ export function UniversityDashboard() {
 
       // Reset form
       setFormData({
-        universityName: formData.universityName,
+        institutionName: formData.institutionName,
         studentName: "",
         studentAddress: "",
         degreeType: "",
@@ -372,7 +372,7 @@ export function UniversityDashboard() {
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
         <School className="h-16 w-16 text-cobalt" />
 
-        <h2 className="mt-4 text-2xl font-bold">University Dashboard</h2>
+        <h2 className="mt-4 text-2xl font-bold">Institution Dashboard</h2>
 
         <p className="mt-2 text-ink/60">
           Connect your wallet to issue academic credentials
@@ -393,7 +393,7 @@ export function UniversityDashboard() {
   if (!isAuthenticated) {
     return (
       <SignInRequired
-        title="Sign in to manage your university"
+        title="Sign in to manage your institution"
         description="Sign a free message with your connected wallet to create a profile and issue credentials."
       />
     );
@@ -403,20 +403,20 @@ export function UniversityDashboard() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
         <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
-        <p className="mt-4 text-ink/60">Loading your university profile...</p>
+        <p className="mt-4 text-ink/60">Loading your institution profile...</p>
       </div>
     );
   }
 
-  if (!universityProfile) {
+  if (!institutionProfile) {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="text-center">
           <School className="mx-auto h-16 w-16 text-cobalt" />
-          <h2 className="mt-4 text-2xl font-bold">Register Your University</h2>
+          <h2 className="mt-4 text-2xl font-bold">Register Your Institution</h2>
           <p className="mt-2 text-ink/60">
-            Create a university profile to issue credentials. Your account will
-            be upgraded to the university role and marked as pending
+            Create an institution profile to issue credentials. Your account will
+            be upgraded to the institution role and marked as pending
             verification.
           </p>
         </div>
@@ -426,16 +426,16 @@ export function UniversityDashboard() {
           className="space-y-4 rounded-lg border border-ink/15 bg-paper-soft p-6"
         >
           <Input
-            label="University or Institution Name"
+            label="Institution or Institution Name"
             name="name"
-            placeholder="e.g. Harvard University"
+            placeholder="e.g. Harvard Institution"
             value={profileForm.name}
             onChange={handleProfileInputChange}
             required
           />
 
           <Input
-            label="University Code"
+            label="Institution Code"
             name="code"
             placeholder="e.g. HARVARD"
             value={profileForm.code}
@@ -449,7 +449,7 @@ export function UniversityDashboard() {
               label="Contact Email"
               name="email"
               type="email"
-              placeholder="registrar@university.edu"
+              placeholder="registrar@institution.edu"
               value={profileForm.email}
               onChange={handleProfileInputChange}
             />
@@ -466,7 +466,7 @@ export function UniversityDashboard() {
           <Input
             label="Website"
             name="website"
-            placeholder="https://university.edu"
+            placeholder="https://institution.edu"
             value={profileForm.website}
             onChange={handleProfileInputChange}
           />
@@ -507,7 +507,7 @@ export function UniversityDashboard() {
                 Creating profile...
               </>
             ) : (
-              "Create University Profile"
+              "Create Institution Profile"
             )}
           </Button>
         </form>
@@ -519,7 +519,7 @@ export function UniversityDashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">University Dashboard</h2>
+          <h2 className="text-2xl font-bold">Institution Dashboard</h2>
 
           <p className="mt-1 text-ink/60">
             Connected as: {shortenAddress(publicKey?.toBase58() || "")}
@@ -562,33 +562,33 @@ export function UniversityDashboard() {
 
       <div className="flex flex-col gap-3 rounded-lg border border-ink/15 bg-paper-soft p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="font-semibold">{universityProfile.name}</h3>
+          <h3 className="font-semibold">{institutionProfile.name}</h3>
           <p className="mt-1 text-sm text-ink/60">
-            Code: {universityProfile.code} · Wallet:{" "}
-            {shortenAddress(universityProfile.walletAddress)}
+            Code: {institutionProfile.code} · Wallet:{" "}
+            {shortenAddress(institutionProfile.walletAddress)}
           </p>
         </div>
         <span
           className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${
-            universityProfile.verificationStatus === "VERIFIED"
+            institutionProfile.verificationStatus === "VERIFIED"
               ? "bg-green-600/10 text-green-700"
-              : universityProfile.verificationStatus === "REJECTED"
+              : institutionProfile.verificationStatus === "REJECTED"
               ? "bg-red-600/10 text-red-700"
               : "bg-yellow-500/15 text-yellow-800"
           }`}
         >
-          {universityProfile.verificationStatus || "PENDING"}
+          {institutionProfile.verificationStatus || "PENDING"}
         </span>
       </div>
 
       {!canIssueCredentials && (
         <div className="rounded-lg border border-yellow-600/40 bg-yellow-500/10 p-4">
           <p className="font-medium text-yellow-800">
-            University account required
+            Institution account required
           </p>
           <p className="mt-1 text-sm text-yellow-900/80">
             This wallet is registered as &apos;{roleName || "unknown"}&apos;.
-            Credential issuing and batch uploads require a university role.
+            Credential issuing and batch uploads require an institution role.
           </p>
         </div>
       )}
@@ -600,11 +600,11 @@ export function UniversityDashboard() {
         </p>
 
         <form onSubmit={handleIssueDegree} className="mt-6 space-y-6">
-          {/* University Information */}
+          {/* Institution Information */}
           <div className="space-y-4">
             <div className="flex items-center">
               <h4 className="font-medium text-cobalt">
-                University Information
+                Institution Information
               </h4>
               <div
                 className="tooltip ml-2 cursor-help"
@@ -614,12 +614,12 @@ export function UniversityDashboard() {
               </div>
             </div>
             <Input
-              label="University or Institution Name"
-              name="universityName"
-              placeholder="e.g. Harvard University"
-              value={formData.universityName}
+              label="Institution or Institution Name"
+              name="institutionName"
+              placeholder="e.g. Harvard Institution"
+              value={formData.institutionName}
               onChange={handleInputChange}
-              description="Official name of the university or educational institution"
+              description="Official name of the institution or educational institution"
               required
             />
           </div>
@@ -659,7 +659,7 @@ export function UniversityDashboard() {
                 !isValidPublicKey(formData.studentAddress)
                   ? "Invalid Solana address"
                   : formData.studentAddress === publicKey?.toString()
-                  ? "Student wallet address cannot be the same as the university wallet address"
+                  ? "Student wallet address cannot be the same as the institution wallet address"
                   : undefined
               }
               required
@@ -763,7 +763,7 @@ export function UniversityDashboard() {
             <Button
               type="submit"
               disabled={
-                !formData.universityName ||
+                !formData.institutionName ||
                 !formData.studentName ||
                 !isValidPublicKey(formData.studentAddress) ||
                 !formData.degreeType ||

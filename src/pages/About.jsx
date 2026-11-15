@@ -95,7 +95,7 @@ export function About() {
             ownership of their academic achievements.
           </p>
           <p>
-            The platform provides a comprehensive ecosystem where universities can issue digital credentials, 
+            The platform provides a comprehensive ecosystem where institutions can issue digital credentials, 
             students can manage and share their achievements, and employers can instantly verify authenticity 
             without relying on intermediaries or lengthy verification processes.
           </p>
@@ -140,7 +140,7 @@ export function About() {
         </h2>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="space-y-3">
-            <div className="text-cobalt font-semibold text-lg">University Dashboard</div>
+            <div className="text-cobalt font-semibold text-lg">Institution Dashboard</div>
             <ul className="space-y-2 text-ink/60 text-sm">
               <li>• Batch credential upload via CSV</li>
               <li>• Student authorization management</li>
@@ -251,7 +251,7 @@ export function About() {
         <p className="text-ink/70 text-center max-w-3xl mx-auto leading-relaxed">
           We envision a future where academic credentials are universally accessible, instantly verifiable, 
           and completely owned by the individuals who earned them. By leveraging blockchain technology, 
-          we're building a trustless system that benefits students, universities, and employers alike, 
+          we're building a trustless system that benefits students, institutions, and employers alike, 
           eliminating fraud and creating a more transparent educational ecosystem.
         </p>
       </section>

@@ -45,7 +45,7 @@ export function BatchUploadPortal() {
   // For file download
   const templateData = [
     {
-      universityName: "Example University",
+      institutionName: "Example Institution",
       studentName: "John Doe",
       studentAddress: "29peNqmLi7xRtQfyiibo4WTKwRDS9hWQ93iFZxq2YTPj",
       degreeType: "Bachelor of Science",
@@ -137,9 +137,9 @@ export function BatchUploadPortal() {
   // Format form data into NFT metadata
   const createNftMetadata = (formData) => {
     return {
-      name: `${formData.universityName} - ${formData.degreeType}`,
+      name: `${formData.institutionName} - ${formData.degreeType}`,
       symbol: "DegreeNFT",
-      description: `${formData.degreeType} issued by ${formData.universityName} to ${formData.studentName}`,
+      description: `${formData.degreeType} issued by ${formData.institutionName} to ${formData.studentName}`,
       seller_fee_basis_points: 500,
       image:
         "https://cdn.tourradar.com/s3/tour/720x480/251218_65585c177b316.jpg", // Replace with your certificate image URL
@@ -150,8 +150,8 @@ export function BatchUploadPortal() {
           value: formData.studentName,
         },
         {
-          trait_type: "University",
-          value: formData.universityName,
+          trait_type: "Institution",
+          value: formData.institutionName,
         },
         {
           trait_type: "Degree",
@@ -233,7 +233,7 @@ export function BatchUploadPortal() {
         "http://localhost:5001/api/create-nft-ipfsHash-allocation",
         {
           studentWallet: studentData.studentAddress,
-          universityWallet: publicKey.toString(),
+          institutionWallet: publicKey.toString(),
           name: studentData.degreeType,
           symbol: "DegreeNFT",
           uri: metadataUri,
@@ -258,7 +258,7 @@ export function BatchUploadPortal() {
 
       // Check required fields
       const requiredFields = [
-        "universityName",
+        "institutionName",
         "studentName",
         "studentAddress",
         "degreeType",
@@ -416,7 +416,7 @@ export function BatchUploadPortal() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">University Batch Upload Portal</h2>
+          <h2 className="text-2xl font-bold">Institution Batch Upload Portal</h2>
           <p className="mt-1 text-ink/60">
             Connected as: {shortenAddress(publicKey?.toBase58() || "")}
           </p>
@@ -480,7 +480,7 @@ export function BatchUploadPortal() {
               <p className="flex items-start text-sm text-ink/70">
                 <Info className="mr-2 h-4 w-4 flex-shrink-0 mt-0.5 text-cobalt" />
                 <span>
-                  The CSV file should contain columns for universityName,
+                  The CSV file should contain columns for institutionName,
                   studentName, studentAddress, degreeType, issueDate,
                   graduationYear, cgpa, programDuration, major, and optionally
                   honors. Each row represents one degree certificate to be

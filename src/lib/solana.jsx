@@ -50,8 +50,8 @@ export const getExplorerUrl = (address, type = 'account') => {
 
 /**
  * @typedef {Object} DegreeMetadataAttributes
- * @property {string} universityName
- * @property {string} universityAddress
+ * @property {string} institutionName
+ * @property {string} institutionAddress
  * @property {string} studentName
  * @property {string} studentAddress
  * @property {string} degreeType
@@ -80,8 +80,8 @@ export const getExplorerUrl = (address, type = 'account') => {
 /**
  * Creates metadata for a degree certificate NFT
  * @param {Object} data - Certificate data
- * @param {string} data.universityName - Name of the university
- * @param {string} data.universityAddress - Solana address of the university
+ * @param {string} data.institutionName - Name of the institution
+ * @param {string} data.institutionAddress - Solana address of the institution
  * @param {string} data.studentName - Name of the student
  * @param {string} data.degreeType - Type of degree
  * @param {string} data.issueDate - Date when the degree was issued
@@ -90,17 +90,17 @@ export const getExplorerUrl = (address, type = 'account') => {
  * @param {string} data.programDuration - Duration of the program
  * @param {string} data.major - Major subject
  * @param {string} data.honors - Honors received (optional)
- * @param {string} universityAddress - Solana address of the university issuing the certificate
+ * @param {string} institutionAddress - Solana address of the institution issuing the certificate
  * @returns {DegreeMetadata} - Formatted metadata object
  */
 
 
-export const createDegreeMetadata = (data, universityAddress) => ({
-  name: `${data.universityName} - ${data.degreeType}`,
+export const createDegreeMetadata = (data, institutionAddress) => ({
+  name: `${data.institutionName} - ${data.degreeType}`,
   symbol: 'DEGREE',
-  description: `Official degree certificate issued by ${data.universityName} to ${data.studentName}`,
+  description: `Official degree certificate issued by ${data.institutionName} to ${data.studentName}`,
   image: 'https://images.unsplash.com/photo-1564585222527-c2777a5bc6cb?w=800',
-  external_url: `https://explorer.solana.com/address/${universityAddress}?cluster=${SOLANA_NETWORK}`,
+  external_url: `https://explorer.solana.com/address/${institutionAddress}?cluster=${SOLANA_NETWORK}`,
   attributes: {
     ...data,
     studentAddress: '', // Will be filled during minting
@@ -112,7 +112,7 @@ export const createDegreeMetadata = (data, universityAddress) => ({
     }],
     category: 'image',
     creators: [{
-      address: universityAddress,
+      address: institutionAddress,
       share: 100
     }]
   }
@@ -151,8 +151,8 @@ export const calculateMintingCost = async () => {
 //   const [mintCost, setMintCost] = useState(0);
 //   const [statusMessage, setStatusMessage] = useState('');
 //   const [formData, setFormData] = useState({
-//     universityName: '',
-//     universityAddress: '',
+//     institutionName: '',
+//     institutionAddress: '',
 //     studentName: '',
 //     degreeType: '',
 //     issueDate: '',
@@ -193,8 +193,8 @@ export const calculateMintingCost = async () => {
 //       return;
 //     }
     
-//     if (!isValidPublicKey(formData.universityAddress)) {
-//       setStatusMessage("Please enter a valid university wallet address");
+//     if (!isValidPublicKey(formData.institutionAddress)) {
+//       setStatusMessage("Please enter a valid institution wallet address");
 //       return;
 //     }
     
@@ -202,14 +202,14 @@ export const calculateMintingCost = async () => {
 //       setIsLoading(true);
 //       setStatusMessage("Creating degree certificate NFT...");
       
-//       // Set university address to connected wallet if not specified
-//       const universityAddress = formData.universityAddress || publicKey.toString();
+//       // Set institution address to connected wallet if not specified
+//       const institutionAddress = formData.institutionAddress || publicKey.toString();
       
 //       // Create the metadata
 //       const metadata = createDegreeMetadata(
 //         {
-//           universityName: formData.universityName,
-//           universityAddress: universityAddress,
+//           institutionName: formData.institutionName,
+//           institutionAddress: institutionAddress,
 //           studentName: formData.studentName,
 //           degreeType: formData.degreeType,
 //           issueDate: formData.issueDate,
@@ -219,7 +219,7 @@ export const calculateMintingCost = async () => {
 //           major: formData.major,
 //           honors: formData.honors
 //         },
-//         universityAddress
+//         institutionAddress
 //       );
       
 //       // Initialize Metaplex with the connected wallet
@@ -246,8 +246,8 @@ export const calculateMintingCost = async () => {
       
 //       // Clear form after successful submission
 //       setFormData({
-//         universityName: '',
-//         universityAddress: '',
+//         institutionName: '',
+//         institutionAddress: '',
 //         studentName: '',
 //         degreeType: '',
 //         issueDate: '',
@@ -285,17 +285,17 @@ export const calculateMintingCost = async () => {
       
 //       <form onSubmit={handleSubmit}>
 //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//           {/* University Information */}
+//           {/* Institution Information */}
 //           <div className="col-span-2">
-//             <h2 className="text-lg font-semibold mb-2">University Information</h2>
+//             <h2 className="text-lg font-semibold mb-2">Institution Information</h2>
 //           </div>
           
 //           <div className="mb-4">
-//             <label className="block text-sm font-medium mb-1">University Name</label>
+//             <label className="block text-sm font-medium mb-1">Institution Name</label>
 //             <input
 //               type="text"
-//               name="universityName"
-//               value={formData.universityName}
+//               name="institutionName"
+//               value={formData.institutionName}
 //               onChange={handleInputChange}
 //               className="w-full p-2 border rounded"
 //               required
@@ -304,12 +304,12 @@ export const calculateMintingCost = async () => {
           
 //           <div className="mb-4">
 //             <label className="block text-sm font-medium mb-1">
-//               University Wallet Address (optional)
+//               Institution Wallet Address (optional)
 //             </label>
 //             <input
 //               type="text"
-//               name="universityAddress"
-//               value={formData.universityAddress}
+//               name="institutionAddress"
+//               value={formData.institutionAddress}
 //               onChange={handleInputChange}
 //               placeholder={publicKey ? publicKey.toString() : "Connect wallet first"}
 //               className="w-full p-2 border rounded"
@@ -482,8 +482,8 @@ export const calculateMintingCost = async () => {
 
 // /**
 //  * @typedef {Object} DegreeMetadataAttributes
-//  * @property {string} universityName
-//  * @property {string} universityAddress
+//  * @property {string} institutionName
+//  * @property {string} institutionAddress
 //  * @property {string} studentName
 //  * @property {string} studentAddress
 //  * @property {string} degreeType
@@ -512,16 +512,16 @@ export const calculateMintingCost = async () => {
 // /**
 //  * Creates metadata for a degree certificate NFT
 //  * @param {Omit<DegreeMetadataAttributes, 'studentAddress'>} data 
-//  * @param {string} universityAddress 
+//  * @param {string} institutionAddress 
 //  * @returns {DegreeMetadata}
 //  */
 
-// export const createDegreeMetadata = (data, universityAddress) => ({
-//   name: `${data.universityName} - ${data.degreeType}`,
+// export const createDegreeMetadata = (data, institutionAddress) => ({
+//   name: `${data.institutionName} - ${data.degreeType}`,
 //   symbol: 'DEGREE',
-//   description: `Official degree certificate issued by ${data.universityName} to ${data.studentName}`,
+//   description: `Official degree certificate issued by ${data.institutionName} to ${data.studentName}`,
 //   image: 'https://images.unsplash.com/photo-1564585222527-c2777a5bc6cb?w=800',
-//   external_url: `https://explorer.solana.com/address/${universityAddress}?cluster=${SOLANA_NETWORK}`,
+//   external_url: `https://explorer.solana.com/address/${institutionAddress}?cluster=${SOLANA_NETWORK}`,
 //   attributes: {
 //     ...data,
 //     studentAddress: '', // Will be filled during minting
@@ -533,7 +533,7 @@ export const calculateMintingCost = async () => {
 //     }],
 //     category: 'image',
 //     creators: [{
-//       address: universityAddress,
+//       address: institutionAddress,
 //       share: 100
 //     }]
 //   }

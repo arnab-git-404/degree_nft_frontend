@@ -73,7 +73,7 @@ export function AdminRegistrationLinks() {
     <div className="space-y-6">
       <AdminPageHeader
         title="Registration links"
-        description="Public links universities use to apply. Deactivate a link to stop new applications through it."
+        description="Public links institutions use to apply. Deactivate a link to stop new applications through it."
         onRefresh={refresh}
         isRefreshing={isLoading}
       />

@@ -17,11 +17,11 @@ const STAT_MODULES = [
     to: "/admin/users",
   },
   {
-    label: "Universities",
-    valueKey: "totalUniversities",
-    detail: (stats) => `${stats?.pendingUniversities ?? 0} pending`,
+    label: "Institutions",
+    valueKey: "totalInstitutions",
+    detail: (stats) => `${stats?.pendingInstitutions ?? 0} pending`,
     icon: School,
-    to: "/admin/universities",
+    to: "/admin/institutions",
   },
   {
     label: "Allocations",
@@ -106,16 +106,16 @@ export function AdminOverview() {
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="rounded-lg border border-ink/15 bg-paper-soft p-5">
-              <h3 className="font-semibold">University verification</h3>
+              <h3 className="font-semibold">Institution verification</h3>
               <p className="mt-1 text-sm text-ink/60">
-                {stats?.pendingUniversities ?? 0} university profiles are
+                {stats?.pendingInstitutions ?? 0} institution profiles are
                 waiting for review.
               </p>
               <Link
-                to="/admin/universities"
+                to="/admin/institutions"
                 className="mt-4 inline-flex h-8 items-center rounded-lg bg-cobalt px-3 text-sm font-medium text-paper transition-colors hover:bg-ink"
               >
-                Review universities
+                Review institutions
               </Link>
             </div>
             <div className="rounded-lg border border-ink/15 bg-paper-soft p-5">
