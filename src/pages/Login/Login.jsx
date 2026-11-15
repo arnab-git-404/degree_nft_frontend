@@ -157,7 +157,7 @@ export function Login() {
 
         <div>
           <h2 className="brand-headline">
-            Tamper-proof academic credentials on Solana.
+            Tamper proof academic credentials on Solana.
           </h2>
           <ul className="highlights">
             {HIGHLIGHTS.map((item) => {

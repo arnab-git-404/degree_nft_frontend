@@ -12,6 +12,7 @@ import {
   Loader2,
   LogOut,
   School,
+  Settings,
   Upload,
   UserRound,
   Users,
@@ -68,6 +69,7 @@ export const SECTIONS = [
       { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck, adminOnly: true },
       { to: "/admin/reports", label: "Reports", icon: FileWarning, adminOnly: true },
       { to: "/admin/activity", label: "Activity log", icon: History, adminOnly: true },
+      { to: "/admin/settings", label: "Settings", icon: Settings, adminOnly: true },
     ],
   },
   {

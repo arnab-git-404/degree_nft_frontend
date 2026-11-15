@@ -1,0 +1,98 @@
+@reference "../../../index.css";
+
+/* Admin › Settings. One card per settings group. Scoped under .admin-settings. */
+.admin-settings {
+  @apply max-w-3xl space-y-3;
+
+  & .settings-card {
+    @apply overflow-hidden rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+  }
+
+  & .settings-head {
+    @apply flex items-start gap-3 border-b border-ink/10 px-4 py-3;
+  }
+
+  & .settings-icon {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-cobalt/10 text-cobalt;
+  }
+
+  & .settings-title {
+    @apply text-sm font-semibold;
+  }
+
+  & .settings-sub {
+    @apply text-xs text-ink/55;
+  }
+
+  & .state-pill {
+    @apply shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium bg-ink/5 text-ink/60;
+
+    &.is-on {
+      @apply bg-green-600/10 text-green-700;
+    }
+  }
+
+  & .settings-warning {
+    @apply mx-4 mt-3 rounded border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-2 text-xs text-yellow-900;
+  }
+
+  & .settings-body {
+    @apply space-y-3 px-4 py-3;
+  }
+
+  & .field-grid {
+    @apply grid gap-3 sm:grid-cols-2;
+  }
+
+  & .field-label {
+    @apply mb-1 block;
+  }
+
+  & .toggle {
+    @apply flex cursor-pointer items-start gap-2 rounded-md border border-ink/10 bg-paper px-3 py-2 text-[13px];
+
+    & > span {
+      @apply flex flex-col;
+    }
+  }
+
+  & .check {
+    @apply mt-0.5 h-4 w-4 accent-cobalt;
+  }
+
+  & .hint {
+    @apply text-xs text-ink/50;
+  }
+
+  & .inline-check {
+    @apply mt-1 flex items-center gap-1.5 text-xs text-ink/60;
+  }
+
+  & .settings-foot {
+    @apply flex justify-end gap-2 border-t border-ink/10 bg-ink/[0.02] px-4 py-2.5;
+  }
+
+  & .test-row {
+    @apply flex flex-col gap-2 border-t border-ink/10 px-4 py-3 text-[13px] sm:flex-row sm:items-center;
+  }
+
+  & .test-input {
+    @apply sm:w-56;
+  }
+
+  & .test-result {
+    @apply mt-0.5 flex items-start gap-1 break-words;
+
+    & svg {
+      @apply mt-0.5 shrink-0;
+    }
+
+    &.is-ok {
+      @apply text-green-700;
+    }
+
+    &.is-failed {
+      @apply text-red-700;
+    }
+  }
+}

@@ -74,7 +74,10 @@ function ApproveModal({ application, busy, onConfirm, onClose }) {
             </li>
             <li>
               <Check className="step-icon" />
-              <span>Invite them as the college head. They get access after opening the activation link.</span>
+              <span>
+                Email them an approval message with the activation link. They become the college head once they
+                activate.
+              </span>
             </li>
           </ul>
           <p className="modal-note">This cannot be undone from this page.</p>
@@ -161,7 +164,11 @@ export function AdminApplications() {
       const { data } = await api.post(`/admin/applications/${application._id}/reject`, { reason });
       replaceItem(application._id, { ...application, ...data.application, linkId: application.linkId });
       setRejectingId("");
-      toast.success(`${application.name} rejected`);
+      if (data.emailDelivery === "sent") {
+        toast.success(`${application.name} rejected. The reason was emailed to ${application.email}.`);
+      } else {
+        toast(`${application.name} rejected, but the email was not sent (${data.emailDelivery === "failed" ? "sending failed" : "email is not configured"}). Tell ${application.email} yourself.`, { icon: "⚠️", duration: 8000 });
+      }
     } catch (rejectError) {
       toast.error(rejectError.response?.data?.message || "Failed to reject application");
     } finally {
@@ -283,7 +290,7 @@ export function AdminApplications() {
                 {application.status === "PENDING" && rejecting && (
                   <div className="reject-panel">
                     <label htmlFor={`reason-${application._id}`} className="field-label">
-                      Why are you rejecting {application.name}? The reason is saved with the application.
+                      Why are you rejecting {application.name}? The reason is saved and emailed to {application.email}.
                     </label>
                     <textarea
                       id={`reason-${application._id}`}
