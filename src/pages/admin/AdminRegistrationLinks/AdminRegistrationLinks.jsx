@@ -138,12 +138,21 @@ export function AdminRegistrationLinks() {
                       </div>
                     </td>
                     <td>
-                      <StatusBadge tone={statusTone(link.isActive)}>
-                        {link.isActive ? "Active" : "Inactive"}
-                      </StatusBadge>
+                      {link.expiresAt && new Date(link.expiresAt) <= new Date() ? (
+                        <StatusBadge tone="danger">Expired</StatusBadge>
+                      ) : (
+                        <StatusBadge tone={statusTone(link.isActive)}>
+                          {link.isActive ? "Active" : "Inactive"}
+                        </StatusBadge>
+                      )}
                     </td>
                     <td className="num">{link.submissionCount}</td>
-                    <td className="date">{formatDate(link.createdAt)}</td>
+                    <td className="date">
+                      {formatDate(link.createdAt)}
+                      <p className="cell-sub">
+                        {link.expiresAt ? `Expires ${formatDate(link.expiresAt)}` : "Never expires"}
+                      </p>
+                    </td>
                     <td className="col-actions">
                       <Button
                         size="sm"

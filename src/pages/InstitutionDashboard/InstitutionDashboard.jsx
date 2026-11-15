@@ -21,9 +21,7 @@ export function InstitutionDashboard() {
     isRestoring,
     hasPermission,
     roleName,
-    refreshUser,
     activeInstitutionId,
-    selectInstitution,
   } = useAuth();
   const navigate = useNavigate();
   const canIssueCredentials =
@@ -33,16 +31,6 @@ export function InstitutionDashboard() {
   const [institutionProfile, setInstitutionProfile] = useState(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [profileError, setProfileError] = useState("");
-  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
-  const [profileFormError, setProfileFormError] = useState("");
-  const [profileForm, setProfileForm] = useState({
-    name: "",
-    code: "",
-    email: "",
-    phone: "",
-    website: "",
-    accreditation: "",
-  });
 
   const {
     connected,
@@ -66,7 +54,7 @@ export function InstitutionDashboard() {
   });
 
   useEffect(() => {
-    // No selected college means no membership yet: show the create-profile form.
+    // No selected college means no active membership: show how to join.
     if (!isAuthenticated || !activeInstitutionId) {
       setInstitutionProfile(null);
       setIsLoadingProfile(false);
@@ -109,48 +97,6 @@ export function InstitutionDashboard() {
       cancelled = true;
     };
   }, [isAuthenticated, activeInstitutionId]);
-
-  const handleProfileInputChange = (e) => {
-    const { name, value } = e.target;
-
-    setProfileForm((prev) => ({
-      ...prev,
-      [name]: name === "code" ? value.toUpperCase() : value,
-    }));
-  };
-
-  const handleCreateProfile = async (e) => {
-    e.preventDefault();
-
-    if (!publicKey) {
-      toast.error("Connect your wallet first");
-      return;
-    }
-
-    setIsCreatingProfile(true);
-    setProfileFormError("");
-
-    try {
-      const { data } = await api.post("/institution/profile", {
-        ...profileForm,
-        walletAddress: publicKey.toBase58(),
-      });
-
-      setInstitutionProfile(data.institution);
-      await refreshUser().catch(() => {});
-      selectInstitution(data.institution._id);
-      toast.success("Institution profile created successfully");
-    } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to create institution profile";
-      setProfileFormError(message);
-      toast.error(message);
-    } finally {
-      setIsCreatingProfile(false);
-    }
-  };
 
   // Format form data into NFT metadata
   const createNftMetadata = (formData) => {
@@ -414,100 +360,33 @@ export function InstitutionDashboard() {
     );
   }
 
+  // Institutions are created only when a Super Admin approves an application (no self-registration).
   if (!institutionProfile) {
     return (
       <div className="institution-page">
-        <form onSubmit={handleCreateProfile} className="card register-card">
+        <div className="card register-card">
           <div className="card-head">
             <span className="state-icon">
               <School className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="card-title">Register your institution</h2>
+              <h2 className="card-title">You are not part of an institution yet</h2>
               <p className="card-sub">
-                Create an institution profile to issue credentials. Your account
-                will be upgraded to the institution role and marked as pending
-                verification.
+                Institutions join DegreeNFT by applying through a registration
+                link from the DegreeNFT team. When a Super Admin approves the
+                application, the head of the institution receives an activation
+                link by email. Open that link to activate access, then sign in
+                with the wallet named in the application.
               </p>
             </div>
           </div>
 
-          <div className="card-body">
-            <div className="fields-2">
-              <Input
-                label="Institution name"
-                name="name"
-                placeholder="e.g. Harvard Institution"
-                value={profileForm.name}
-                onChange={handleProfileInputChange}
-                required
-              />
-              <Input
-                label="Institution code"
-                name="code"
-                placeholder="e.g. HARVARD"
-                value={profileForm.code}
-                onChange={handleProfileInputChange}
-                description="A unique short code used to identify your institution"
-                required
-              />
-              <Input
-                label="Contact email"
-                name="email"
-                type="email"
-                placeholder="registrar@institution.edu"
-                value={profileForm.email}
-                onChange={handleProfileInputChange}
-              />
-              <Input
-                label="Phone"
-                name="phone"
-                placeholder="+1 555 000 0000"
-                value={profileForm.phone}
-                onChange={handleProfileInputChange}
-              />
-              <Input
-                label="Website"
-                name="website"
-                placeholder="https://institution.edu"
-                value={profileForm.website}
-                onChange={handleProfileInputChange}
-              />
-              <Input
-                label="Accreditation"
-                name="accreditation"
-                placeholder="Accrediting body or reference"
-                value={profileForm.accreditation}
-                onChange={handleProfileInputChange}
-              />
+          {profileError && (
+            <div className="card-body">
+              <p className="error-text">{profileError}</p>
             </div>
-
-            {profileError && <p className="error-text">{profileError}</p>}
-            {profileFormError && <p className="error-text">{profileFormError}</p>}
-          </div>
-
-          <div className="card-foot">
-            <p className="cell-sub">
-              Profile wallet:{" "}
-              <span className="font-mono text-ink/80">
-                {shortenAddress(publicKey?.toBase58() || "")}
-              </span>
-            </p>
-            <Button
-              type="submit"
-              disabled={isCreatingProfile || !profileForm.name || !profileForm.code}
-            >
-              {isCreatingProfile ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Creating profile...
-                </>
-              ) : (
-                "Create institution profile"
-              )}
-            </Button>
-          </div>
-        </form>
+          )}
+        </div>
       </div>
     );
   }

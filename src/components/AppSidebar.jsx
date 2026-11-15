@@ -17,6 +17,7 @@ import {
   Users,
   X,
   History,
+  ClipboardCheck,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
@@ -52,6 +53,7 @@ export const SECTIONS = [
         permissions: ["batch:upload"],
       },
       { to: "/admin/institutions", label: "Institutions", icon: Building2, adminOnly: true },
+      { to: "/admin/applications", label: "Applications", icon: ClipboardCheck, adminOnly: true },
       { to: "/admin/registration-links", label: "Registration links", icon: Link2, adminOnly: true },
     ],
   },

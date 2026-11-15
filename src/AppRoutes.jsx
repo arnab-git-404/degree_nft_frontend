@@ -20,6 +20,7 @@ import { AdminCredentials } from "./pages/admin/AdminCredentials/AdminCredential
 import { AdminReports } from "./pages/admin/AdminReports/AdminReports";
 import { AdminRegistrationLinks } from "./pages/admin/AdminRegistrationLinks/AdminRegistrationLinks";
 import { AdminActivity } from "./pages/admin/AdminActivity/AdminActivity";
+import { AdminApplications } from "./pages/admin/AdminApplications/AdminApplications";
 import { Apply } from "./pages/Apply/Apply";
 import { Faucet } from "./pages/Faucet/Faucet";
 import { Login } from "./pages/Login/Login";
@@ -93,6 +94,7 @@ const AppRoutes = () => {
         <Route path="reports" element={<AdminReports />} />
         <Route path="registration-links" element={<AdminRegistrationLinks />} />
         <Route path="activity" element={<AdminActivity />} />
+        <Route path="applications" element={<AdminApplications />} />
       </Route>
       <Route path="/faucet" element={<Faucet />} />
 

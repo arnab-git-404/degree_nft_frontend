@@ -1,0 +1,82 @@
+@reference "../../../index.css";
+
+/* Admin › Applications. Scoped under .admin-applications. */
+.admin-applications {
+  @apply space-y-3;
+
+  & .application-list {
+    @apply divide-y divide-ink/10;
+  }
+
+  & .application {
+    @apply space-y-2 px-3 py-3;
+  }
+
+  & .application-head {
+    @apply flex flex-wrap items-center gap-x-2 gap-y-0.5;
+  }
+
+  & .application-name {
+    @apply font-medium;
+  }
+
+  & .application-code {
+    @apply rounded bg-paper-deep px-1.5 py-0.5 font-mono text-xs text-ink/70;
+  }
+
+  & .application-meta {
+    @apply text-xs text-ink/50 sm:ml-auto;
+  }
+
+  & .application-facts {
+    @apply grid gap-x-6 gap-y-1 text-[13px] sm:grid-cols-2;
+
+    & dt {
+      @apply text-xs text-ink/50;
+    }
+
+    & dd {
+      @apply break-words text-ink/80;
+    }
+
+    & .mono {
+      @apply font-mono text-xs;
+    }
+
+    & a {
+      @apply text-cobalt underline-offset-2 hover:underline;
+    }
+  }
+
+  & .review-row {
+    @apply flex flex-col gap-1.5 sm:flex-row sm:items-start;
+  }
+
+  & .reason-input {
+    @apply min-h-8 flex-1;
+  }
+
+  & .review-result {
+    @apply rounded bg-green-600/5 px-2 py-1 text-xs text-ink/70;
+
+    &.is-rejected {
+      @apply bg-red-600/5;
+    }
+  }
+
+  & .activation {
+    @apply space-y-1 rounded border border-cobalt/20 bg-cobalt/5 px-2 py-1.5 text-xs text-ink/75;
+  }
+
+  & .activation-link {
+    @apply flex flex-col gap-1.5 sm:flex-row sm:items-center;
+
+    & code {
+      @apply flex-1 break-all rounded bg-paper-deep px-1.5 py-1 font-mono text-[11px];
+    }
+  }
+
+  & .empty {
+    @apply px-3 py-6 text-center text-ink/55;
+  }
+}
