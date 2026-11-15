@@ -70,6 +70,7 @@ export function AdminToolbar({
   onFilterChange,
   filterOptions,
   placeholder = "Search...",
+  children,
 }) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -96,6 +97,7 @@ export function AdminToolbar({
           </option>
         ))}
       </select>
+      {children}
     </div>
   );
 }

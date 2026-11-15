@@ -6,8 +6,10 @@ export function useAdminList({
   listKey,
   filterParam,
   initialFilter = "all",
+  extraParams,
 }) {
   const [items, setItems] = useState([]);
+  const [data, setData] = useState(null);
   const [pagination, setPagination] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -16,6 +18,8 @@ export function useAdminList({
   const [filter, setFilter] = useState(initialFilter);
   const [page, setPage] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
+  // Serialized so callers can pass an inline object without refetching on every render.
+  const extraKey = JSON.stringify(extraParams || {});
 
   useEffect(() => {
     let cancelled = false;
@@ -25,7 +29,7 @@ export function useAdminList({
       setError("");
 
       try {
-        const params = { page, limit: 10 };
+        const params = { ...JSON.parse(extraKey), page, limit: 10 };
 
         if (appliedSearch) {
           params.search = appliedSearch;
@@ -39,6 +43,7 @@ export function useAdminList({
 
         if (cancelled) return;
 
+        setData(data);
         setItems(data[listKey] || []);
         setPagination(data.pagination || null);
       } catch (loadError) {
@@ -57,7 +62,7 @@ export function useAdminList({
     return () => {
       cancelled = true;
     };
-  }, [endpoint, listKey, filterParam, page, appliedSearch, filter, refreshKey]);
+  }, [endpoint, listKey, filterParam, page, appliedSearch, filter, refreshKey, extraKey]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -82,6 +87,7 @@ export function useAdminList({
 
   return {
     items,
+    data,
     pagination,
     isLoading,
     error,
