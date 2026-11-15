@@ -2,19 +2,48 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { ArrowRight, BadgeCheck, Eye, EyeOff, Loader2, Wallet } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Building2,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  Loader2,
+  ShieldCheck,
+  Wallet,
+} from "lucide-react";
 import toast from "react-hot-toast";
-import { Brand } from "../components/Brand";
-import { Input } from "../components/Input";
-import { useAuth } from "../context/AuthContext";
-import { getErrorMessage } from "../lib/api";
-import { getHomePath } from "../lib/roles";
-import { shortenAddress } from "../lib/utils";
+import { Brand } from "../../components/Brand";
+import { Input } from "../../components/Input";
+import { useAuth } from "../../context/AuthContext";
+import { getErrorMessage } from "../../lib/api";
+import { getHomePath } from "../../lib/roles";
+import { shortenAddress } from "../../lib/utils";
+import "./Login.css";
 
 const safeNextPath = (value, fallback = "/profile") =>
   value && value.startsWith("/") && !value.startsWith("//")
     ? value
     : fallback;
+
+const HIGHLIGHTS = [
+  {
+    icon: BadgeCheck,
+    title: "Free wallet sign-in",
+    text: "A message signature only. It never moves funds or creates a transaction.",
+  },
+  {
+    icon: Building2,
+    title: "Issued accounts",
+    text: "Institutions join through an approved registration link.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Student access",
+    text: "Students get access once an institution issues a credential to their wallet.",
+  },
+];
 
 export function Login() {
   const navigate = useNavigate();
@@ -116,19 +145,57 @@ export function Login() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12 sm:px-6">
-      <div className="w-full max-w-[440px]">
-        <div className="flex justify-center">
-          <Brand showTag={false} to="/login" />
+    <div className="login-page">
+      {/* Left: brand panel (desktop only) */}
+      <aside className="brand-panel">
+        <div className="brand-row">
+          <span className="brand-mark">
+            <GraduationCap className="h-4 w-4" />
+          </span>
+          <span className="font-semibold text-white">DegreeNFT</span>
         </div>
 
-        <div className="panel mt-8 p-6 sm:p-8">
-          <h1 className="text-xl font-semibold">Sign in</h1>
-          <p className="mt-1 text-sm text-ink/55">
+        <div>
+          <h2 className="brand-headline">
+            Tamper-proof academic credentials on Solana.
+          </h2>
+          <ul className="highlights">
+            {HIGHLIGHTS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.title}>
+                  <span className="highlight-icon">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span>
+                    <span className="highlight-title">{item.title}</span>
+                    <span className="highlight-text">{item.text}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <Link to="/verify" className="verify-link">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          Verify a credential publicly
+        </Link>
+      </aside>
+
+      {/* Right: sign-in form */}
+      <main className="form-side">
+        <div className="form-wrap">
+          <div className="mobile-brand">
+            <Brand showTag={false} to="/login" />
+          </div>
+
+          <h1 className="form-title">Sign in</h1>
+          <p className="form-sub">
             Use your registered email or the wallet linked to your account.
           </p>
 
-          <form onSubmit={handleLogin} className="mt-6 space-y-4">
+          <form onSubmit={handleLogin} className="form">
             <Input
               label="Email address"
               type="email"
@@ -148,11 +215,12 @@ export function Login() {
                 onChange={(event) => setPassword(event.target.value)}
                 autoComplete="current-password"
                 required
+                className="pr-9"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute right-3 top-[30px] text-ink/40 transition-colors hover:text-cobalt"
+                className="eye-btn"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
@@ -164,10 +232,7 @@ export function Login() {
             </div>
 
             {error ? (
-              <div
-                role="alert"
-                className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700"
-              >
+              <div role="alert" className="form-error">
                 {error}
                 {needsActivation ? (
                   <button
@@ -195,10 +260,10 @@ export function Login() {
             </button>
           </form>
 
-          <div className="my-6 flex items-center gap-3">
-            <span className="h-px flex-1 bg-ink/10" />
-            <span className="text-xs text-ink/40">or</span>
-            <span className="h-px flex-1 bg-ink/10" />
+          <div className="divider">
+            <span />
+            <span className="divider-text">or</span>
+            <span />
           </div>
 
           <button
@@ -219,27 +284,16 @@ export function Login() {
                 : "Sign in with wallet"}
           </button>
 
-          <div className="mt-4 flex items-start gap-2 text-xs leading-5 text-ink/50">
-            <BadgeCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cobalt" />
-            <p>
-              Wallet sign-in uses a free message signature. It never moves funds
-              or creates a blockchain transaction.
-            </p>
-          </div>
-
-          <p className="mt-6 rounded-md bg-paper px-3 py-2.5 text-xs leading-5 text-ink/60">
-            Accounts are issued by DegreeNFT. Institutions join through an
-            approved registration; students get access once an institution issues
-            a credential to their wallet.
-          </p>
-
-          <div className="mt-6 flex justify-end border-t border-ink/10 pt-4 text-xs text-ink/45">
-            <Link to="/verify" className="hover:text-cobalt">
+          {/* On phones the brand panel is hidden, so keep the key notes here */}
+          <p className="mobile-note">
+            Wallet sign-in is a free message signature and never moves funds.
+            Accounts are issued by DegreeNFT.{" "}
+            <Link to="/verify" className="link-underline">
               Public verification
             </Link>
-          </div>
+          </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

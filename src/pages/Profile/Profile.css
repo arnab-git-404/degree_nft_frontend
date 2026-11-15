@@ -1,0 +1,198 @@
+@reference "../../index.css";
+
+/* My profile. Identity card on the left, 2x2 grid of section cards on the right. */
+.profile-page {
+  @apply space-y-3;
+
+  & .page-head {
+    @apply flex flex-wrap items-start justify-between gap-2;
+  }
+
+  & .page-title {
+    @apply text-base leading-tight font-semibold;
+  }
+
+  & .page-sub {
+    @apply max-w-2xl text-xs text-ink/55;
+  }
+
+  & .head-actions {
+    @apply flex flex-wrap items-center gap-1;
+  }
+
+  & .layout {
+    @apply grid items-start gap-3 lg:grid-cols-[260px_minmax(0,1fr)];
+  }
+
+  /* ---- Identity card ---- */
+  & .id-card {
+    @apply space-y-3 rounded-md border border-ink/10 bg-paper-soft p-3 shadow-xs lg:sticky lg:top-16;
+  }
+
+  & .id-top {
+    @apply flex items-center gap-3;
+  }
+
+  & .avatar {
+    @apply h-12 w-12 shrink-0 rounded-md object-cover;
+  }
+
+  & .avatar-initials {
+    @apply flex items-center justify-center bg-cobalt text-base font-semibold text-white;
+  }
+
+  & .id-name {
+    @apply truncate text-[15px] leading-tight font-semibold;
+  }
+
+  & .role-pill {
+    @apply mt-1 inline-flex items-center gap-1 rounded bg-acid px-1.5 py-0.5 text-[11px] font-medium text-cobalt;
+  }
+
+  & .bio {
+    @apply border-t border-ink/10 pt-2 text-xs leading-5 text-ink/60;
+  }
+
+  & .id-stats {
+    @apply grid grid-cols-2 gap-2;
+
+    & > div {
+      @apply rounded bg-paper px-2.5 py-1.5;
+    }
+  }
+
+  & .stat-label {
+    @apply text-[11px] text-ink/50;
+  }
+
+  & .stat-number {
+    @apply text-lg leading-tight font-semibold tabular-nums;
+  }
+
+  & .stat-text {
+    @apply text-[13px] font-medium;
+  }
+
+  & .summary {
+    @apply space-y-1 border-t border-ink/10 pt-2 text-xs;
+
+    & > div {
+      @apply flex items-center justify-between gap-3;
+    }
+
+    & dt {
+      @apply text-ink/50;
+    }
+
+    & dd {
+      @apply font-medium;
+    }
+  }
+
+  /* ---- Section cards ---- */
+  & .sections {
+    @apply grid items-start gap-3 xl:grid-cols-2;
+  }
+
+  & .card {
+    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+  }
+
+  & .card-head {
+    @apply border-b border-ink/10 px-3 py-2;
+  }
+
+  & .card-title {
+    @apply text-[13px] font-semibold;
+  }
+
+  & .card-sub {
+    @apply text-[11px] text-ink/50;
+  }
+
+  & .card-body {
+    @apply space-y-3 px-3 py-3;
+  }
+
+  & .card-foot {
+    @apply flex flex-wrap items-center justify-end gap-2 border-t border-ink/10 pt-2.5;
+  }
+
+  & .field-grid {
+    @apply grid gap-2.5 sm:grid-cols-2;
+  }
+
+  & .span-2 {
+    @apply sm:col-span-2;
+  }
+
+  /* ---- Wallets ---- */
+  & .empty {
+    @apply rounded-md border border-dashed border-ink/15 p-4 text-center text-xs text-ink/50;
+  }
+
+  & .wallet-list {
+    @apply divide-y divide-ink/10 rounded-md border border-ink/10;
+  }
+
+  & .wallet {
+    @apply flex items-center gap-2.5 px-2.5 py-2;
+  }
+
+  & .wallet-icon {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded bg-paper text-ink/50;
+  }
+
+  & .wallet-address {
+    @apply flex items-center gap-1.5 font-mono text-xs;
+  }
+
+  & .primary-tag {
+    @apply rounded bg-cobalt px-1.5 py-px font-sans text-[10px] font-medium text-white;
+  }
+
+  & .wallet-status {
+    @apply flex items-center gap-1 text-[11px] text-ink/45;
+  }
+
+  & .wallet-actions {
+    @apply flex shrink-0 items-center gap-1;
+  }
+
+  & .icon-btn {
+    @apply flex h-7 w-7 items-center justify-center rounded border border-ink/10 text-ink/45 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-50;
+  }
+
+  & .icon-btn-danger {
+    @apply hover:border-red-600 hover:text-red-600;
+  }
+
+  & .text-btn {
+    @apply h-7 rounded border border-ink/10 px-2 text-[11px] text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-50;
+  }
+
+  /* ---- Sign-in details ---- */
+  & .details {
+    @apply divide-y divide-ink/10 px-3 text-[13px];
+
+    & > div {
+      @apply flex flex-col gap-0.5 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3;
+    }
+
+    & dt {
+      @apply flex shrink-0 items-center gap-1.5 text-xs text-ink/50;
+    }
+  }
+
+  & .status-pill {
+    @apply inline-flex rounded px-1.5 py-0.5 text-xs font-medium;
+  }
+
+  & .status-pill.is-on {
+    @apply bg-cobalt/10 text-cobalt;
+  }
+
+  & .status-pill.is-off {
+    @apply bg-paper-deep text-ink/50;
+  }
+}

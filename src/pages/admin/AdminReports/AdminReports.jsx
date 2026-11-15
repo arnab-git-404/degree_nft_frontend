@@ -1,10 +1,10 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import api from "../../lib/api";
-import { useAdminList } from "../../hooks/useAdminList";
-import { formatDate } from "../../lib/admin";
-import { shortenAddress } from "../../lib/utils";
-import { Button } from "../../components/Button";
+import api from "../../../lib/api";
+import { useAdminList } from "../../../hooks/useAdminList";
+import { formatDate } from "../../../lib/admin";
+import { shortenAddress } from "../../../lib/utils";
+import { Button } from "../../../components/Button";
 import {
   AdminError,
   AdminLoading,
@@ -12,7 +12,8 @@ import {
   AdminPagination,
   AdminToolbar,
   StatusBadge,
-} from "../../components/admin/AdminUI";
+} from "../../../components/admin/AdminUI";
+import "./AdminReports.css";
 
 const FILTER_OPTIONS = [
   ["all", "All reports"],
@@ -73,7 +74,7 @@ export function AdminReports() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="admin-reports">
       <AdminPageHeader
         title="Reports"
         description="Review credential issues reported by students."
@@ -96,45 +97,36 @@ export function AdminReports() {
       {isLoading ? (
         <AdminLoading />
       ) : (
-        <>
-          <div className="space-y-3">
+        <div className="table-card">
+          <div className="report-list">
             {reports.map((report) => (
-              <div
-                key={report._id}
-                className="rounded-lg border border-ink/15 bg-paper-soft p-4"
-              >
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="font-medium">{report.reportType}</p>
-                    <p className="mt-1 text-sm text-ink/70">
-                      {report.reportDetails}
-                    </p>
-                    <p className="mt-2 text-xs text-ink/60">
-                      Student: {shortenAddress(report.studentWallet || "")} ·
-                      Institution:{" "}
-                      {shortenAddress(report.institutionWallet || "")} · Reported{" "}
-                      {formatDate(report.reportedOn)}
-                    </p>
-                  </div>
+              <div key={report._id} className="report">
+                <div className="report-head">
+                  <p className="report-type">{report.reportType}</p>
                   <StatusBadge tone={report.resolved ? "success" : "warning"}>
                     {report.resolved ? "Resolved" : "Open"}
                   </StatusBadge>
+                  <p className="report-meta">
+                    Student {shortenAddress(report.studentWallet || "")} ·
+                    Institution {shortenAddress(report.institutionWallet || "")} ·
+                    Reported {formatDate(report.reportedOn)}
+                  </p>
                 </div>
+                <p className="report-details">{report.reportDetails}</p>
 
                 {report.resolved ? (
-                  <div className="mt-3 rounded-lg bg-paper-deep p-3 text-sm text-ink/70">
-                    <p className="text-xs font-medium text-ink/60">
-                      Resolution
-                    </p>
-                    <p className="mt-1">{report.solutionDetails}</p>
-                    <p className="mt-1 text-xs text-ink/60">
-                      Resolved {formatDate(report.resolvedDate)}
-                    </p>
+                  <div className="resolution">
+                    <span className="resolution-label">Resolution</span>
+                    <span>{report.solutionDetails}</span>
+                    <span className="resolution-date">
+                      · {formatDate(report.resolvedDate)}
+                    </span>
                   </div>
                 ) : (
-                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  <div className="resolve-row">
                     <textarea
-                      rows="2"
+                      rows="1"
+                      aria-label={`Resolution note for ${report.reportType}`}
                       placeholder="Resolution note..."
                       value={resolutionDrafts[report._id] || ""}
                       onChange={(event) =>
@@ -143,7 +135,7 @@ export function AdminReports() {
                           [report._id]: event.target.value,
                         }))
                       }
-                      className="flex-1 rounded-lg border border-ink/15 bg-paper-deep px-3 py-2 text-sm text-ink placeholder:text-ink/60 focus:outline-none focus:ring-2 focus:ring-cobalt"
+                      className="textarea-field resolve-input"
                     />
                     <Button
                       size="sm"
@@ -157,13 +149,11 @@ export function AdminReports() {
               </div>
             ))}
             {reports.length === 0 && (
-              <div className="rounded-lg border border-ink/15 bg-paper-soft p-8 text-center text-ink/60">
-                No reports found
-              </div>
+              <p className="empty">No reports found</p>
             )}
           </div>
           <AdminPagination pagination={pagination} onPage={setPage} />
-        </>
+        </div>
       )}
     </div>
   );

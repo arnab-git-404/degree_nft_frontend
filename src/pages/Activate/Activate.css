@@ -1,0 +1,74 @@
+@reference "../../index.css";
+
+/* Account activation. Small centered card over the grid backdrop. */
+.activate-page {
+  @apply relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8;
+
+  & .backdrop {
+    @apply pointer-events-none absolute inset-0;
+  }
+
+  & .card {
+    @apply relative w-full max-w-md rounded-md border border-ink/10 bg-paper-soft shadow-sm;
+  }
+
+  & .card-head {
+    @apply flex items-center justify-between gap-3 border-b border-ink/10 px-4 py-2.5;
+  }
+
+  & .tag {
+    @apply rounded bg-paper px-1.5 py-0.5 text-[11px] text-ink/55;
+  }
+
+  & .card-body {
+    @apply px-4 py-4;
+  }
+
+  & .state {
+    @apply space-y-3;
+  }
+
+  & .state-center {
+    @apply flex flex-col items-center py-6 text-center;
+  }
+
+  & .state-head {
+    @apply flex items-start gap-3;
+  }
+
+  & .icon {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-md border;
+  }
+
+  & .icon-ok {
+    @apply border-cobalt/30 bg-cobalt/5 text-cobalt;
+  }
+
+  & .icon-muted {
+    @apply border-ink/10 bg-paper text-ink/55;
+  }
+
+  & .icon-bad {
+    @apply border-red-600/30 bg-red-600/5 text-red-700;
+  }
+
+  & .title {
+    @apply text-base leading-tight font-semibold;
+  }
+
+  & .text {
+    @apply mt-0.5 text-xs leading-5 text-ink/60;
+  }
+
+  & .note {
+    @apply flex items-center gap-2 rounded-md bg-paper px-2.5 py-2 text-xs text-ink/60;
+  }
+
+  & .error-box {
+    @apply rounded-md border border-red-600/20 bg-red-600/5 px-2.5 py-1.5 text-xs text-red-700;
+  }
+
+  & .card-foot {
+    @apply flex items-center justify-between border-t border-ink/10 px-4 py-2 text-[11px] text-ink/40;
+  }
+}

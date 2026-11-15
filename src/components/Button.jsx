@@ -19,14 +19,14 @@ const Button = React.forwardRef(
       outline: "btn-outline",
       ghost: "btn-ghost",
       acid:
-        "inline-flex items-center justify-center gap-2 rounded-md bg-acid px-4 text-sm font-medium text-cobalt transition-colors hover:bg-blue-200 disabled:pointer-events-none disabled:opacity-50",
-      ink: "inline-flex items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-medium text-white transition-colors hover:bg-slate-700 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center gap-1.5 rounded-md bg-acid px-3 text-[13px] font-medium text-cobalt transition-colors hover:bg-cobalt/20 disabled:pointer-events-none disabled:opacity-50",
+      ink: "inline-flex items-center justify-center gap-1.5 rounded-md bg-ink px-3 text-[13px] font-medium text-white transition-colors hover:bg-ink/85 disabled:pointer-events-none disabled:opacity-50",
     };
 
     const sizes = {
-      sm: "h-8 px-3 text-xs",
-      md: "h-9",
-      lg: "h-10 px-5",
+      sm: "h-7 px-2.5 text-xs",
+      md: "h-8",
+      lg: "h-9 px-4",
     };
 
     return (

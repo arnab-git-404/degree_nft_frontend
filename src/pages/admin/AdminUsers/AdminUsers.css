@@ -1,0 +1,39 @@
+@reference "../../../index.css";
+
+/* Admin › Users. Everything is scoped under .admin-users. */
+.admin-users {
+  @apply space-y-3;
+
+  & .user {
+    @apply flex min-w-48 items-center gap-2.5;
+  }
+
+  & .user-avatar {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-acid text-[11px] font-semibold text-cobalt;
+  }
+
+  & .user-name {
+    @apply truncate leading-tight font-medium;
+  }
+
+  & .user-email {
+    @apply truncate text-xs text-ink/55;
+  }
+
+  & .wallet {
+    @apply font-mono text-xs whitespace-nowrap text-ink/70;
+  }
+
+  /* Inline selects inside table rows */
+  & .cell-select {
+    @apply h-7 rounded border border-ink/15 bg-paper-soft px-1.5 text-xs text-ink focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none disabled:opacity-50;
+  }
+
+  & .muted {
+    @apply text-xs whitespace-nowrap text-ink/55;
+  }
+
+  & .col-actions {
+    @apply text-right;
+  }
+}

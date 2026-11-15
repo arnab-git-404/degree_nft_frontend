@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
-/* Token names kept from the old theme so every page picks up the ERP palette without edits. */
+/* Token names kept from the old theme so every page picks up the palette without edits. */
 @theme {
-  --color-paper: #f1f5f9;
+  --color-paper: #f4f5f9;
   --color-paper-soft: #ffffff;
-  --color-paper-deep: #e2e8f0;
-  --color-ink: #0f172a;
-  --color-cobalt: #2563eb;
-  --color-acid: #dbeafe;
+  --color-paper-deep: #e7e9f1;
+  --color-ink: #161827;
+  --color-cobalt: #4f46e5;
+  --color-cobalt-strong: #4338ca;
+  --color-acid: #e0e7ff;
+  --color-rail: #15162b;
   --font-sans: "Inter", system-ui, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-serif: "Inter", system-ui, Arial, sans-serif;
@@ -15,12 +17,12 @@
 
 :root {
   color-scheme: light;
-  --paper: #f1f5f9;
+  --paper: #f4f5f9;
   --paper-soft: #ffffff;
-  --paper-deep: #e2e8f0;
-  --ink: #0f172a;
-  --cobalt: #2563eb;
-  --acid: #dbeafe;
+  --paper-deep: #e7e9f1;
+  --ink: #161827;
+  --cobalt: #4f46e5;
+  --acid: #e0e7ff;
 }
 
 @layer base {
@@ -29,7 +31,7 @@
   }
 
   body {
-    @apply bg-paper font-sans text-sm text-ink antialiased;
+    @apply bg-paper font-sans text-[13px] text-ink antialiased;
   }
 
   ::selection {
@@ -57,35 +59,35 @@
   }
 
   .input-field {
-    @apply h-9 w-full rounded-md border border-ink/20 bg-paper-soft px-3 text-sm text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
+    @apply h-8 w-full rounded-md border border-ink/15 bg-paper-soft px-2.5 text-[13px] text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
   }
 
   .textarea-field {
-    @apply min-h-24 w-full resize-y rounded-md border border-ink/20 bg-paper-soft px-3 py-2 text-sm text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
+    @apply min-h-20 w-full resize-y rounded-md border border-ink/15 bg-paper-soft px-2.5 py-1.5 text-[13px] text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
   }
 
   .select-field {
-    @apply h-9 w-full appearance-none rounded-md border border-ink/20 bg-paper-soft px-3 text-sm text-ink shadow-xs transition-colors focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
+    @apply h-8 w-full appearance-none rounded-md border border-ink/15 bg-paper-soft px-2.5 text-[13px] text-ink shadow-xs transition-colors focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
   }
 
   .btn-primary {
-    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md bg-cobalt px-4 text-sm font-medium text-white shadow-xs transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-cobalt px-3 text-[13px] font-medium text-white shadow-xs transition-colors hover:bg-cobalt-strong disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-outline {
-    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md border border-ink/20 bg-paper-soft px-4 text-sm font-medium text-ink shadow-xs transition-colors hover:bg-paper disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-ink/15 bg-paper-soft px-3 text-[13px] font-medium text-ink shadow-xs transition-colors hover:bg-paper disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-ink/70 transition-colors hover:bg-paper-deep hover:text-ink disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1 text-[13px] font-medium text-ink/70 transition-colors hover:bg-paper-deep hover:text-ink disabled:pointer-events-none disabled:opacity-50;
   }
 
   .panel {
-    @apply rounded-lg border border-ink/10 bg-paper-soft shadow-xs;
+    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   .panel-deep {
-    @apply rounded-lg border border-ink/10 bg-paper;
+    @apply rounded-md border border-ink/10 bg-paper;
   }
 
   .link-underline {
@@ -93,11 +95,55 @@
   }
 
   .stat-value {
-    @apply text-2xl font-semibold tabular-nums;
+    @apply text-xl font-semibold tabular-nums;
   }
 
   .app-card {
-    @apply rounded-lg border border-ink/10 bg-paper-soft shadow-xs transition-colors hover:border-cobalt/40;
+    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs transition-colors hover:border-cobalt/40;
+  }
+
+  /* Dense table: put className="data-table" on <table>; cells need no padding classes. */
+  .data-table {
+    @apply w-full text-left text-[13px];
+  }
+
+  .data-table thead th {
+    @apply bg-paper px-3 py-2 text-[11px] font-semibold tracking-wide whitespace-nowrap text-ink/55 uppercase;
+  }
+
+  .data-table tbody td {
+    @apply border-t border-ink/10 px-3 py-1.5 align-middle;
+  }
+
+  .data-table tbody tr:hover td {
+    @apply bg-paper/70;
+  }
+
+  /* Bordered box around a table + its pagination footer */
+  .table-card {
+    @apply overflow-hidden rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+  }
+
+  .table-scroll {
+    @apply overflow-x-auto;
+  }
+
+  /* Two-line table cell: bold first line, muted second line */
+  .cell-title {
+    @apply leading-tight font-medium;
+  }
+
+  .cell-sub {
+    @apply text-xs text-ink/55;
+  }
+
+  .cell-mono {
+    @apply font-mono text-xs whitespace-nowrap text-ink/70;
+  }
+
+  /* Small uppercase heading above a group of cards */
+  .section-label {
+    @apply text-[11px] font-semibold tracking-wide text-ink/50 uppercase;
   }
 }
 
@@ -112,17 +158,17 @@
 
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background-color: rgba(15, 23, 42, 0.2);
+  background-color: rgba(22, 24, 39, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(15, 23, 42, 0.35);
+  background-color: rgba(22, 24, 39, 0.35);
 }
 
 .hero-grid {
   background-image:
-    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(22, 24, 39, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(22, 24, 39, 0.04) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: linear-gradient(to bottom, black, transparent 92%);
 }
@@ -132,12 +178,12 @@
   font-size: 13px !important;
   font-weight: 500 !important;
   border-radius: 6px !important;
-  height: 34px !important;
-  line-height: 34px !important;
+  height: 30px !important;
+  line-height: 30px !important;
   padding: 0 12px !important;
   background: var(--paper-soft) !important;
   color: var(--ink) !important;
-  border: 1px solid rgba(15, 23, 42, 0.2) !important;
+  border: 1px solid rgba(22, 24, 39, 0.15) !important;
 }
 
 .wallet-adapter-button:not([disabled]):hover {
@@ -154,8 +200,8 @@
 .wallet-adapter-modal {
   border-radius: 8px !important;
   background: var(--paper-soft) !important;
-  border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12) !important;
+  border: 1px solid rgba(22, 24, 39, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(22, 24, 39, 0.12) !important;
 }
 
 .wallet-adapter-dropdown-list {
@@ -174,7 +220,7 @@
 }
 
 .wallet-adapter-modal-wrapper {
-  background: rgba(15, 23, 42, 0.45) !important;
+  background: rgba(22, 24, 39, 0.45) !important;
 }
 
 .wallet-adapter-modal-title {

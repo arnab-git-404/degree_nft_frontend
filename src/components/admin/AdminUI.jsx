@@ -1,6 +1,5 @@
 import { Loader2, RefreshCw, Search } from "lucide-react";
 import { Button } from "../Button";
-import { Input } from "../Input";
 
 const BADGE_TONES = {
   success: "bg-green-600/10 text-green-700",
@@ -13,7 +12,7 @@ const BADGE_TONES = {
 export function StatusBadge({ tone = "neutral", children }) {
   return (
     <span
-      className={`rounded-full px-2 py-1 text-xs font-medium ${
+      className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium whitespace-nowrap ${
         BADGE_TONES[tone] || BADGE_TONES.neutral
       }`}
     >
@@ -30,31 +29,31 @@ export function AdminPageHeader({
   actions,
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <p className="eyebrow">Administration</p>
-        <h1 className="mt-2 text-xl font-semibold">
-          {title}
-        </h1>
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="min-w-0">
+        <h1 className="text-base leading-tight font-semibold">{title}</h1>
         {description && (
-          <p className="mt-2 text-sm leading-6 text-ink/60">{description}</p>
+          <p className="text-xs text-ink/55">{description}</p>
         )}
       </div>
       {(actions || onRefresh) && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {actions}
           {onRefresh && (
             <Button
+              size="sm"
               variant="secondary"
               onClick={onRefresh}
               disabled={isRefreshing}
+              aria-label="Refresh"
+              title="Refresh"
             >
               {isRefreshing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="h-3.5 w-3.5" />
               )}
-              Refresh
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
           )}
         </div>
@@ -73,21 +72,23 @@ export function AdminToolbar({
   placeholder = "Search...",
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row">
-      <form onSubmit={onSubmit} className="flex flex-1 gap-2">
-        <Input
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <form onSubmit={onSubmit} className="relative flex-1 sm:max-w-md">
+        <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-ink/40" />
+        <input
+          type="search"
+          aria-label="Search"
           placeholder={placeholder}
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
+          className="input-field pl-8"
         />
-        <Button type="submit" variant="secondary" aria-label="Search">
-          <Search className="h-4 w-4" />
-        </Button>
       </form>
       <select
+        aria-label="Filter"
         value={filter}
         onChange={(event) => onFilterChange(event.target.value)}
-        className="h-10 rounded-lg border border-ink/15 bg-paper-deep px-3 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
+        className="select-field sm:w-48"
       >
         {filterOptions.map(([value, label]) => (
           <option key={value} value={value}>
@@ -105,11 +106,11 @@ export function AdminPagination({ pagination, onPage }) {
   }
 
   return (
-    <div className="mt-4 flex items-center justify-between text-sm text-ink/60">
+    <div className="flex items-center justify-between border-t border-ink/10 px-3 py-2 text-xs text-ink/55">
       <span>
         Page {pagination.page} of {pagination.pages} · {pagination.total} total
       </span>
-      <div className="flex gap-2">
+      <div className="flex gap-1.5">
         <Button
           size="sm"
           variant="secondary"
@@ -133,8 +134,8 @@ export function AdminPagination({ pagination, onPage }) {
 
 export function AdminLoading() {
   return (
-    <div className="flex min-h-[40vh] items-center justify-center">
-      <Loader2 className="h-10 w-10 animate-spin text-cobalt" />
+    <div className="flex min-h-[30vh] items-center justify-center">
+      <Loader2 className="h-6 w-6 animate-spin text-cobalt" />
     </div>
   );
 }
@@ -143,7 +144,7 @@ export function AdminError({ message }) {
   if (!message) return null;
 
   return (
-    <div className="rounded-lg border border-red-500/30 bg-red-600/5 p-4 text-sm text-red-800">
+    <div className="rounded-md border border-red-500/30 bg-red-600/5 px-3 py-2 text-xs text-red-800">
       {message}
     </div>
   );
@@ -152,7 +153,7 @@ export function AdminError({ message }) {
 export function AdminEmpty({ colSpan, message }) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-4 py-8 text-center text-ink/60">
+      <td colSpan={colSpan} className="px-3 py-6 text-center text-ink/55">
         {message}
       </td>
     </tr>

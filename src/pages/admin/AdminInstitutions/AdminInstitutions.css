@@ -1,0 +1,14 @@
+@reference "../../../index.css";
+
+/* Admin › Institutions. Scoped under .admin-institutions. */
+.admin-institutions {
+  @apply space-y-3;
+
+  & .col-actions {
+    @apply text-right;
+  }
+
+  & .actions {
+    @apply inline-flex gap-1;
+  }
+}

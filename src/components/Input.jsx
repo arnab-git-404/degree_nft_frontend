@@ -7,7 +7,7 @@ const Input = React.forwardRef(
     const inputId = id || generatedId;
 
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-1">
         {label ? (
           <label htmlFor={inputId} className="field-label block">
             {label}

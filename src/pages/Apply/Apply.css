@@ -1,0 +1,80 @@
+@reference "../../index.css";
+
+/* Public institution application form. Two field groups side by side on desktop. */
+.apply-page {
+  @apply min-h-screen;
+
+  & .topbar {
+    @apply flex h-12 items-center justify-between gap-3 border-b border-ink/10 bg-paper-soft px-4 sm:px-6;
+  }
+
+  & .campaign {
+    @apply truncate rounded bg-acid px-2 py-0.5 text-[11px] font-medium text-cobalt;
+  }
+
+  & .content {
+    @apply mx-auto w-full max-w-5xl px-3 py-5 sm:px-5;
+  }
+
+  & .loading {
+    @apply flex justify-center py-16;
+  }
+
+  /* ---- Status notices ---- */
+  & .notice {
+    @apply mx-auto flex max-w-lg items-start gap-3 rounded-md border border-ink/10 bg-paper-soft p-4 shadow-xs;
+  }
+
+  & .notice-icon {
+    @apply h-6 w-6 shrink-0;
+  }
+
+  & .notice-title {
+    @apply text-base font-semibold;
+  }
+
+  & .notice-text {
+    @apply mt-0.5 text-xs leading-5 text-ink/60;
+  }
+
+  /* ---- Form ---- */
+  & .form-card {
+    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+  }
+
+  & .form-head {
+    @apply border-b border-ink/10 px-4 py-3;
+  }
+
+  & .form-title {
+    @apply text-base font-semibold;
+  }
+
+  & .form-sub {
+    @apply mt-0.5 text-xs text-ink/55;
+  }
+
+  & .form-body {
+    @apply grid gap-x-6 gap-y-4 px-4 py-4 lg:grid-cols-2;
+  }
+
+  & .group {
+    @apply grid content-start gap-3 sm:grid-cols-2;
+
+    & legend {
+      @apply mb-2;
+    }
+  }
+
+  & .span-2 {
+    @apply sm:col-span-2;
+  }
+
+  & .form-error {
+    @apply mx-4 mb-3 rounded-md bg-red-50 px-2.5 py-1.5 text-xs text-red-700;
+  }
+
+  & .form-foot {
+    @apply flex justify-end border-t border-ink/10 bg-paper/50 px-4 py-2.5;
+  }
+}

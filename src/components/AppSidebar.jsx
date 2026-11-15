@@ -81,9 +81,9 @@ function SidebarLink({ module, onNavigate }) {
       end={module.end}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+        `flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors ${
           isActive
-            ? "bg-white/10 font-medium text-white"
+            ? "bg-cobalt font-medium text-white shadow-sm"
             : "text-slate-400 hover:bg-white/5 hover:text-white"
         }`
       }
@@ -96,7 +96,7 @@ function SidebarLink({ module, onNavigate }) {
 
 function SectionLabel({ children }) {
   return (
-    <p className="px-3 pb-1 pt-5 text-[11px] font-semibold text-slate-500">
+    <p className="px-2.5 pb-1 pt-3 text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
       {children}
     </p>
   );
@@ -152,10 +152,10 @@ export function AppSidebar({ onNavigate, onClose }) {
   };
 
   return (
-    <div className="flex h-full flex-col bg-ink text-slate-300">
-      <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 px-4">
+    <div className="flex h-full flex-col bg-rail text-slate-300">
+      <div className="flex h-12 shrink-0 items-center justify-between border-b border-white/10 px-3">
         <Link to="/" onClick={onNavigate} className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-cobalt text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-cobalt text-white">
             <GraduationCap className="h-4 w-4" />
           </span>
           <span className="leading-tight">
@@ -180,7 +180,7 @@ export function AppSidebar({ onNavigate, onClose }) {
       </div>
 
       {memberships.length > 0 && (
-        <div className="border-b border-white/10 p-3">
+        <div className="border-b border-white/10 px-3 py-2">
           <label
             htmlFor="active-institution"
             className="mb-1 block text-[11px] uppercase tracking-wide text-slate-500"
@@ -192,7 +192,7 @@ export function AppSidebar({ onNavigate, onClose }) {
             value={activeInstitutionId || ""}
             onChange={(event) => selectInstitution(event.target.value)}
             disabled={memberships.length === 1}
-            className="h-9 w-full rounded-md border border-white/10 bg-white/5 px-2 text-sm text-white disabled:opacity-100"
+            className="h-8 w-full rounded-md border border-white/10 bg-white/5 px-2 text-xs text-white disabled:opacity-100"
           >
             {memberships.map((membership) => (
               <option
@@ -207,7 +207,7 @@ export function AppSidebar({ onNavigate, onClose }) {
         </div>
       )}
 
-      <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 pb-3">
         {visibleSections.map((section) => (
           <div key={section.label}>
             <SectionLabel>{section.label}</SectionLabel>
@@ -218,7 +218,7 @@ export function AppSidebar({ onNavigate, onClose }) {
         ))}
       </nav>
 
-      <div className="border-t border-white/10 p-3">
+      <div className="border-t border-white/10 p-2">
         {isRestoring ? (
           <div className="flex items-center gap-2 px-2 py-1 text-xs text-slate-400">
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -258,7 +258,7 @@ export function AppSidebar({ onNavigate, onClose }) {
           <Link
             to="/login"
             onClick={onNavigate}
-            className="flex h-9 w-full items-center justify-center rounded-md bg-cobalt text-sm font-medium text-white hover:bg-blue-700"
+            className="flex h-8 w-full items-center justify-center rounded-md bg-cobalt text-[13px] font-medium text-white hover:bg-cobalt-strong"
           >
             Sign in
           </Link>

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import api from "../../lib/api";
-import { useAdminList } from "../../hooks/useAdminList";
-import { formatDate } from "../../lib/admin";
-import { shortenAddress } from "../../lib/utils";
-import { Button } from "../../components/Button";
+import api from "../../../lib/api";
+import { useAdminList } from "../../../hooks/useAdminList";
+import { formatDate } from "../../../lib/admin";
+import { shortenAddress } from "../../../lib/utils";
+import { Button } from "../../../components/Button";
+import { getInitials } from "../../../components/AppSidebar";
 import {
   AdminEmpty,
   AdminError,
@@ -14,7 +15,8 @@ import {
   AdminPagination,
   AdminToolbar,
   StatusBadge,
-} from "../../components/admin/AdminUI";
+} from "../../../components/admin/AdminUI";
+import "./AdminUsers.css";
 
 const USER_TYPE_OPTIONS = [
   ["SUPER_ADMIN", "Super Admin"],
@@ -122,7 +124,7 @@ export function AdminUsers() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="admin-users">
       <AdminPageHeader
         title="Users"
         description="Manage accounts, roles, and access status."
@@ -145,44 +147,52 @@ export function AdminUsers() {
       {isLoading ? (
         <AdminLoading />
       ) : (
-        <>
-          <div className="overflow-x-auto rounded-lg border border-ink/15">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-paper-soft text-ink/60">
+        <div className="table-card">
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3">User</th>
-                  <th className="px-4 py-3">Wallet</th>
-                  <th className="px-4 py-3">Role</th>
-                  <th className="px-4 py-3">User type</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Joined</th>
-                  <th className="px-4 py-3">Actions</th>
+                  <th>User</th>
+                  <th>Wallet</th>
+                  <th>Role</th>
+                  <th>User type</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th className="col-actions">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user._id} className="border-t border-ink/15">
-                    <td className="px-4 py-3">
-                      <p className="font-medium">{user.name}</p>
-                      <p className="text-xs text-ink/60">
-                        {user.email || "No email"}
-                      </p>
+                  <tr key={user._id}>
+                    <td>
+                      <div className="user">
+                        <span className="user-avatar">
+                          {getInitials(user.name)}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="user-name">{user.name}</p>
+                          <p className="user-email">
+                            {user.email || "No email"}
+                          </p>
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs">
+                    <td className="wallet">
                       {shortenAddress(
                         user.primaryWallet?.address ||
                           user.wallets?.[0]?.address ||
                           ""
-                      )}
+                      ) || "—"}
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <select
+                        aria-label={`Role for ${user.name}`}
                         value={user.roleId?.name || ""}
                         disabled={busyId === user._id}
                         onChange={(event) =>
                           updateUserRole(user._id, event.target.value)
                         }
-                        className="h-8 rounded border border-ink/15 bg-paper-deep px-2 text-xs text-ink disabled:opacity-50"
+                        className="cell-select"
                       >
                         {roles.length === 0 && user.roleId?.name && (
                           <option value={user.roleId.name}>
@@ -196,7 +206,7 @@ export function AdminUsers() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <select
                         aria-label={`User type for ${user.name}`}
                         value={user.userType || "STUDENT"}
@@ -204,7 +214,7 @@ export function AdminUsers() {
                         onChange={(event) =>
                           updateUserType(user, event.target.value)
                         }
-                        className="h-8 rounded border border-ink/15 bg-paper-deep px-2 text-xs text-ink disabled:opacity-50"
+                        className="cell-select"
                       >
                         {USER_TYPE_OPTIONS.map(([value, label]) => (
                           <option key={value} value={value}>
@@ -213,15 +223,13 @@ export function AdminUsers() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <StatusBadge tone={user.isActive ? "success" : "danger"}>
                         {user.isActive ? "Active" : "Inactive"}
                       </StatusBadge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-ink/60">
-                      {formatDate(user.createdAt)}
-                    </td>
-                    <td className="px-4 py-3">
+                    <td className="muted">{formatDate(user.createdAt)}</td>
+                    <td className="col-actions">
                       <Button
                         size="sm"
                         variant={user.isActive ? "ghost" : "secondary"}
@@ -240,7 +248,7 @@ export function AdminUsers() {
             </table>
           </div>
           <AdminPagination pagination={pagination} onPage={setPage} />
-        </>
+        </div>
       )}
     </div>
   );

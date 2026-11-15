@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, clusterApiUrl } from "@solana/web3.js";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
-import { CredentialCard } from "../components/nft/CredentialCard";
+import { CredentialCard } from "../../components/nft/CredentialCard";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 import {
   createNft,
@@ -25,13 +25,14 @@ import {
   Save,
   X,
 } from "lucide-react";
-import { shortenAddress } from "../lib/utils";
-import { Button } from "../components/Button";
-import { SignInRequired } from "../components/SignInRequired";
+import { shortenAddress } from "../../lib/utils";
+import { Button } from "../../components/Button";
+import { SignInRequired } from "../../components/SignInRequired";
 import { useNavigate } from "react-router-dom";
-import api from "../lib/api";
-import { useAuth } from "../context/AuthContext";
+import api from "../../lib/api";
+import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import "./StudentDashboard.css";
 
 const INSTITUTION_FEES = 0.01;
 
@@ -508,9 +509,11 @@ export function StudentDashboard() {
   // Render loading state for authorization check
   if (isLoading) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
-        <p className="mt-4 text-ink/60">Checking your credentials...</p>
+      <div className="student-page">
+        <div className="loading">
+          <Loader2 className="h-6 w-6 animate-spin text-cobalt" />
+          <p>Checking your credentials...</p>
+        </div>
       </div>
     );
   }
@@ -518,21 +521,29 @@ export function StudentDashboard() {
   // Render disconnected state
   if (!connected) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <UserCheck className="h-16 w-16 text-cobalt" />
-        <h2 className="mt-4 text-2xl font-bold">Student Dashboard</h2>
-        <p className="mt-2 text-ink/60">
-          Connect your wallet to view your credentials
-        </p>
+      <div className="student-page">
+        <div className="state-card">
+          <span className="state-icon">
+            <UserCheck className="h-5 w-5" />
+          </span>
+          <div>
+            <h2 className="state-title">Student dashboard</h2>
+            <p className="state-text">
+              Connect your wallet to view your credentials.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (isRestoring) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-cobalt" />
-        <p className="mt-4 text-ink/60">Restoring your session...</p>
+      <div className="student-page">
+        <div className="loading">
+          <Loader2 className="h-6 w-6 animate-spin text-cobalt" />
+          <p>Restoring your session...</p>
+        </div>
       </div>
     );
   }
@@ -563,208 +574,112 @@ export function StudentDashboard() {
     }
   };
 
-  // Fetch metadata when nftInfo changes
-
   // Render connected state
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="student-page">
+      {/* Header: title, wallet, balance, refresh */}
+      <div className="page-head">
         <div>
-          <h2 className="text-2xl font-bold">Student Dashboard</h2>
-          <p className="mt-1 text-ink/60">
-            Connected as :{" "}
-            <span className="font-mono">
-              {shortenAddress(walletAddress || "")}
+          <h1 className="page-title">Student dashboard</h1>
+          <div className="pills">
+            <span className="pill">
+              Wallet{" "}
+              <span className="font-mono">
+                {shortenAddress(walletAddress || "")}
+              </span>
             </span>
-          </p>
-
-          <p className="mt-1 text-ink/60">
-            Wallet Balance :{" "}
-            <span className="font-mono">
-              {balanceRefreshing ? (
-                <>
-                  <Loader2 className="inline-block h-4 w-4 animate-spin" />
-                  ...
-                </>
-              ) : (
-                `${walletBalance} SOL`
-              )}
+            <span className="pill">
+              Balance{" "}
+              <span className="font-mono">
+                {balanceRefreshing ? (
+                  <Loader2 className="inline-block h-3 w-3 animate-spin" />
+                ) : (
+                  `${walletBalance} SOL`
+                )}
+              </span>
             </span>
-          </p>
+          </div>
         </div>
 
-        <Button
-          onClick={fetchMintedNFTs}
-          variant="outline"
-          className="cursor-pointer"
-        >
+        <Button onClick={fetchMintedNFTs} variant="outline" size="sm">
           Refresh NFTs
         </Button>
       </div>
 
-      {/* Display Mint Success Message */}
+      {/* Mint success */}
       {mintSuccess && mintedNft && (
-        <div className="rounded-lg border border-green-600 bg-green-600/10 p-4 animate-fadeIn">
-          <div className="flex items-center space-x-3">
-            <div>
-              <p className="font-semibold text-2xl text-green-700 flex items-center gap-2">
-                <CheckCircle className="h-6 w-6 text-green-700" />
-                <span>NFT Minted Successfully!</span>
-              </p>
-
-              <div className="mt-2 flex space-x-4">
-                <a
-                  href={getNftExplorerLink(
-                    mintedNft.address,
-                    mintedNft.signature,
-                    "address",
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center text-sm text-green-700 hover:text-green-800 underline cursor-pointer"
-                >
-                  View NFT <ExternalLink className="ml-1 h-4 w-4" />
-                </a>
-
-                <p
-                  className=" hover:cursor-pointer inline-flex items-center text-sm text-green-700 hover:text-green-800 underline cursor-pointer"
-                  onClick={() => window.location.reload()}
-                >
-                  Reload Page
-                </p>
-              </div>
-            </div>
-          </div>
+        <div className="success">
+          <CheckCircle className="h-4 w-4 shrink-0 text-green-700" />
+          <span className="font-semibold text-green-800">NFT minted successfully!</span>
+          <a
+            href={getNftExplorerLink(
+              mintedNft.address,
+              mintedNft.signature,
+              "address",
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="success-link"
+          >
+            View NFT <ExternalLink className="h-3 w-3" />
+          </a>
+          <button
+            type="button"
+            className="success-link"
+            onClick={() => window.location.reload()}
+          >
+            Reload page
+          </button>
         </div>
       )}
 
-      {/* Display Available NFT to Verify/Mint */}
-
+      {/* Credential to review / mint */}
       {isAuthorized && nftInfo && !mintSuccess && (
-        <div className="rounded-lg border border-cobalt bg-cobalt/5 p-6 shadow-sm hover:shadow-md transition-all">
-          <div className="flex justify-between items-start">
-            <h3 className="text-xl font-semibold text-cobalt flex items-center">
-              <Award className="inline-block mr-2 h-5 w-5" />
-              {isConfirmed
-                ? "Credential Ready to Mint"
-                : "Review Your Credential"}
+        <div className="review">
+          <div className="review-head">
+            <h3 className="review-title">
+              <Award className="h-4 w-4" />
+              {isConfirmed ? "Credential ready to mint" : "Review your credential"}
             </h3>
 
             {confirmationDeadline && !isConfirmed && (
-              <div className="flex items-center text-amber-400 text-sm">
-                <Clock className="h-4 w-4 mr-1" />
-                <div>
-                  <p>Time remaining: {formatTimeRemaining()}</p>
-                  <p className="text-xs text-ink/60">
-                    Auto-confirms after deadline
-                  </p>
-                </div>
-              </div>
+              <span className="countdown" title="Auto-confirms after deadline">
+                <Clock className="h-3.5 w-3.5" />
+                {formatTimeRemaining()} left · auto-confirms after deadline
+              </span>
             )}
           </div>
 
-          {/* Edit Mode */}
-
           {isReportingIssue ? (
-            // <div className="mt-4 space-y-4">
-            //   <div>
-            //     <label className="block text-sm font-medium text-ink/70 mb-1">Name</label>
-            //     <input
-            //       type="text"
-            //       name="name"
-            //       value={editedNftInfo.name || ""}
-            //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
-            //     />
-            //   </div>
-
-            //   <div>
-            //     <label className="block text-sm font-medium text-ink/70 mb-1">Symbol</label>
-            //     <input
-            //       type="text"
-            //       name="symbol"
-            //       value={editedNftInfo.symbol || ""}
-            //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
-            //     />
-            //   </div>
-
-            //   <div>
-            //     <label className="block text-sm font-medium text-ink/70 mb-1">Metadata URI</label>
-            //     <input
-            //       type="text"
-            //       name="uri"
-            //       value={editedNftInfo.uri || ""}
-            //       onChange={handleInputChange}
-            //       className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
-            //     />
-            //   </div>
-
-            //   <div className="flex space-x-3 pt-2">
-            //     <Button
-            //       onClick={handleSaveChanges}
-            //       disabled={isSavingChanges}
-            //       className="cursor-pointer flex items-center"
-            //     >
-            //       {isSavingChanges ? (
-            //         <>
-            //           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            //           Saving...
-            //         </>
-            //       ) : (
-            //         <>
-            //           <Save className="mr-2 h-4 w-4" />
-            //           Save Changes
-            //         </>
-            //       )}
-            //     </Button>
-
-            //     <Button
-            //       onClick={handleEditToggle}
-            //       variant="outline"
-            //       className="cursor-pointer"
-            //       disabled={isSavingChanges}
-            //     >
-            //       <X className="mr-2 h-4 w-4" />
-            //       Cancel
-            //     </Button>
-            //   </div>
-            // </div>
-
-            <div className="mt-4 space-y-4">
-              <p className="text-ink/70">
+            <div className="review-body report">
+              <label htmlFor="issue-description" className="field-label">
                 Report an issue with your credential information that requires
-                institution attention:
-              </p>
-              <div>
-                <label className="block text-sm font-medium text-ink/70 mb-1">
-                  Issue Description
-                </label>
-                <textarea
-                  value={issueDescription}
-                  onChange={(e) => setIssueDescription(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-soft border border-ink/15 rounded-lg text-ink focus:outline-none focus:ring-2 focus:ring-cobalt"
-                  rows={4}
-                  placeholder="Describe the issue with your credential details..."
-                />
-              </div>
+                institution attention
+              </label>
+              <textarea
+                id="issue-description"
+                value={issueDescription}
+                onChange={(e) => setIssueDescription(e.target.value)}
+                className="textarea-field"
+                rows={3}
+                placeholder="Describe the issue with your credential details..."
+              />
 
-              <div className="flex space-x-3 pt-2">
+              <div className="actions">
                 <Button
                   onClick={handleSubmitIssue}
                   disabled={isSendingIssue || !issueDescription.trim()}
-                  className="cursor-pointer flex items-center"
                   title="Submit issue to institution"
                 >
                   {isSendingIssue ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       Sending...
                     </>
                   ) : (
                     <>
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      Submit Issue
+                      <MessageSquare className="h-3.5 w-3.5" />
+                      Submit issue
                     </>
                   )}
                 </Button>
@@ -772,267 +687,214 @@ export function StudentDashboard() {
                 <Button
                   onClick={handleCancelReport}
                   variant="outline"
-                  className="cursor-pointer"
                   disabled={isSendingIssue}
                 >
-                  <X className="mr-2 h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                   Cancel
                 </Button>
               </div>
             </div>
           ) : (
-            <>
-              {/* View Mode */}
-              {/* <div className="mt-4 space-y-2 text-ink/70">
-                <p>
-                  <span className="font-medium text-ink">Name:</span>{" "}
-                  {nftInfo.name}
-                </p>
-                <p>
-                  <span className="font-medium text-ink">Symbol:</span>{" "}
-                  {nftInfo.symbol || "CRED"}
-                </p>
-                <p>
-                  <span className="font-medium text-ink">
-                    Metadata URI:
-                  </span>{" "}
-                  <a
-                    href={nftInfo.uri}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-cobalt break-all cursor-pointer"
-                  >
-                    {nftInfo.uri}
-                  </a>
-                </p>
-              </div> */}
+            <div className="review-body review-grid">
+              {/* Left: image + basic info */}
+              <div className="review-side">
+                {metadataDetails?.image && (
+                  <img
+                    src={metadataDetails.image}
+                    alt={metadataDetails.name}
+                    className="cert-image"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                )}
+                <dl className="basic">
+                  <div>
+                    <dt>Name</dt>
+                    <dd>{nftInfo.name}</dd>
+                  </div>
+                  <div>
+                    <dt>Symbol</dt>
+                    <dd>{nftInfo.symbol || "CRED"}</dd>
+                  </div>
+                  <div>
+                    <dt>Metadata URI</dt>
+                    <dd>
+                      <a
+                        href={nftInfo.uri}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="uri"
+                      >
+                        {nftInfo.uri}
+                      </a>
+                    </dd>
+                  </div>
+                </dl>
+              </div>
 
-              <div className="mt-4 space-y-4">
-                {/* Basic NFT Info */}
-                <div className="space-y-2 text-ink/70">
-                  <p>
-                    <span className="font-medium text-ink">Name:</span>{" "}
-                    {nftInfo.name}
-                  </p>
-                  <p>
-                    <span className="font-medium text-ink">Symbol:</span>{" "}
-                    {nftInfo.symbol || "CRED"}
-                  </p>
-                  <p>
-                    <span className="font-medium text-ink">
-                      Metadata URI:
-                    </span>{" "}
-                    <a
-                      href={nftInfo.uri}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:text-cobalt break-all cursor-pointer"
-                    >
-                      {nftInfo.uri}
-                    </a>
-                  </p>
-                </div>
-
-                {/* Metadata Details */}
+              {/* Right: details + actions */}
+              <div className="review-main">
                 {loadingMetadata ? (
-                  <div className="flex items-center justify-center py-4">
-                    <Loader2 className="h-6 w-6 animate-spin text-cobalt" />
-                    <span className="ml-2 text-ink/60">
-                      Loading credential details...
-                    </span>
+                  <div className="cell-sub flex items-center gap-2 py-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-cobalt" />
+                    Loading credential details...
                   </div>
                 ) : metadataDetails ? (
-                  <div className="mt-6 space-y-6">
-                    {/* Image */}
-                    {metadataDetails.image && (
-                      <div className="rounded-lg overflow-hidden border border-ink/15">
-                        <img
-                          src={metadataDetails.image}
-                          alt={metadataDetails.name}
-                          className="w-full h-64 object-cover"
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                          }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Description */}
+                  <>
                     {metadataDetails.description && (
-                      <div className="bg-paper-soft rounded-lg p-4">
-                        <h4 className="text-sm font-medium text-ink mb-2">
-                          Description
-                        </h4>
-                        <p className="text-ink/70">
-                          {metadataDetails.description}
-                        </p>
-                      </div>
+                      <p className="description">{metadataDetails.description}</p>
                     )}
 
-                    {/* Attributes */}
                     {metadataDetails.attributes &&
                       metadataDetails.attributes.length > 0 && (
-                        <div className="bg-paper-soft rounded-lg p-4">
-                          <h4 className="text-sm font-medium text-ink mb-3">
-                            Credential Details
-                          </h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <p className="section-label mb-1.5">Credential details</p>
+                          <dl className="attributes">
                             {metadataDetails.attributes.map((attr, index) => (
-                              <div key={index} className="flex flex-col">
-                                <span className="text-xs text-ink/60">
-                                  {attr.trait_type}
-                                </span>
-                                <span className="text-sm text-ink/80 font-medium">
-                                  {attr.value}
-                                </span>
+                              <div key={index}>
+                                <dt>{attr.trait_type}</dt>
+                                <dd>{attr.value}</dd>
                               </div>
                             ))}
-                          </div>
+                          </dl>
                         </div>
                       )}
 
-                    {/* Additional Properties */}
                     {metadataDetails.external_url && (
-                      <div className="bg-paper-soft rounded-lg p-4">
-                        <h4 className="text-sm font-medium text-ink mb-2">
-                          External URL
-                        </h4>
-                        <a
-                          href={metadataDetails.external_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-cobalt hover:text-cobalt underline text-sm flex items-center cursor-pointer"
-                        >
-                          {metadataDetails.external_url}
-                          <ExternalLink className="ml-1 h-3 w-3" />
-                        </a>
-                      </div>
+                      <a
+                        href={metadataDetails.external_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="external"
+                      >
+                        {metadataDetails.external_url}
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
                     )}
-                  </div>
+                  </>
                 ) : null}
-              </div>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                {!isConfirmed && !timeRemaining?.expired && (
-                  <>
+                <div className="actions">
+                  {!isConfirmed && !timeRemaining?.expired && (
+                    <>
+                      <Button
+                        disabled={isSavingChanges}
+                        onClick={handleConfirm}
+                        {...(alreadyReported
+                          ? {
+                              title:
+                                "You have already reported an issue for this credential. Please contact your institution for further assistance.",
+                            }
+                          : {
+                              title:
+                                "Confirm that, the above details are correct",
+                            })}
+                      >
+                        {isSavingChanges ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            Confirming...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-3.5 w-3.5" />
+                            Confirm details
+                          </>
+                        )}
+                      </Button>
+
+                      <Button
+                        onClick={handleReportIssue}
+                        variant="outline"
+                        disabled={isSendingIssue}
+                      >
+                        <Flag className="h-3.5 w-3.5" />
+                        Report issue to institution
+                      </Button>
+                    </>
+                  )}
+
+                  {(isConfirmed || timeRemaining?.expired) && (
                     <Button
-                      disabled={isSavingChanges}
-                      onClick={handleConfirm}
-                      className="cursor-pointer flex items-center"
-                      {...(alreadyReported
-                        ? {
-                            title:
-                              "You have already reported an issue for this credential. Please contact your institution for further assistance.",
-                          }
-                        : {
-                            title:
-                              "Confirm that, the above details are correct",
-                          })}
+                      onClick={handleMintNft}
+                      disabled={isMinting || !umi.identity}
                     >
-                      {isSavingChanges ? (
+                      {isMinting ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Confirming...
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          Minting...
                         </>
                       ) : (
-                        <>
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          Confirm Details
-                        </>
+                        "Mint credential NFT"
                       )}
                     </Button>
+                  )}
+                </div>
 
-                    <Button
-                      onClick={handleReportIssue}
-                      variant="outline"
-                      className="cursor-pointer flex items-center"
-                      disabled={isSendingIssue}
-                    >
-                      <Flag className="mr-2 h-4 w-4" />
-                      Report Issue to Institution
-                    </Button>
-                  </>
+                {isConfirmed && (
+                  <p className="msg msg-ok">
+                    <CheckCircle className="h-3.5 w-3.5" />
+                    You've confirmed these details are correct
+                  </p>
                 )}
 
-                {(isConfirmed || timeRemaining?.expired) && (
-                  <Button
-                    onClick={handleMintNft}
-                    disabled={isMinting || !umi.identity}
-                    className="w-full sm:w-auto cursor-pointer"
-                  >
-                    {isMinting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Minting...
-                      </>
-                    ) : (
-                      "Mint Credential NFT"
-                    )}
-                  </Button>
+                {timeRemaining?.expired && !isConfirmed && (
+                  <p className="msg msg-warn">
+                    <Clock className="h-3.5 w-3.5" />
+                    Review period expired. Details are auto-confirmed.
+                  </p>
+                )}
+
+                {mintError && (
+                  <p className="msg msg-bad">
+                    <AlertCircle className="h-3.5 w-3.5" /> {mintError}
+                  </p>
+                )}
+
+                {!umi.identity && (
+                  <p className="msg msg-warn">
+                    <AlertCircle className="h-3.5 w-3.5" /> Wallet not fully
+                    ready for signing. Please ensure it's connected and
+                    initialized.
+                  </p>
                 )}
               </div>
-
-              {isConfirmed && (
-                <p className="mt-3 text-sm text-green-700 flex items-center">
-                  <CheckCircle className="mr-1 h-4 w-4" />
-                  You've confirmed these details are correct
-                </p>
-              )}
-
-              {timeRemaining?.expired && !isConfirmed && (
-                <p className="mt-3 text-sm text-amber-400 flex items-center">
-                  <Clock className="mr-1 h-4 w-4" />
-                  Review period expired. Details are auto-confirmed.
-                </p>
-              )}
-
-              {mintError && (
-                <p className="mt-3 text-sm text-red-700 flex items-center">
-                  <AlertCircle className="mr-1 h-4 w-4" /> {mintError}
-                </p>
-              )}
-
-              {!umi.identity && (
-                <p className="mt-3 text-sm text-yellow-700 flex items-center">
-                  <AlertCircle className="mr-1 h-4 w-4" /> Wallet not fully
-                  ready for signing. Please ensure it's connected and
-                  initialized.
-                </p>
-              )}
-            </>
+            </div>
           )}
         </div>
       )}
 
-      {/* Display if not authorized or no allocation found */}
+      {/* Nothing pending */}
       {!isAuthorized && !isLoading && !mintSuccess && (
-        <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
-          <h3 className="text-xl font-semibold flex items-center">
-            <Calendar className="mr-2 h-5 w-5 text-ink/60" />
-            Pending Credentials : {nftInfo ? nftInfo.length : "None"}
-          </h3>
-          <div className="mt-4">
-            <p className="text-ink/60">
-              {authorizationError ||
-                "No pending credentials found for your wallet, or they have already been minted."}
-            </p>
-          </div>
+        <div className="pending">
+          <Calendar className="h-4 w-4 shrink-0 text-ink/50" />
+          <span className="font-medium">
+            Pending credentials: {nftInfo ? nftInfo.length : "None"}
+          </span>
+          <span className="cell-sub">
+            {authorizationError ||
+              "No pending credentials found for your wallet, or they have already been minted."}
+          </span>
         </div>
       )}
 
-      {/* Section for already minted NFTs */}
-      <div className="rounded-lg border border-ink/15 bg-paper-soft p-6">
-        <h3 className="text-xl font-semibold flex items-center">
-          <School className="mr-2 h-5 w-5 text-ink" />
-          Total Minted Credentials : {mintedNfts.length}
-        </h3>
+      {/* Minted credentials */}
+      <section className="minted">
+        <div className="minted-head">
+          <h3 className="minted-title">
+            <School className="h-4 w-4" />
+            Minted credentials
+          </h3>
+          <span className="count">{mintedNfts.length}</span>
+        </div>
 
         {loadingNfts ? (
-          <div className="flex justify-center my-8">
-            <Loader2 className="h-8 w-8 animate-spin text-cobalt" />
+          <div className="flex justify-center py-6">
+            <Loader2 className="h-6 w-6 animate-spin text-cobalt" />
           </div>
         ) : mintedNfts.length > 0 ? (
-          <div className="mt-6 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="minted-grid">
             {mintedNfts.map((nft, index) => (
               <CredentialCard
                 key={index}
@@ -1042,18 +904,18 @@ export function StudentDashboard() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center text-center py-8 text-ink/60">
-            <Award className="h-12 w-12 text-ink/50 mb-3" />
+          <div className="empty">
+            <Award className="h-6 w-6 text-ink/40" />
             <p>You haven't minted any credential NFTs yet.</p>
             {isAuthorized && nftInfo && (
-              <p className="mt-2 text-cobalt">
+              <p className="text-cobalt">
                 You have a credential ready to {isConfirmed ? "mint" : "review"}{" "}
                 above!
               </p>
             )}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

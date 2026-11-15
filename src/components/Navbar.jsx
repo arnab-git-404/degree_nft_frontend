@@ -22,7 +22,7 @@ export function Navbar({ onMenuClick }) {
   const title = page?.title || "Workspace";
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-4 border-b border-ink/10 bg-paper-soft px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-12 shrink-0 items-center justify-between gap-3 border-b border-ink/10 bg-paper-soft/95 px-3 backdrop-blur sm:px-5">
       <div className="flex min-w-0 items-center gap-3">
         <button
           type="button"
@@ -32,7 +32,7 @@ export function Navbar({ onMenuClick }) {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2 text-sm">
+        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
           <span className="hidden text-ink/45 sm:inline">{section}</span>
           <span className="hidden text-ink/25 sm:inline">/</span>
           <span className="truncate font-semibold">{title}</span>

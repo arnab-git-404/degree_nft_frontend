@@ -32,7 +32,7 @@ export function Layout({ children }) {
       toastOptions={{
         style: {
           background: "#ffffff",
-          color: "#0f172a",
+          color: "#161827",
           border: "1px solid rgba(15, 23, 42, 0.1)",
           borderRadius: 8,
           fontSize: "13px",
@@ -55,17 +55,17 @@ export function Layout({ children }) {
     <div className="flex min-h-screen bg-paper text-ink">
       {toaster}
 
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 lg:block">
+      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 lg:block">
         <AppSidebar />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
         <AuthBanner />
-        <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-6">
+        <main className="mx-auto w-full max-w-[1680px] flex-1 px-3 py-4 sm:px-5">
           {children}
         </main>
-        <footer className="flex justify-between border-t border-ink/10 px-4 py-3 text-xs text-ink/45 sm:px-6">
+        <footer className="flex justify-between border-t border-ink/10 px-3 py-2 text-[11px] text-ink/40 sm:px-5">
           <span>DegreeNFT Registry</span>
           <span>Solana devnet</span>
         </footer>

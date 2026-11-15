@@ -1,6 +1,6 @@
-import { useAdminList } from "../../hooks/useAdminList";
-import { formatDate } from "../../lib/admin";
-import { shortenAddress } from "../../lib/utils";
+import { useAdminList } from "../../../hooks/useAdminList";
+import { formatDate } from "../../../lib/admin";
+import { shortenAddress } from "../../../lib/utils";
 import {
   AdminEmpty,
   AdminError,
@@ -9,7 +9,8 @@ import {
   AdminPagination,
   AdminToolbar,
   StatusBadge,
-} from "../../components/admin/AdminUI";
+} from "../../../components/admin/AdminUI";
+import "./AdminCredentials.css";
 
 const FILTER_OPTIONS = [
   ["all", "All credentials"],
@@ -56,7 +57,7 @@ export function AdminCredentials() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="admin-credentials">
       <AdminPageHeader
         title="Credentials"
         description="Browse every credential allocated by institutions."
@@ -79,56 +80,48 @@ export function AdminCredentials() {
       {isLoading ? (
         <AdminLoading />
       ) : (
-        <>
-          <div className="overflow-x-auto rounded-lg border border-ink/15">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-paper-soft text-ink/60">
+        <div className="table-card">
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3">Credential</th>
-                  <th className="px-4 py-3">Institution</th>
-                  <th className="px-4 py-3">Student</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Allocated</th>
+                  <th>Credential</th>
+                  <th>Institution</th>
+                  <th>Student</th>
+                  <th>Status</th>
+                  <th>Allocated</th>
                 </tr>
               </thead>
               <tbody>
                 {allocations.map((allocation) => (
-                  <tr
-                    key={allocation._id}
-                    className="border-t border-ink/15"
-                  >
-                    <td className="px-4 py-3">
-                      <p className="font-medium">{allocation.name}</p>
-                      <p
-                        className="max-w-xs truncate text-xs text-ink/60"
-                        title={allocation.ipfsHash}
-                      >
+                  <tr key={allocation._id}>
+                    <td>
+                      <p className="cell-title">{allocation.name}</p>
+                      <p className="ipfs" title={allocation.ipfsHash}>
                         {allocation.ipfsHash}
                       </p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <p>
                         {allocation.institutionId?.name ||
                           shortenAddress(allocation.institutionWallet || "")}
                       </p>
-                      <p className="text-xs text-ink/60">
+                      <p className="cell-sub">
                         {allocation.institutionId?.code || ""}
                       </p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <p>{allocation.studentId?.name || "—"}</p>
-                      <p className="font-mono text-xs text-ink/60">
+                      <p className="cell-mono">
                         {shortenAddress(allocation.studentWallet || "")}
                       </p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <StatusBadge tone={credentialTone(allocation)}>
                         {credentialLabel(allocation)}
                       </StatusBadge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-ink/60">
-                      {formatDate(allocation.allocatedAt)}
-                    </td>
+                    <td className="date">{formatDate(allocation.allocatedAt)}</td>
                   </tr>
                 ))}
                 {allocations.length === 0 && (
@@ -138,7 +131,7 @@ export function AdminCredentials() {
             </table>
           </div>
           <AdminPagination pagination={pagination} onPage={setPage} />
-        </>
+        </div>
       )}
     </div>
   );

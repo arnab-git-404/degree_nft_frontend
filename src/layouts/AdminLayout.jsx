@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { Loader2, RefreshCw, Shield, XCircle } from "lucide-react";
+import { Loader2, RefreshCw, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/Button";
@@ -59,18 +59,6 @@ export function AdminLayout() {
     );
   }
 
-  return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/15 pb-4">
-        <p className="eyebrow flex items-center gap-2">
-          <Shield className="h-3 w-3" />
-          Registry control room
-        </p>
-        <p className="text-xs text-ink/45">
-          Institutions, credentials and moderation queues.
-        </p>
-      </div>
-      <Outlet />
-    </div>
-  );
+  // The top-bar breadcrumb already names the section, so no extra banner here.
+  return <Outlet />;
 }

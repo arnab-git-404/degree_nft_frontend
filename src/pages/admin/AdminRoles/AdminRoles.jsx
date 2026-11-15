@@ -10,16 +10,17 @@ import {
   X,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import api, { getErrorMessage } from "../../lib/api";
-import { useAuth } from "../../context/AuthContext";
-import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
+import api, { getErrorMessage } from "../../../lib/api";
+import { useAuth } from "../../../context/AuthContext";
+import { Button } from "../../../components/Button";
+import { Input } from "../../../components/Input";
 import {
   AdminError,
   AdminLoading,
   AdminPageHeader,
   StatusBadge,
-} from "../../components/admin/AdminUI";
+} from "../../../components/admin/AdminUI";
+import "./AdminRoles.css";
 
 function RoleEditor({
   role,
@@ -83,7 +84,7 @@ function RoleEditor({
 
   return (
     <div
-      className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-ink/50 p-4 backdrop-blur-sm"
+      className="editor-backdrop"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && !isSaving) {
           onClose();
@@ -94,18 +95,15 @@ function RoleEditor({
         role="dialog"
         aria-modal="true"
         aria-labelledby="role-editor-title"
-        className="rounded-lg my-6 w-full max-w-3xl border border-ink/15 bg-paper-soft shadow-2xl"
+        className="editor"
       >
         <form onSubmit={handleSubmit}>
-          <div className="flex items-start justify-between gap-4 border-b border-ink/15 px-5 py-4">
+          <div className="editor-head">
             <div>
-              <p className="eyebrow">
+              <p className="editor-kicker">
                 {isEditing ? "Role configuration" : "New role"}
               </p>
-              <h2
-                id="role-editor-title"
-                className="mt-1 text-xl font-semibold"
-              >
+              <h2 id="role-editor-title" className="editor-title">
                 {isEditing ? role.displayName : "Create a role"}
               </h2>
             </div>
@@ -113,15 +111,15 @@ function RoleEditor({
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="flex h-8 w-8 items-center justify-center border border-ink/15 text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-40"
+              className="icon-btn"
               aria-label="Close role editor"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="space-y-5 px-5 py-5">
-            <div className="grid gap-4 sm:grid-cols-2">
+          <div className="editor-body">
+            <div className="field-grid">
               <Input
                 label="Role name"
                 value={form.name}
@@ -152,36 +150,28 @@ function RoleEditor({
                   }))
                 }
               />
-            </div>
-
-            <div className="space-y-2">
-              <label className="field-label block">Description</label>
-              <textarea
-                className="textarea-field"
-                value={form.description}
-                rows={2}
-                maxLength={240}
-                placeholder="What is this role responsible for?"
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    description: event.target.value,
-                  }))
-                }
-              />
-            </div>
-
-            <div className="rounded-lg flex items-center justify-between gap-4 border border-ink/15 bg-paper-deep px-4 py-3">
-              <div>
-                <p className="text-sm font-medium">Active role</p>
-                <p className="mt-0.5 text-xs text-ink/55">
-                  {isAdminRole || role?.isSystem
-                    ? "System roles stay available at all times."
-                    : deactivationLocked
-                      ? "Reassign this role's users before deactivating it."
-                      : "Inactive roles cannot be assigned to new users."}
-                </p>
+              <div className="field-wide">
+                <label htmlFor="role-description" className="field-label block">
+                  Description
+                </label>
+                <textarea
+                  id="role-description"
+                  className="textarea-field min-h-14"
+                  value={form.description}
+                  rows={2}
+                  maxLength={240}
+                  placeholder="What is this role responsible for?"
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      description: event.target.value,
+                    }))
+                  }
+                />
               </div>
+            </div>
+
+            <label className="active-toggle">
               <input
                 type="checkbox"
                 checked={form.isActive}
@@ -192,21 +182,28 @@ function RoleEditor({
                     isActive: event.target.checked,
                   }))
                 }
-                className="h-4 w-4 accent-cobalt disabled:opacity-40"
+                className="check"
               />
-            </div>
+              <span className="font-medium">Active role</span>
+              <span className="hint">
+                {isAdminRole || role?.isSystem
+                  ? "System roles stay available at all times."
+                  : deactivationLocked
+                    ? "Reassign this role's users before deactivating it."
+                    : "Inactive roles cannot be assigned to new users."}
+              </span>
+            </label>
 
             <div>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <p className="field-label">Permissions</p>
-                  <p className="mt-1 text-xs text-ink/55">
-                    {selectedPermissions.length} of {allPermissionKeys.length}{" "}
-                    permissions selected.
-                  </p>
-                </div>
+              <div className="perm-head">
+                <p className="field-label">
+                  Permissions
+                  <span className="perm-count">
+                    {selectedPermissions.length} / {allPermissionKeys.length}
+                  </span>
+                </p>
                 {!isAdminRole && (
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <Button
                       type="button"
                       size="sm"
@@ -238,18 +235,16 @@ function RoleEditor({
               </div>
 
               {isAdminRole ? (
-                <div className="rounded-lg mt-3 border border-cobalt/25 bg-cobalt/5 px-4 py-3 text-sm text-ink/70">
+                <div className="admin-note">
                   The system admin role always has full access. It cannot be
                   restricted or deactivated.
                 </div>
               ) : (
-                <div className="mt-3 space-y-4">
+                <div className="perm-groups">
                   {groups.map((group) => (
                     <fieldset key={group.key}>
-                      <legend className="mb-2 text-xs text-ink/50">
-                        {group.label}
-                      </legend>
-                      <div className="grid gap-2 sm:grid-cols-2">
+                      <legend className="perm-group-label">{group.label}</legend>
+                      <div className="perm-grid">
                         {group.permissions.map((permission) => {
                           const checked = form.permissions.includes(
                             permission.key
@@ -258,11 +253,8 @@ function RoleEditor({
                           return (
                             <label
                               key={permission.key}
-                              className={`flex cursor-pointer items-start gap-3 border p-3 transition-colors ${
-                                checked
-                                  ? "border-cobalt bg-cobalt/5"
-                                  : "border-ink/15 hover:border-ink/35"
-                              }`}
+                              title={permission.description}
+                              className={`perm ${checked ? "is-checked" : ""}`}
                             >
                               <input
                                 type="checkbox"
@@ -270,16 +262,14 @@ function RoleEditor({
                                 onChange={() =>
                                   togglePermission(permission.key)
                                 }
-                                className="mt-0.5 h-4 w-4 shrink-0 accent-cobalt"
+                                className="check mt-0.5"
                               />
-                              <span>
-                                <span className="block text-sm font-medium">
+                              <span className="min-w-0">
+                                <span className="perm-label">
                                   {permission.label}
                                 </span>
-                                <span className="mt-0.5 block text-xs text-ink/40">
-                                  {permission.key}
-                                </span>
-                                <span className="mt-1 block text-xs leading-5 text-ink/55">
+                                <span className="perm-key">{permission.key}</span>
+                                <span className="perm-desc">
                                   {permission.description}
                                 </span>
                               </span>
@@ -294,7 +284,7 @@ function RoleEditor({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ink/15 px-5 py-4">
+          <div className="editor-foot">
             <div>
               {isEditing && !role.isSystem && (role.userCount || 0) === 0 && (
                 <Button
@@ -304,12 +294,12 @@ function RoleEditor({
                   disabled={isSaving}
                   className="text-red-700 hover:text-red-800"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-3.5 w-3.5" />
                   Delete role
                 </Button>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <Button
                 type="button"
                 variant="secondary"
@@ -478,7 +468,7 @@ export function AdminRoles() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="admin-roles">
       <AdminPageHeader
         title="Roles & permissions"
         description="Define what each role can do and review the users mapped to it."
@@ -486,10 +476,11 @@ export function AdminRoles() {
         isRefreshing={isLoading}
         actions={
           <Button
+            size="sm"
             onClick={() => setEditor({ mode: "create" })}
             disabled={isLoading || groups.length === 0}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             New role
           </Button>
         }
@@ -500,46 +491,45 @@ export function AdminRoles() {
       {isLoading ? (
         <AdminLoading />
       ) : (
-        <div className="overflow-x-auto border border-ink/15">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-paper-soft text-ink/60">
-              <tr>
-                <th className="px-4 py-3">Role</th>
-                <th className="px-4 py-3">Users</th>
-                <th className="px-4 py-3">Permissions</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {roles.map((role) => {
-                const isExpanded = expandedId === role._id;
-                const assigned = roleUsers[role._id];
-
-                return (
-                  <RoleRows
-                    key={role._id}
-                    role={role}
-                    isExpanded={isExpanded}
-                    assigned={assigned}
-                    permissionIndex={permissionIndex}
-                    onToggle={() => toggleExpanded(role)}
-                    onEdit={() => setEditor(role)}
-                  />
-                );
-              })}
-              {roles.length === 0 && (
+        <div className="table-card">
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-4 py-10 text-center text-ink/60"
-                  >
-                    No roles found. Create the first role to get started.
-                  </td>
+                  <th>Role</th>
+                  <th>Users</th>
+                  <th>Permissions</th>
+                  <th>Status</th>
+                  <th className="col-actions">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {roles.map((role) => {
+                  const isExpanded = expandedId === role._id;
+                  const assigned = roleUsers[role._id];
+
+                  return (
+                    <RoleRows
+                      key={role._id}
+                      role={role}
+                      isExpanded={isExpanded}
+                      assigned={assigned}
+                      permissionIndex={permissionIndex}
+                      onToggle={() => toggleExpanded(role)}
+                      onEdit={() => setEditor(role)}
+                    />
+                  );
+                })}
+                {roles.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="empty">
+                      No roles found. Create the first role to get started.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -570,51 +560,39 @@ function RoleRows({
 }) {
   return (
     <>
-      <tr
-        className={`border-t border-ink/15 transition-colors ${
-          isExpanded ? "bg-paper-soft" : "hover:bg-paper-soft/60"
-        }`}
-      >
-        <td className="px-4 py-3">
+      <tr className={isExpanded ? "role-row is-open" : "role-row"}>
+        <td>
           <button
             type="button"
             onClick={onToggle}
-            className="flex items-center gap-3 text-left"
+            className="role-toggle"
             aria-expanded={isExpanded}
           >
-            <ChevronRight
-              className={`h-4 w-4 shrink-0 text-ink/45 transition-transform ${
-                isExpanded ? "rotate-90 text-cobalt" : ""
-              }`}
-            />
-            <span>
-              <span className="flex flex-wrap items-center gap-2">
-                <span className="font-medium">{role.displayName}</span>
-                {role.isSystem && (
-                  <StatusBadge tone="info">System</StatusBadge>
-                )}
+            <ChevronRight className="chevron" />
+            <span className="min-w-0">
+              <span className="role-name">
+                <span className="cell-title">{role.displayName}</span>
+                {role.isSystem && <StatusBadge tone="info">System</StatusBadge>}
               </span>
-              <span className="mt-0.5 block text-xs text-ink/45">
-                {role.name}
-              </span>
+              <span className="cell-mono">{role.name}</span>
             </span>
           </button>
         </td>
-        <td className="px-4 py-3">
-          <span className="font-medium">{role.userCount || 0}</span>
-          <span className="ml-1 text-xs text-ink/50">assigned</span>
+        <td>
+          <span className="font-medium tabular-nums">{role.userCount || 0}</span>
+          <span className="cell-sub ml-1">assigned</span>
         </td>
-        <td className="px-4 py-3">
+        <td>
           {role.permissions.includes("*")
             ? "All permissions"
             : `${role.permissions.length} selected`}
         </td>
-        <td className="px-4 py-3">
+        <td>
           <StatusBadge tone={role.isActive ? "success" : "danger"}>
             {role.isActive ? "Active" : "Inactive"}
           </StatusBadge>
         </td>
-        <td className="px-4 py-3">
+        <td className="col-actions">
           <Button size="sm" variant="secondary" onClick={onEdit}>
             <Pencil className="h-3 w-3" />
             Edit
@@ -623,82 +601,68 @@ function RoleRows({
       </tr>
 
       {isExpanded && (
-        <tr className="border-t border-ink/10 bg-paper-deep/40">
-          <td colSpan={5} className="px-5 py-5">
-            <div className="grid gap-6 lg:grid-cols-2">
+        <tr className="detail-row">
+          <td colSpan={5}>
+            <div className="detail-grid">
               <section>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="field-label">Granted permissions</p>
-                  <span className="text-xs text-ink/45">
-                    Effective immediately
-                  </span>
+                <div className="detail-head">
+                  <p className="section-label">Granted permissions</p>
+                  <span className="cell-sub">Effective immediately</span>
                 </div>
                 {role.permissions.length === 0 ? (
-                  <p className="mt-3 text-sm text-ink/55">
-                    This role has no permissions yet.
-                  </p>
+                  <p className="cell-sub">This role has no permissions yet.</p>
                 ) : (
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="chips">
                     {role.permissions.map((permissionKey) => {
                       const permission = permissionIndex.get(permissionKey);
 
                       return (
                         <span
                           key={permissionKey}
-                          title={permission?.description || permissionKey}
-                          className="rounded-lg inline-flex flex-col border border-ink/15 bg-paper-soft px-2.5 py-1.5"
+                          title={`${permissionKey} — ${permission?.description || ""}`}
+                          className="chip"
                         >
-                          <span className="text-xs font-medium">
-                            {permission?.label || permissionKey}
-                          </span>
-                          <span className=" text-xs text-ink/40">
-                            {permissionKey}
-                          </span>
+                          {permission?.label || permissionKey}
                         </span>
                       );
                     })}
                   </div>
                 )}
-                <p className="mt-4 text-xs leading-5 text-ink/50">
+                <p className="detail-note">
                   Permission changes are checked against the role on every API
                   request, so users do not need to sign in again.
                 </p>
               </section>
 
               <section>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="field-label flex items-center gap-2">
+                <div className="detail-head">
+                  <p className="section-label flex items-center gap-1.5">
                     <Users className="h-3 w-3" />
                     Assigned users
                   </p>
                   <Link
                     to={`/admin/users?role=${encodeURIComponent(role.name)}`}
-                    className=" text-xs text-cobalt hover:underline"
+                    className="link-underline text-xs"
                   >
                     Manage users
                   </Link>
                 </div>
 
                 {assigned?.isLoading ? (
-                  <div className="mt-4 flex items-center gap-2 text-xs text-ink/50">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                  <div className="cell-sub flex items-center gap-2">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     Loading users...
                   </div>
                 ) : assigned?.error ? (
-                  <p className="mt-3 text-xs text-red-700">{assigned.error}</p>
+                  <p className="text-xs text-red-700">{assigned.error}</p>
                 ) : assigned?.users?.length ? (
                   <>
-                    <div className="rounded-lg mt-3 divide-y divide-ink/10 border border-ink/15 bg-paper-soft">
+                    <div className="user-list">
                       {assigned.users.map((user) => (
-                        <div
-                          key={user._id}
-                          className="flex items-center justify-between gap-3 px-3 py-2.5"
-                        >
+                        <div key={user._id} className="user-item">
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-medium">
-                              {user.name}
-                            </p>
-                            <p className="truncate text-xs text-ink/55">
+                            <p className="cell-title truncate">{user.name}</p>
+                            <p className="cell-sub truncate">
                               {user.email || "No email"}
                             </p>
                           </div>
@@ -711,16 +675,14 @@ function RoleRows({
                       ))}
                     </div>
                     {assigned.pagination?.total > assigned.users.length && (
-                      <p className="mt-2 text-xs text-ink/45">
+                      <p className="detail-note">
                         Showing {assigned.users.length} of{" "}
                         {assigned.pagination.total} users.
                       </p>
                     )}
                   </>
                 ) : (
-                  <p className="mt-3 text-sm text-ink/55">
-                    No users are assigned to this role.
-                  </p>
+                  <p className="cell-sub">No users are assigned to this role.</p>
                 )}
               </section>
             </div>

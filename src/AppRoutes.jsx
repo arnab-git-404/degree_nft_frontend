@@ -6,25 +6,25 @@ import {
   STUDENT_DESK_PERMISSIONS,
   INSTITUTION_DESK_PERMISSIONS,
 } from "./lib/roles";
-import { NotFound } from "./pages/NotFound";
-import { InstitutionDashboard } from "./pages/InstitutionDashboard";
-import { VerificationPortal } from "./pages/VerificationPortal";
-import { StudentDashboard } from "./pages/StudentDashboard";
-import { BatchUploadPortal } from "./pages/BatchUploadPortal";
+import { NotFound } from "./pages/NotFound/NotFound";
+import { InstitutionDashboard } from "./pages/InstitutionDashboard/InstitutionDashboard";
+import { VerificationPortal } from "./pages/VerificationPortal/VerificationPortal";
+import { StudentDashboard } from "./pages/StudentDashboard/StudentDashboard";
+import { BatchUploadPortal } from "./pages/BatchUploadPortal/BatchUploadPortal";
 import { AdminLayout } from "./layouts/AdminLayout";
-import { AdminOverview } from "./pages/admin/AdminOverview";
-import { AdminInstitutions } from "./pages/admin/AdminInstitutions";
-import { AdminUsers } from "./pages/admin/AdminUsers";
-import { AdminRoles } from "./pages/admin/AdminRoles";
-import { AdminCredentials } from "./pages/admin/AdminCredentials";
-import { AdminReports } from "./pages/admin/AdminReports";
-import { AdminRegistrationLinks } from "./pages/admin/AdminRegistrationLinks";
-import { AdminActivity } from "./pages/admin/AdminActivity";
-import { Apply } from "./pages/Apply";
-import { Faucet } from "./pages/Faucet";
-import { Login } from "./pages/Login";
-import { Activate } from "./pages/Activate";
-import { Profile } from "./pages/Profile";
+import { AdminOverview } from "./pages/admin/AdminOverview/AdminOverview";
+import { AdminInstitutions } from "./pages/admin/AdminInstitutions/AdminInstitutions";
+import { AdminUsers } from "./pages/admin/AdminUsers/AdminUsers";
+import { AdminRoles } from "./pages/admin/AdminRoles/AdminRoles";
+import { AdminCredentials } from "./pages/admin/AdminCredentials/AdminCredentials";
+import { AdminReports } from "./pages/admin/AdminReports/AdminReports";
+import { AdminRegistrationLinks } from "./pages/admin/AdminRegistrationLinks/AdminRegistrationLinks";
+import { AdminActivity } from "./pages/admin/AdminActivity/AdminActivity";
+import { Apply } from "./pages/Apply/Apply";
+import { Faucet } from "./pages/Faucet/Faucet";
+import { Login } from "./pages/Login/Login";
+import { Activate } from "./pages/Activate/Activate";
+import { Profile } from "./pages/Profile/Profile";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function RoleRedirect() {

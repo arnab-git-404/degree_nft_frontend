@@ -1,5 +1,5 @@
-import { useAdminList } from "../../hooks/useAdminList";
-import { formatDate } from "../../lib/admin";
+import { useAdminList } from "../../../hooks/useAdminList";
+import { formatDate } from "../../../lib/admin";
 import {
   AdminEmpty,
   AdminError,
@@ -8,7 +8,8 @@ import {
   AdminPagination,
   AdminToolbar,
   StatusBadge,
-} from "../../components/admin/AdminUI";
+} from "../../../components/admin/AdminUI";
+import "./AdminActivity.css";
 
 const FILTER_OPTIONS = [
   ["all", "All activity"],
@@ -44,7 +45,7 @@ export function AdminActivity() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="admin-activity">
       <AdminPageHeader
         title="Activity log"
         description="Who did what, and when: sign-ins, admin changes and institution actions. Newest first."
@@ -67,49 +68,45 @@ export function AdminActivity() {
       {isLoading ? (
         <AdminLoading />
       ) : (
-        <>
-          <div className="overflow-x-auto rounded-lg border border-ink/15">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-paper-soft text-ink/60">
+        <div className="table-card">
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3">When</th>
-                  <th className="px-4 py-3">Who</th>
-                  <th className="px-4 py-3">What</th>
-                  <th className="px-4 py-3">Where</th>
-                  <th className="px-4 py-3">Result</th>
+                  <th>When</th>
+                  <th>Who</th>
+                  <th>What</th>
+                  <th>Where</th>
+                  <th>Result</th>
                 </tr>
               </thead>
               <tbody>
                 {logs.map((log) => (
-                  <tr key={log._id} className="border-t border-ink/15 align-top">
-                    <td className="whitespace-nowrap px-4 py-3 text-xs text-ink/60">
-                      {formatDate(log.createdAt)}
+                  <tr key={log._id} className="log-row">
+                    <td className="when">{formatDate(log.createdAt)}</td>
+                    <td>
+                      <p className="cell-title">{log.actorName || "Anonymous"}</p>
+                      {log.ip && <p className="cell-sub">{log.ip}</p>}
                     </td>
-                    <td className="px-4 py-3">
-                      <p className="font-medium">{log.actorName || "Anonymous"}</p>
-                      {log.ip && <p className="text-xs text-ink/50">{log.ip}</p>}
-                    </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <p>{log.summary || log.action}</p>
-                      <p className="font-mono text-xs text-ink/50">{log.action}</p>
+                      <p className="action-code">{log.action}</p>
                       {log.details && (
-                        <details className="mt-1 text-xs text-ink/60">
-                          <summary className="cursor-pointer">Details</summary>
-                          <pre className="mt-1 max-w-md overflow-x-auto whitespace-pre-wrap rounded bg-paper-deep p-2">
-                            {JSON.stringify(log.details, null, 2)}
-                          </pre>
+                        <details className="details">
+                          <summary>Details</summary>
+                          <pre>{JSON.stringify(log.details, null, 2)}</pre>
                         </details>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="where">
                       <p>{SCOPE_LABELS[log.scope] || log.scope}</p>
                       {log.institutionId?.name && (
-                        <p className="text-ink/60">
+                        <p className="cell-sub">
                           {log.institutionId.name} ({log.institutionId.code})
                         </p>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <StatusBadge tone={log.outcome === "FAILURE" ? "danger" : "success"}>
                         {log.outcome === "FAILURE" ? "Failed" : "OK"}
                       </StatusBadge>
@@ -121,7 +118,7 @@ export function AdminActivity() {
             </table>
           </div>
           <AdminPagination pagination={pagination} onPage={setPage} />
-        </>
+        </div>
       )}
     </div>
   );

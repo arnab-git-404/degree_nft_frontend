@@ -1,0 +1,34 @@
+@reference "../../../index.css";
+
+/* Admin › Activity log. Scoped under .admin-activity. */
+.admin-activity {
+  @apply space-y-3;
+
+  & .log-row td {
+    @apply align-top;
+  }
+
+  & .when {
+    @apply text-xs whitespace-nowrap text-ink/55;
+  }
+
+  & .action-code {
+    @apply font-mono text-[11px] text-ink/45;
+  }
+
+  & .where {
+    @apply text-xs;
+  }
+
+  & .details {
+    @apply mt-0.5 text-xs text-ink/60;
+
+    & summary {
+      @apply cursor-pointer text-cobalt hover:underline;
+    }
+
+    & pre {
+      @apply mt-1 max-h-48 max-w-md overflow-auto rounded bg-paper p-2 text-[11px] whitespace-pre-wrap;
+    }
+  }
+}

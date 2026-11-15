@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import api from "../../lib/api";
-import { useAdminList } from "../../hooks/useAdminList";
-import { statusTone } from "../../lib/admin";
-import { shortenAddress } from "../../lib/utils";
-import { Button } from "../../components/Button";
+import api from "../../../lib/api";
+import { useAdminList } from "../../../hooks/useAdminList";
+import { statusTone } from "../../../lib/admin";
+import { shortenAddress } from "../../../lib/utils";
+import { Button } from "../../../components/Button";
 import {
   AdminEmpty,
   AdminError,
@@ -14,7 +14,8 @@ import {
   AdminPagination,
   AdminToolbar,
   StatusBadge,
-} from "../../components/admin/AdminUI";
+} from "../../../components/admin/AdminUI";
+import "./AdminInstitutions.css";
 
 const FILTER_OPTIONS = [
   ["all", "All statuses"],
@@ -65,7 +66,7 @@ export function AdminInstitutions() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="admin-institutions">
       <AdminPageHeader
         title="Institutions"
         description="Review, verify, and reject institution profiles."
@@ -88,48 +89,41 @@ export function AdminInstitutions() {
       {isLoading ? (
         <AdminLoading />
       ) : (
-        <>
-          <div className="overflow-x-auto rounded-lg border border-ink/15">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-paper-soft text-ink/60">
+        <div className="table-card">
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3">Institution</th>
-                  <th className="px-4 py-3">Wallet</th>
-                  <th className="px-4 py-3">Owner</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Actions</th>
+                  <th>Institution</th>
+                  <th>Wallet</th>
+                  <th>Owner</th>
+                  <th>Status</th>
+                  <th className="col-actions">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {institutions.map((institution) => (
-                  <tr
-                    key={institution._id}
-                    className="border-t border-ink/15"
-                  >
-                    <td className="px-4 py-3">
-                      <p className="font-medium">{institution.name}</p>
-                      <p className="text-xs text-ink/60">
-                        {institution.code}
-                      </p>
+                  <tr key={institution._id}>
+                    <td>
+                      <p className="cell-title">{institution.name}</p>
+                      <p className="cell-sub">{institution.code}</p>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs">
+                    <td className="cell-mono">
                       {shortenAddress(institution.walletAddress || "")}
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <p>{institution.userId?.name || "—"}</p>
-                      <p className="text-xs text-ink/60">
-                        {institution.userId?.email || ""}
-                      </p>
+                      <p className="cell-sub">{institution.userId?.email || ""}</p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <StatusBadge
                         tone={statusTone(institution.verificationStatus)}
                       >
                         {institution.verificationStatus}
                       </StatusBadge>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
+                    <td className="col-actions">
+                      <div className="actions">
                         <Button
                           size="sm"
                           variant="secondary"
@@ -141,7 +135,7 @@ export function AdminInstitutions() {
                             )
                           }
                         >
-                          <CheckCircle className="mr-1 h-3 w-3" />
+                          <CheckCircle className="h-3.5 w-3.5 text-green-700" />
                           Verify
                         </Button>
                         <Button
@@ -155,7 +149,7 @@ export function AdminInstitutions() {
                             )
                           }
                         >
-                          <XCircle className="mr-1 h-3 w-3" />
+                          <XCircle className="h-3.5 w-3.5 text-red-700" />
                           Reject
                         </Button>
                       </div>
@@ -169,7 +163,7 @@ export function AdminInstitutions() {
             </table>
           </div>
           <AdminPagination pagination={pagination} onPage={setPage} />
-        </>
+        </div>
       )}
     </div>
   );
