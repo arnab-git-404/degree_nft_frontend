@@ -17,7 +17,7 @@ export const getHomePath = (user) => {
   const has = (permission) =>
     permissions.includes("*") || permissions.includes(permission);
 
-  if (role === "admin") return "/admin";
+  if (has("platform:manage")) return "/admin";
   if (role === "university") return "/university";
   if (role === "student") return "/student";
 

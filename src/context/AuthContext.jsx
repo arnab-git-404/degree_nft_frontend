@@ -270,6 +270,9 @@ export function AuthProvider({ children }) {
     [permissions]
   );
 
+  // Admin panel access comes from the role's permissions, same rule as the backend.
+  const canManagePlatform = hasPermission("platform:manage");
+
   const hasAnyPermission = useCallback(
     (...required) =>
       permissions.includes("*") ||
@@ -286,6 +289,7 @@ export function AuthProvider({ children }) {
       walletAddress,
       sessionWallet,
       isAuthenticated,
+      canManagePlatform,
       isRestoring,
       isAuthenticating,
       authError,
@@ -313,6 +317,7 @@ export function AuthProvider({ children }) {
       walletAddress,
       sessionWallet,
       isAuthenticated,
+      canManagePlatform,
       isRestoring,
       isAuthenticating,
       authError,

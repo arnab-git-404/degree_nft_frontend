@@ -116,11 +116,10 @@ export function AppSidebar({ onNavigate, onClose }) {
   const { publicKey } = useWallet();
   const {
     user,
-    roleName,
     isAuthenticated,
     isRestoring,
     signOut,
-    hasRole,
+    canManagePlatform,
     hasAnyPermission,
   } = useAuth();
   const navigate = useNavigate();
@@ -128,11 +127,12 @@ export function AppSidebar({ onNavigate, onClose }) {
   const walletAddress =
     user?.primaryWallet?.address || publicKey?.toBase58() || "";
   const displayName = user?.name || "Guest";
-  const roleLabel = roleName
-    ? `${roleName.charAt(0).toUpperCase()}${roleName.slice(1)}`
+  // userType is the display category (e.g. SUPER_ADMIN -> "Super Admin").
+  const roleLabel = user?.userType
+    ? user.userType.toLowerCase().replace(/(^|_)(\w)/g, (_, sep, c) => `${sep ? " " : ""}${c.toUpperCase()}`)
     : "Not signed in";
   const canSee = (module) =>
-    (!module.adminOnly || hasRole("admin")) &&
+    (!module.adminOnly || canManagePlatform) &&
     (!module.permissions || hasAnyPermission(...module.permissions));
   const visibleSections = SECTIONS.map((section) => ({
     ...section,

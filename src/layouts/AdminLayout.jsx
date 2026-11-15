@@ -6,8 +6,7 @@ import { Button } from "../components/Button";
 import { SignInRequired } from "../components/SignInRequired";
 
 export function AdminLayout() {
-  const { isAuthenticated, isRestoring, hasRole, refreshUser } = useAuth();
-  const isAdmin = hasRole("admin");
+  const { isAuthenticated, isRestoring, canManagePlatform: isAdmin, refreshUser } = useAuth();
 
   if (isRestoring) {
     return (
@@ -38,7 +37,7 @@ export function AdminLayout() {
           Administrator only
         </h2>
         <p className="mt-3 text-sm leading-6 text-ink/60">
-          This account does not have admin access. Ask a platform owner to grant
+          This account does not have Super Admin access. Ask a Super Admin to grant
           the role, then refresh.
         </p>
         <Button

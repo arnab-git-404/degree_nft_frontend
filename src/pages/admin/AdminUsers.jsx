@@ -16,6 +16,13 @@ import {
   StatusBadge,
 } from "../../components/admin/AdminUI";
 
+const USER_TYPE_OPTIONS = [
+  ["SUPER_ADMIN", "Super Admin"],
+  ["ADMIN", "Admin"],
+  ["STAFF", "Staff"],
+  ["STUDENT", "Student"],
+];
+
 export function AdminUsers() {
   const [searchParams] = useSearchParams();
   const [roles, setRoles] = useState([]);
@@ -67,6 +74,22 @@ export function AdminUsers() {
     } catch (updateError) {
       toast.error(
         updateError.response?.data?.message || "Failed to update user role"
+      );
+    } finally {
+      setBusyId("");
+    }
+  };
+
+  const updateUserType = async (user, userType) => {
+    setBusyId(user._id);
+
+    try {
+      const { data } = await api.patch(`/admin/users/${user._id}/account`, { userType });
+      replaceItem(user._id, data.user);
+      toast.success("User type updated");
+    } catch (updateError) {
+      toast.error(
+        updateError.response?.data?.message || "Failed to update user type"
       );
     } finally {
       setBusyId("");
@@ -129,6 +152,7 @@ export function AdminUsers() {
                   <th className="px-4 py-3">User</th>
                   <th className="px-4 py-3">Wallet</th>
                   <th className="px-4 py-3">Role</th>
+                  <th className="px-4 py-3">User type</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Joined</th>
                   <th className="px-4 py-3">Actions</th>
@@ -172,6 +196,23 @@ export function AdminUsers() {
                       </select>
                     </td>
                     <td className="px-4 py-3">
+                      <select
+                        aria-label={`User type for ${user.name}`}
+                        value={user.userType || "STUDENT"}
+                        disabled={busyId === user._id}
+                        onChange={(event) =>
+                          updateUserType(user, event.target.value)
+                        }
+                        className="h-8 rounded border border-ink/15 bg-paper-deep px-2 text-xs text-ink disabled:opacity-50"
+                      >
+                        {USER_TYPE_OPTIONS.map(([value, label]) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-4 py-3">
                       <StatusBadge tone={user.isActive ? "success" : "danger"}>
                         {user.isActive ? "Active" : "Inactive"}
                       </StatusBadge>
@@ -192,7 +233,7 @@ export function AdminUsers() {
                   </tr>
                 ))}
                 {users.length === 0 && (
-                  <AdminEmpty colSpan={6} message="No users found" />
+                  <AdminEmpty colSpan={7} message="No users found" />
                 )}
               </tbody>
             </table>
