@@ -65,10 +65,48 @@ export function Apply() {
   }, [token]);
 
   const wallet = form.walletAddress.trim();
+  const walletFormatOk = Boolean(wallet) && isValidPublicKey(wallet);
+  const [walletCheck, setWalletCheck] = useState(null); // { address, status?, message? }
+
+  useEffect(() => {
+    if (!walletFormatOk) return;
+    let cancelled = false;
+
+    const timer = setTimeout(() => {
+      api
+        .get(`/registration/${encodeURIComponent(token)}/wallet/${encodeURIComponent(wallet)}`)
+        .then(({ data }) => {
+          if (!cancelled) setWalletCheck({ address: wallet, status: data.status, message: data.message });
+        })
+        .catch((checkError) => {
+          if (cancelled) return;
+          if (checkError.response?.data?.code === "REGISTRATION_LINK_INACTIVE") setStatus("invalid");
+          // Check failed (network etc.): don't block, the server re-checks on submit.
+          else setWalletCheck({ address: wallet });
+        });
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [token, wallet, walletFormatOk]);
+
+  // Only trust a result for the address currently in the field.
+  const check = walletCheck?.address === wallet ? walletCheck : null;
+  const isCheckingWallet = walletFormatOk && !check;
+  const walletBlocked = Boolean(check?.status && check.status !== "AVAILABLE");
   const walletError =
-    wallet && !isValidPublicKey(wallet)
+    wallet && !walletFormatOk
       ? "Enter a valid Solana wallet address"
-      : "";
+      : walletBlocked
+        ? check.message
+        : "";
+  const walletDescription = isCheckingWallet
+    ? "Checking wallet…"
+    : check?.message && !walletBlocked
+      ? check.message
+      : "The wallet that will issue your credentials on Solana.";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -80,7 +118,7 @@ export function Apply() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (walletError) return;
+    if (walletError || isCheckingWallet) return;
     setIsSubmitting(true);
     setError("");
 
@@ -92,8 +130,12 @@ export function Apply() {
       setMessage(data.message);
       setStatus("submitted");
     } catch (submitError) {
-      if (submitError.response?.data?.code === "REGISTRATION_LINK_INACTIVE") {
+      const code = submitError.response?.data?.code;
+      if (code === "REGISTRATION_LINK_INACTIVE") {
         setStatus("invalid");
+      } else if (code?.startsWith("WALLET_")) {
+        // Someone used this wallet after the live check: show it on the field.
+        setWalletCheck({ address: wallet, status: code, message: submitError.response.data.message });
       } else {
         setError(getErrorMessage(submitError, "Failed to submit application"));
       }
@@ -161,7 +203,7 @@ export function Apply() {
                     autoComplete="off"
                     className="font-mono"
                     error={walletError}
-                    description="The wallet that will issue your credentials on Solana."
+                    description={walletError ? undefined : walletDescription}
                   />
                 </div>
               </fieldset>
@@ -190,7 +232,7 @@ export function Apply() {
             ) : null}
 
             <div className="form-foot">
-              <Button type="submit" isLoading={isSubmitting}>
+              <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting || walletBlocked || isCheckingWallet}>
                 Submit application
               </Button>
             </div>
