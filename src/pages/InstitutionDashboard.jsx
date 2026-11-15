@@ -29,6 +29,8 @@ export function InstitutionDashboard() {
     hasPermission,
     roleName,
     refreshUser,
+    activeInstitutionId,
+    selectInstitution,
   } = useAuth();
   const navigate = useNavigate();
   const canIssueCredentials =
@@ -71,8 +73,10 @@ export function InstitutionDashboard() {
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // No selected college means no membership yet: show the create-profile form.
+    if (!isAuthenticated || !activeInstitutionId) {
       setInstitutionProfile(null);
+      setIsLoadingProfile(false);
       return;
     }
 
@@ -111,7 +115,7 @@ export function InstitutionDashboard() {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, activeInstitutionId]);
 
   const handleProfileInputChange = (e) => {
     const { name, value } = e.target;
@@ -141,6 +145,7 @@ export function InstitutionDashboard() {
 
       setInstitutionProfile(data.institution);
       await refreshUser().catch(() => {});
+      selectInstitution(data.institution._id);
       toast.success("Institution profile created successfully");
     } catch (error) {
       const message =

@@ -2,10 +2,22 @@
 export const INSTITUTION_DESK_PERMISSIONS = ["nft:create", "batch:upload", "student:read"];
 export const STUDENT_DESK_PERMISSIONS = ["nft:read", "nft:confirm", "report:create"];
 
+// Colleges the user can work in (the API already returns only ACTIVE memberships).
+export const getActiveMemberships = (user) =>
+  (user?.memberships || []).filter(
+    (membership) =>
+      membership.institutionId?.status === "ACTIVE" && membership.roleId?.isActive !== false
+  );
+
+// Account role permissions plus those of every active college membership. UI only: the backend
+// checks college permissions against the selected college's membership on each request.
 export const getPermissions = (user) => {
   if (!user || typeof user === "string") return [];
 
-  return user.roleId?.permissions || [];
+  return [
+    ...(user.roleId?.permissions || []),
+    ...getActiveMemberships(user).flatMap((membership) => membership.roleId?.permissions || []),
+  ];
 };
 
 const hasAny = (user, required) => {

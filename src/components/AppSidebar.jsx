@@ -121,6 +121,9 @@ export function AppSidebar({ onNavigate, onClose }) {
     signOut,
     canManagePlatform,
     hasAnyPermission,
+    memberships,
+    activeInstitutionId,
+    selectInstitution,
   } = useAuth();
   const navigate = useNavigate();
 
@@ -173,6 +176,34 @@ export function AppSidebar({ onNavigate, onClose }) {
           </button>
         ) : null}
       </div>
+
+      {memberships.length > 0 && (
+        <div className="border-b border-white/10 p-3">
+          <label
+            htmlFor="active-institution"
+            className="mb-1 block text-[11px] uppercase tracking-wide text-slate-500"
+          >
+            Working in
+          </label>
+          <select
+            id="active-institution"
+            value={activeInstitutionId || ""}
+            onChange={(event) => selectInstitution(event.target.value)}
+            disabled={memberships.length === 1}
+            className="h-9 w-full rounded-md border border-white/10 bg-white/5 px-2 text-sm text-white disabled:opacity-100"
+          >
+            {memberships.map((membership) => (
+              <option
+                key={membership.institutionId._id}
+                value={membership.institutionId._id}
+                className="text-ink"
+              >
+                {membership.institutionId.name} · {membership.roleId.displayName}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
         {visibleSections.map((section) => (

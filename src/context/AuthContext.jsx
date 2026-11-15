@@ -9,7 +9,12 @@ import {
 } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Buffer } from "buffer";
-import api, { AUTH_TOKEN_KEY, AUTH_WALLET_KEY } from "../lib/api";
+import api, {
+  ACTIVE_INSTITUTION_KEY,
+  AUTH_TOKEN_KEY,
+  AUTH_WALLET_KEY,
+} from "../lib/api";
+import { getActiveMemberships } from "../lib/roles";
 
 const AuthContext = createContext(null);
 
@@ -30,10 +35,25 @@ export function AuthProvider({ children }) {
   const [isRestoring, setIsRestoring] = useState(Boolean(getStoredToken()));
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authError, setAuthError] = useState("");
+  const [activeInstitutionId, setActiveInstitutionIdState] = useState(() =>
+    localStorage.getItem(ACTIVE_INSTITUTION_KEY)
+  );
+
+  // Stored first so the api interceptor sends the new X-Institution-Id on the very next request.
+  const selectInstitution = useCallback((institutionId) => {
+    if (institutionId) {
+      localStorage.setItem(ACTIVE_INSTITUTION_KEY, institutionId);
+    } else {
+      localStorage.removeItem(ACTIVE_INSTITUTION_KEY);
+    }
+    setActiveInstitutionIdState(institutionId || null);
+  }, []);
 
   const clearSession = useCallback(() => {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_WALLET_KEY);
+    localStorage.removeItem(ACTIVE_INSTITUTION_KEY);
+    setActiveInstitutionIdState(null);
     setToken(null);
     setUser(null);
     setSessionWallet(null);
@@ -253,9 +273,23 @@ export function AuthProvider({ children }) {
   }, []);
 
   const roleName = user?.roleId?.name || null;
+  const memberships = useMemo(() => getActiveMemberships(user), [user]);
+  const activeMembership =
+    memberships.find((membership) => membership.institutionId._id === activeInstitutionId) || null;
+
+  // Keep the selection valid: default to the first college, clear it when the user has none.
+  useEffect(() => {
+    if (!user) return;
+    if (!activeMembership) selectInstitution(memberships[0]?.institutionId._id || null);
+  }, [user, memberships, activeMembership, selectInstitution]);
+
+  // Account role permissions plus the selected college's membership role (UI only; the API re-checks).
   const permissions = useMemo(
-    () => user?.roleId?.permissions || [],
-    [user]
+    () => [
+      ...(user?.roleId?.permissions || []),
+      ...(activeMembership?.roleId?.permissions || []),
+    ],
+    [user, activeMembership]
   );
   const isAuthenticated = Boolean(token && user);
 
@@ -302,8 +336,16 @@ export function AuthProvider({ children }) {
       refreshUser,
       hasPermission,
       hasAnyPermission,
+      memberships,
+      activeMembership,
+      activeInstitutionId,
+      selectInstitution,
     }),
     [
+      memberships,
+      activeMembership,
+      activeInstitutionId,
+      selectInstitution,
       user,
       token,
       roleName,
