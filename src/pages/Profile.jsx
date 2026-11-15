@@ -21,13 +21,8 @@ import toast from "react-hot-toast";
 import api, { getErrorMessage } from "../lib/api";
 import { Input } from "../components/Input";
 import { useAuth } from "../context/AuthContext";
+import { getDeskPath } from "../lib/roles";
 import { shortenAddress } from "../lib/utils";
-
-const ROLE_LABELS = {
-  student: "Student",
-  university: "University",
-  admin: "Administrator",
-};
 
 const formatDate = (value) => {
   if (!value) return "—";
@@ -103,7 +98,7 @@ export function Profile() {
     );
   }, [user]);
 
-  const roleLabel = ROLE_LABELS[roleName] || roleName || "Member";
+  const roleLabel = user?.roleId?.displayName || roleName || "Member";
   const connectedAddress = publicKey?.toBase58() || "";
   const connectedWalletLinked = wallets.some(
     (wallet) => wallet.address === connectedAddress
@@ -236,7 +231,7 @@ export function Profile() {
     return null;
   }
 
-  const deskPath = roleName === "university" ? "/university" : "/student";
+  const deskPath = getDeskPath(user);
 
   return (
     <div className="space-y-10">
@@ -257,10 +252,12 @@ export function Profile() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Link to={deskPath} className="btn-outline">
-            Open {roleName === "university" ? "university" : "student"} desk
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
+          {deskPath && (
+            <Link to={deskPath} className="btn-outline">
+              Open {deskPath === "/university" ? "university" : "student"} desk
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          )}
           <button type="button" onClick={handleSignOut} className="btn-ghost">
             <LogOut className="h-4 w-4" />
             Sign out

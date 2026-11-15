@@ -1,9 +1,6 @@
-export const getRoleName = (user) => {
-  if (!user) return null;
-  if (typeof user === "string") return user;
-
-  return user.roleId?.name || null;
-};
+// Pages are opened by permission, never by role name (custom roles can have any name).
+export const UNIVERSITY_DESK_PERMISSIONS = ["nft:create", "batch:upload", "student:read"];
+export const STUDENT_DESK_PERMISSIONS = ["nft:read", "nft:confirm", "report:create"];
 
 export const getPermissions = (user) => {
   if (!user || typeof user === "string") return [];
@@ -11,27 +8,19 @@ export const getPermissions = (user) => {
   return user.roleId?.permissions || [];
 };
 
-export const getHomePath = (user) => {
-  const role = getRoleName(user);
+const hasAny = (user, required) => {
   const permissions = getPermissions(user);
-  const has = (permission) =>
-    permissions.includes("*") || permissions.includes(permission);
+  return permissions.includes("*") || required.some((key) => permissions.includes(key));
+};
 
-  if (has("platform:manage")) return "/admin";
-  if (role === "university") return "/university";
-  if (role === "student") return "/student";
+// The working desk for this user, or null when they have neither.
+export const getDeskPath = (user) => {
+  if (hasAny(user, UNIVERSITY_DESK_PERMISSIONS)) return "/university";
+  if (hasAny(user, STUDENT_DESK_PERMISSIONS)) return "/student";
+  return null;
+};
 
-  if (
-    has("nft:create") ||
-    has("batch:upload") ||
-    has("student:read")
-  ) {
-    return "/university";
-  }
-
-  if (has("nft:read") || has("nft:confirm") || has("report:create")) {
-    return "/student";
-  }
-
-  return "/profile";
+export const getHomePath = (user) => {
+  if (hasAny(user, ["platform:manage"])) return "/admin";
+  return getDeskPath(user) || "/profile";
 };

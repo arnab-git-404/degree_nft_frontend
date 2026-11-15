@@ -1,7 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "./context/AuthContext";
-import { getHomePath } from "./lib/roles";
+import {
+  getHomePath,
+  STUDENT_DESK_PERMISSIONS,
+  UNIVERSITY_DESK_PERMISSIONS,
+} from "./lib/roles";
 import { NotFound } from "./pages/NotFound";
 import { UniversityDashboard } from "./pages/UniversityDashboard";
 import { VerificationPortal } from "./pages/VerificationPortal";
@@ -55,9 +59,30 @@ const AppRoutes = () => {
         }
       />
       <Route path="/verify" element={<VerificationPortal />} />
-      <Route path="/student" element={<StudentDashboard />} />
-      <Route path="/university" element={<UniversityDashboard />} />
-      <Route path="/batch-upload" element={<BatchUploadPortal />} />
+      <Route
+        path="/student"
+        element={
+          <ProtectedRoute anyOf={STUDENT_DESK_PERMISSIONS}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/university"
+        element={
+          <ProtectedRoute anyOf={UNIVERSITY_DESK_PERMISSIONS}>
+            <UniversityDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/batch-upload"
+        element={
+          <ProtectedRoute anyOf={["batch:upload"]}>
+            <BatchUploadPortal />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminOverview />} />
         <Route path="universities" element={<AdminUniversities />} />

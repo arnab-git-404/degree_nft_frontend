@@ -61,7 +61,7 @@ export function Navbar({ onMenuClick }) {
                 {user?.name || "Profile"}
               </span>
               <span className="block text-[11px] capitalize text-ink/50">
-                {roleName}
+                {user?.roleId?.displayName || roleName}
               </span>
             </span>
           </Link>

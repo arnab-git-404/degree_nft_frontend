@@ -259,11 +259,6 @@ export function AuthProvider({ children }) {
   );
   const isAuthenticated = Boolean(token && user);
 
-  const hasRole = useCallback(
-    (...roles) => Boolean(roleName && roles.includes(roleName)),
-    [roleName]
-  );
-
   const hasPermission = useCallback(
     (permission) =>
       permissions.includes("*") || permissions.includes(permission),
@@ -305,7 +300,6 @@ export function AuthProvider({ children }) {
       unlinkWallet,
       setPrimaryWallet,
       refreshUser,
-      hasRole,
       hasPermission,
       hasAnyPermission,
     }),
@@ -333,7 +327,6 @@ export function AuthProvider({ children }) {
       unlinkWallet,
       setPrimaryWallet,
       refreshUser,
-      hasRole,
       hasPermission,
       hasAnyPermission,
     ]
