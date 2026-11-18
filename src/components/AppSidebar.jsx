@@ -3,6 +3,7 @@ import { Link, NavLink, matchPath, useLocation, useNavigate } from "react-router
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   BadgeCheck,
+  BookOpen,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -59,6 +60,7 @@ export const SECTIONS = [
       // No permissions on the desk: it is where an applicant registers, before any role exists.
       { to: "/institution", label: "Registration & desk", icon: School, end: true },
       { to: "/institution/staff", label: "Staff", icon: UsersRound, permissions: ["staff:read"] },
+      { to: "/institution/programs", label: "Programs", icon: BookOpen, permissions: ["program:read"] },
       {
         to: "/batch-upload",
         label: "Batch upload",

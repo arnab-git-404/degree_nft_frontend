@@ -9,6 +9,7 @@ import {
 import { NotFound } from "./pages/NotFound/NotFound";
 import { InstitutionDashboard } from "./pages/InstitutionDashboard/InstitutionDashboard";
 import { InstitutionStaff } from "./pages/InstitutionStaff/InstitutionStaff";
+import { InstitutionPrograms } from "./pages/InstitutionPrograms/InstitutionPrograms";
 import { VerificationPortal } from "./pages/VerificationPortal/VerificationPortal";
 import { StudentDashboard } from "./pages/StudentDashboard/StudentDashboard";
 import { BatchUploadPortal } from "./pages/BatchUploadPortal/BatchUploadPortal";
@@ -84,6 +85,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute anyOf={["staff:read"]}>
             <InstitutionStaff />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/programs"
+        element={
+          <ProtectedRoute anyOf={["program:read"]}>
+            <InstitutionPrograms />
           </ProtectedRoute>
         }
       />

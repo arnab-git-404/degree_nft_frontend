@@ -47,11 +47,12 @@
 
   /* ---- Details modal ---- */
   & .modal-backdrop {
-    @apply fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-ink/50 p-3 backdrop-blur-sm;
+    @apply fixed inset-0 z-[120] flex overflow-y-auto bg-ink/50 p-3 backdrop-blur-sm;
   }
 
+  /* m-auto centres both ways and still scrolls from the top when taller than the screen */
   & .modal {
-    @apply my-4 w-full max-w-2xl rounded-xl border border-ink/10 bg-paper-soft shadow-2xl;
+    @apply m-auto w-full max-w-2xl rounded-xl border border-ink/10 bg-paper-soft shadow-2xl;
   }
 
   & .modal-head {
