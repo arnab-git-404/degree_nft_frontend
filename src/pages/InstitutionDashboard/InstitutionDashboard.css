@@ -6,7 +6,7 @@
 
   /* ---- Guard / loading states ---- */
   & .state-card {
-    @apply mx-auto mt-[15vh] flex max-w-md items-start gap-3 rounded-md border border-ink/10 bg-paper-soft p-4 shadow-xs;
+    @apply mx-auto mt-[15vh] flex max-w-md items-start gap-3 rounded-xl border border-ink/10 bg-paper-soft p-4 shadow-xs;
   }
 
   & .state-icon {
@@ -27,7 +27,7 @@
 
   /* ---- Header ---- */
   & .page-head {
-    @apply flex flex-wrap items-center justify-between gap-2 rounded-md border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs;
+    @apply flex flex-wrap items-center justify-between gap-2 rounded-xl border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs;
   }
 
   & .inst {
@@ -39,11 +39,11 @@
   }
 
   & .inst-name {
-    @apply text-[15px] leading-tight font-semibold;
+    @apply text-[16px] leading-tight font-semibold;
   }
 
   & .status {
-    @apply rounded px-1.5 py-0.5 text-[11px] font-medium;
+    @apply rounded px-1.5 py-0.5 text-[12px] font-medium;
   }
 
   & .status-verified {
@@ -64,7 +64,7 @@
 
   /* ---- Cards ---- */
   & .card {
-    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   & .register-card {
@@ -76,7 +76,7 @@
   }
 
   & .card-title {
-    @apply text-[13px] font-semibold;
+    @apply text-[14px] font-semibold;
   }
 
   & .card-sub {
@@ -101,7 +101,7 @@
   }
 
   & .group-label {
-    @apply mb-2 flex cursor-help items-center gap-1 text-[11px] font-semibold tracking-wide text-cobalt uppercase;
+    @apply mb-2 flex cursor-help items-center gap-1 text-[12px] font-semibold tracking-wide text-cobalt uppercase;
   }
 
   & .fields-2 {
@@ -117,6 +117,6 @@
   }
 
   & .info {
-    @apply flex max-w-2xl items-start gap-1.5 text-[11px] leading-4 text-ink/55;
+    @apply flex max-w-2xl items-start gap-1.5 text-[12px] leading-4 text-ink/55;
   }
 }

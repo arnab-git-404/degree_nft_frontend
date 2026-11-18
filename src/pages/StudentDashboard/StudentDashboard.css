@@ -6,7 +6,7 @@
 
   /* ---- Guard / loading states ---- */
   & .state-card {
-    @apply mx-auto mt-[15vh] flex max-w-md items-start gap-3 rounded-md border border-ink/10 bg-paper-soft p-4 shadow-xs;
+    @apply mx-auto mt-[15vh] flex max-w-md items-start gap-3 rounded-xl border border-ink/10 bg-paper-soft p-4 shadow-xs;
   }
 
   & .state-icon {
@@ -31,7 +31,7 @@
   }
 
   & .page-title {
-    @apply text-base leading-tight font-semibold;
+    @apply text-[22px] leading-tight font-bold tracking-tight;
   }
 
   & .pills {
@@ -39,7 +39,7 @@
   }
 
   & .pill {
-    @apply inline-flex items-center gap-1 rounded bg-paper-soft px-1.5 py-0.5 text-[11px] text-ink/55 ring-1 ring-ink/10;
+    @apply inline-flex items-center gap-1 rounded bg-paper-soft px-1.5 py-0.5 text-[12px] text-ink/55 ring-1 ring-ink/10;
 
     & .font-mono {
       @apply text-ink/80;
@@ -48,7 +48,7 @@
 
   /* ---- Mint success ---- */
   & .success {
-    @apply flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-green-600/40 bg-green-600/10 px-3 py-2 text-[13px];
+    @apply flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-green-600/40 bg-green-600/10 px-3 py-2 text-[14px];
   }
 
   & .success-link {
@@ -65,11 +65,11 @@
   }
 
   & .review-title {
-    @apply flex items-center gap-1.5 text-[13px] font-semibold text-cobalt;
+    @apply flex items-center gap-1.5 text-[14px] font-semibold text-cobalt;
   }
 
   & .countdown {
-    @apply inline-flex items-center gap-1 rounded bg-amber-100 px-1.5 py-0.5 text-[11px] font-medium text-amber-800;
+    @apply inline-flex items-center gap-1 rounded bg-amber-100 px-1.5 py-0.5 text-[12px] font-medium text-amber-800;
   }
 
   & .review-body {
@@ -96,7 +96,7 @@
     @apply space-y-1 text-xs;
 
     & dt {
-      @apply text-[11px] text-ink/50;
+      @apply text-[12px] text-ink/50;
     }
 
     & dd {
@@ -125,11 +125,11 @@
     }
 
     & dt {
-      @apply truncate text-[10px] text-ink/50 uppercase;
+      @apply truncate text-[11px] text-ink/50 uppercase;
     }
 
     & dd {
-      @apply truncate text-[13px] font-medium;
+      @apply truncate text-[14px] font-medium;
     }
   }
 
@@ -159,12 +159,12 @@
 
   /* ---- Nothing pending ---- */
   & .pending {
-    @apply flex flex-wrap items-center gap-x-2 gap-y-0.5 rounded-md border border-ink/10 bg-paper-soft px-3 py-2 text-[13px] shadow-xs;
+    @apply flex flex-wrap items-center gap-x-2 gap-y-0.5 rounded-xl border border-ink/10 bg-paper-soft px-3 py-2 text-[14px] shadow-xs;
   }
 
   /* ---- Minted credentials ---- */
   & .minted {
-    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   & .minted-head {
@@ -172,11 +172,11 @@
   }
 
   & .minted-title {
-    @apply flex items-center gap-1.5 text-[13px] font-semibold;
+    @apply flex items-center gap-1.5 text-[14px] font-semibold;
   }
 
   & .count {
-    @apply rounded bg-acid px-1.5 py-0.5 text-[11px] font-semibold text-cobalt tabular-nums;
+    @apply rounded bg-acid px-1.5 py-0.5 text-[12px] font-semibold text-cobalt tabular-nums;
   }
 
   & .minted-grid {

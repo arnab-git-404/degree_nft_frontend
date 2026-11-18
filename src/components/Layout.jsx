@@ -9,6 +9,8 @@ const FULL_WIDTH_PATHS = ["/login", "/activate", "/apply"];
 
 export function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Desktop only: full sidebar or icon rail. The phone drawer has its own open/close.
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { pathname } = useLocation();
   const isFullWidth =
     pathname === "/" ||
@@ -34,8 +36,8 @@ export function Layout({ children }) {
           background: "#ffffff",
           color: "#161827",
           border: "1px solid rgba(15, 23, 42, 0.1)",
-          borderRadius: 8,
-          fontSize: "13px",
+          borderRadius: 12,
+          fontSize: "14px",
           boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
         },
       }}
@@ -55,17 +57,25 @@ export function Layout({ children }) {
     <div className="flex min-h-screen bg-paper text-ink">
       {toaster}
 
-      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 lg:block">
-        <AppSidebar />
+      {/* z-40 keeps the edge toggle button above the sticky top bar */}
+      <aside
+        className={`sticky top-0 z-40 hidden h-screen shrink-0 shadow-[2px_0_12px_rgb(0_0_0/0.06)] transition-[width] duration-300 ease-[cubic-bezier(.4,0,.2,1)] lg:block ${
+          isSidebarCollapsed ? "w-16" : "w-[220px]"
+        }`}
+      >
+        <AppSidebar
+          collapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed((collapsed) => !collapsed)}
+        />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
         <AuthBanner />
-        <main className="mx-auto w-full max-w-[1680px] flex-1 px-3 py-4 sm:px-5">
+        <main className="mx-auto w-full max-w-[1680px] flex-1 px-4 py-5 sm:px-7 sm:py-6">
           {children}
         </main>
-        <footer className="flex justify-between border-t border-ink/10 px-3 py-2 text-[11px] text-ink/40 sm:px-5">
+        <footer className="flex justify-between border-t border-ink/10 px-4 py-2.5 text-[12px] text-ink/40 sm:px-7">
           <span>DegreeNFT Registry</span>
           <span>Solana devnet</span>
         </footer>
@@ -79,7 +89,7 @@ export function Layout({ children }) {
         aria-hidden="true"
       />
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[85vw] shadow-xl transition-transform duration-200 lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-[220px] max-w-[85vw] shadow-xl transition-transform duration-200 lg:hidden ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -10,7 +10,7 @@
   }
 
   & .stat {
-    @apply flex items-center gap-3 rounded-md border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs transition-colors hover:border-cobalt/50;
+    @apply flex items-center gap-3 rounded-xl border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs transition-colors hover:border-cobalt/50;
   }
 
   & .stat-icon {
@@ -30,12 +30,12 @@
   }
 
   & .stat-detail {
-    @apply hidden shrink-0 self-end rounded bg-paper px-1.5 py-0.5 text-[11px] text-ink/60 sm:inline;
+    @apply hidden shrink-0 self-end rounded bg-paper px-1.5 py-0.5 text-[12px] text-ink/60 sm:inline;
   }
 
   /* Moderation queues: one compact row each */
   & .queues-title {
-    @apply pt-1 text-[11px] font-semibold tracking-wide text-ink/50 uppercase;
+    @apply pt-1 text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
   }
 
   & .queues {
@@ -43,7 +43,7 @@
   }
 
   & .queue {
-    @apply flex items-center gap-3 rounded-md border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs;
+    @apply flex items-center gap-3 rounded-xl border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs;
   }
 
   & .queue-count {
@@ -63,7 +63,7 @@
   }
 
   & .queue-title {
-    @apply text-[13px] font-medium;
+    @apply text-[14px] font-medium;
   }
 
   & .queue-text {

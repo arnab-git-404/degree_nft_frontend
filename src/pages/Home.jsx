@@ -84,7 +84,7 @@ function Ticker() {
             {tickerItems.map((item) => (
               <span
                 key={item}
-                className="mx-6 font-mono text-[9px] uppercase tracking-[0.2em]"
+                className="mx-6 font-mono text-[10px] uppercase tracking-[0.2em]"
               >
                 {item}
                 <span className="ml-6 text-acid">+</span>
@@ -119,7 +119,7 @@ export function Home() {
 
         <div className="relative grid lg:grid-cols-[1.35fr_0.65fr]">
           <div className="border-b border-ink/20 px-5 pb-10 pt-8 sm:px-8 sm:pb-12 sm:pt-10 lg:border-b-0 lg:border-r lg:px-10 lg:pb-12 lg:pt-12">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/20 pb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/55">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/20 pb-4 font-mono text-[10px] uppercase tracking-[0.18em] text-ink/55">
               <span className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 bg-cobalt" />
                 On-chain credential registry
@@ -152,19 +152,19 @@ export function Home() {
             <dl className="mt-10 grid max-w-2xl grid-cols-3 border-t border-ink/20 pt-5">
               <div className="pr-4">
                 <dt className="stat-value">100%</dt>
-                <dd className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45 sm:text-[9px]">
+                <dd className="mt-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/45 sm:text-[10px]">
                   Student owned
                 </dd>
               </div>
               <div className="border-l border-ink/20 px-4">
                 <dt className="stat-value">0</dt>
-                <dd className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45 sm:text-[9px]">
+                <dd className="mt-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/45 sm:text-[10px]">
                   Middlemen
                 </dd>
               </div>
               <div className="border-l border-ink/20 pl-4">
                 <dt className="stat-value">&lt;1 min</dt>
-                <dd className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45 sm:text-[9px]">
+                <dd className="mt-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/45 sm:text-[10px]">
                   To verify
                 </dd>
               </div>
@@ -172,7 +172,7 @@ export function Home() {
           </div>
 
           <aside className="flex flex-col justify-between bg-paper-deep px-5 py-7 sm:px-7 lg:px-8">
-            <div className="flex items-center justify-between border-b border-ink/20 pb-4 font-mono text-[8px] uppercase tracking-[0.18em] text-ink/50">
+            <div className="flex items-center justify-between border-b border-ink/20 pb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/50">
               <span>Registry status</span>
               <span className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-cobalt" />
@@ -181,7 +181,7 @@ export function Home() {
             </div>
 
             <div className="my-7 border border-ink/25 bg-paper-soft p-5 shadow-[12px_12px_0_0_rgba(17,16,14,0.08)]">
-              <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-ink/45">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/45">
                 Current session
               </p>
               <p className="mt-3 font-serif text-4xl leading-none tracking-tight">
@@ -195,7 +195,7 @@ export function Home() {
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <dt className="text-ink/50">Wallet</dt>
-                  <dd className="font-mono text-[10px] uppercase tracking-[0.1em]">
+                  <dd className="font-mono text-[11px] uppercase tracking-[0.1em]">
                     {walletLabel}
                   </dd>
                 </div>
@@ -216,14 +216,14 @@ export function Home() {
 
               <Link
                 to={isAuthenticated ? "/profile" : "/login"}
-                className="mt-6 flex items-center justify-between border-t border-ink/15 pt-4 font-mono text-[9px] uppercase tracking-[0.16em] text-cobalt"
+                className="mt-6 flex items-center justify-between border-t border-ink/15 pt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-cobalt"
               >
                 {isAuthenticated ? "Manage profile" : "Sign in or create account"}
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             </div>
 
-            <div className="flex items-center justify-between border-t border-ink/20 pt-4 font-mono text-[8px] uppercase tracking-[0.16em] text-ink/40">
+            <div className="flex items-center justify-between border-t border-ink/20 pt-4 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/40">
               <span>{isAuthenticated ? "Registry connected" : "Public view"}</span>
               <Wallet className="h-3.5 w-3.5" />
             </div>
@@ -256,7 +256,7 @@ export function Home() {
                 className="group grid gap-3 border-b border-ink/15 px-5 py-6 transition-colors last:border-b-0 hover:bg-cobalt hover:text-paper sm:px-7 lg:grid-cols-[3rem_1fr_auto] lg:items-center lg:gap-6"
               >
                 <div className="flex items-center gap-4">
-                  <span className="font-mono text-[9px] tracking-[0.16em] text-ink/35 transition-colors group-hover:text-paper/50">
+                  <span className="font-mono text-[10px] tracking-[0.16em] text-ink/35 transition-colors group-hover:text-paper/50">
                     0{index + 1}
                   </span>
                   <span className="flex h-10 w-10 items-center justify-center border border-ink/20 transition-colors group-hover:border-paper/40 group-hover:bg-paper group-hover:text-ink">
@@ -269,7 +269,7 @@ export function Home() {
                     <p className="font-serif text-2xl leading-none tracking-tight sm:text-3xl">
                       {module.title}
                     </p>
-                    <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.14em] text-ink/40 transition-colors group-hover:text-paper/50">
+                    <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.14em] text-ink/40 transition-colors group-hover:text-paper/50">
                       {module.label}
                     </p>
                   </div>
@@ -289,7 +289,7 @@ export function Home() {
 
       <section className="grid overflow-hidden border border-ink/20 bg-acid lg:grid-cols-[1.2fr_0.8fr]">
         <div className="px-5 py-9 sm:px-8 sm:py-10">
-          <p className="font-mono text-[9px] uppercase tracking-[0.2em]">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em]">
             02 / Account
           </p>
           <h2 className="mt-5 max-w-[16ch] font-serif text-4xl leading-[0.92] tracking-[-0.03em] sm:text-5xl">
@@ -324,7 +324,7 @@ export function Home() {
                 </Link>
                 <Link
                   to="/login"
-                  className="inline-flex h-11 items-center gap-2 border border-ink bg-transparent px-5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-ink hover:text-acid"
+                  className="inline-flex h-11 items-center gap-2 border border-ink bg-transparent px-5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors hover:bg-ink hover:text-acid"
                 >
                   Sign in with wallet
                   <Wallet className="h-4 w-4" />
@@ -335,20 +335,20 @@ export function Home() {
         </div>
 
         <div className="border-t border-ink/30 bg-ink px-5 py-9 text-paper sm:px-8 lg:border-l lg:border-t-0">
-          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-paper/45">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper/45">
             Registry notes
           </p>
           <ul className="mt-5 space-y-3 text-sm leading-6 text-paper/65">
             <li className="flex gap-3 border-b border-paper/15 pb-3">
-              <span className="font-mono text-[9px] text-acid">01</span>
+              <span className="font-mono text-[10px] text-acid">01</span>
               Email accounts must be activated before the first sign in.
             </li>
             <li className="flex gap-3 border-b border-paper/15 pb-3">
-              <span className="font-mono text-[9px] text-acid">02</span>
+              <span className="font-mono text-[10px] text-acid">02</span>
               Wallet sign-in is free and never moves funds.
             </li>
             <li className="flex gap-3">
-              <span className="font-mono text-[9px] text-acid">03</span>
+              <span className="font-mono text-[10px] text-acid">03</span>
               Credentials stay yours. The registry only proves them.
             </li>
           </ul>

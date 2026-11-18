@@ -16,12 +16,12 @@
     @apply flex items-center gap-2;
 
     & code {
-      @apply min-w-0 flex-1 truncate font-mono text-[11px];
+      @apply min-w-0 flex-1 truncate font-mono text-[12px];
     }
   }
 
   & .head-badge {
-    @apply ml-1.5 inline-flex items-center gap-0.5 rounded bg-yellow-500/15 px-1 py-0.5 text-[10px] font-medium text-yellow-800;
+    @apply ml-1.5 inline-flex items-center gap-0.5 rounded bg-yellow-500/15 px-1 py-0.5 text-[11px] font-medium text-yellow-800;
   }
 
   & .role-select {

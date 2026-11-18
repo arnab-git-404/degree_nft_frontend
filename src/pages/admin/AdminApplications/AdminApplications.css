@@ -29,7 +29,7 @@
   }
 
   & .application-code {
-    @apply rounded bg-paper-deep px-1.5 py-0.5 font-mono text-[11px] font-medium text-ink/70;
+    @apply rounded bg-paper-deep px-1.5 py-0.5 font-mono text-[12px] font-medium text-ink/70;
   }
 
   & .application-meta {
@@ -40,11 +40,11 @@
     @apply mx-4 grid gap-x-6 gap-y-2.5 border-t border-ink/10 py-3 sm:grid-cols-2 lg:grid-cols-4;
 
     & dt {
-      @apply text-[10px] font-semibold tracking-wider text-ink/45 uppercase;
+      @apply text-[11px] font-semibold tracking-wider text-ink/45 uppercase;
     }
 
     & dd {
-      @apply mt-0.5 text-[13px] break-words text-ink/85;
+      @apply mt-0.5 text-[14px] break-words text-ink/85;
     }
 
     & .mono {
@@ -92,7 +92,7 @@
     @apply flex flex-col gap-1.5 sm:flex-row sm:items-center;
 
     & code {
-      @apply flex-1 rounded bg-paper-deep px-1.5 py-1 font-mono text-[11px] break-all;
+      @apply flex-1 rounded bg-paper-deep px-1.5 py-1 font-mono text-[12px] break-all;
     }
   }
 
@@ -102,7 +102,7 @@
   }
 
   & .modal {
-    @apply my-4 w-full max-w-lg rounded-md border border-ink/10 bg-paper-soft shadow-2xl;
+    @apply my-4 w-full max-w-lg rounded-xl border border-ink/10 bg-paper-soft shadow-2xl;
   }
 
   & .modal-head {
@@ -114,7 +114,7 @@
   }
 
   & .modal-kicker {
-    @apply text-[11px] text-ink/50;
+    @apply text-[12px] text-ink/50;
   }
 
   & .modal-title {
@@ -126,7 +126,7 @@
   }
 
   & .modal-body {
-    @apply space-y-2 px-4 py-3 text-[13px];
+    @apply space-y-2 px-4 py-3 text-[14px];
   }
 
   & .modal-lead {

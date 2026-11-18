@@ -363,7 +363,7 @@ export function Profile() {
                     <label htmlFor="profile-bio" className="field-label">
                       Short bio
                     </label>
-                    <span className="text-[11px] text-ink/40">
+                    <span className="text-[12px] text-ink/40">
                       {form.bio.length} / 280
                     </span>
                   </div>

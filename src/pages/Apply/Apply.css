@@ -9,7 +9,7 @@
   }
 
   & .campaign {
-    @apply truncate rounded bg-acid px-2 py-0.5 text-[11px] font-medium text-cobalt;
+    @apply truncate rounded bg-acid px-2 py-0.5 text-[12px] font-medium text-cobalt;
   }
 
   & .content {
@@ -22,7 +22,7 @@
 
   /* ---- Status notices ---- */
   & .notice {
-    @apply mx-auto flex max-w-lg items-start gap-3 rounded-md border border-ink/10 bg-paper-soft p-4 shadow-xs;
+    @apply mx-auto flex max-w-lg items-start gap-3 rounded-xl border border-ink/10 bg-paper-soft p-4 shadow-xs;
   }
 
   & .notice-icon {
@@ -39,7 +39,7 @@
 
   /* ---- Form ---- */
   & .form-card {
-    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   & .form-head {

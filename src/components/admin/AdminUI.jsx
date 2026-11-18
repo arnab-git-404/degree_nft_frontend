@@ -2,17 +2,17 @@ import { Loader2, RefreshCw, Search } from "lucide-react";
 import { Button } from "../Button";
 
 const BADGE_TONES = {
-  success: "bg-green-600/10 text-green-700",
-  danger: "bg-red-600/10 text-red-700",
-  warning: "bg-yellow-500/15 text-yellow-800",
-  info: "bg-cobalt/10 text-cobalt",
-  neutral: "bg-ink/5 text-ink/70",
+  success: "border-green-600/20 bg-green-600/10 text-green-700",
+  danger: "border-red-600/20 bg-red-600/10 text-red-700",
+  warning: "border-yellow-500/30 bg-yellow-500/15 text-yellow-800",
+  info: "border-cobalt/20 bg-cobalt/10 text-cobalt",
+  neutral: "border-ink/10 bg-ink/5 text-ink/70",
 };
 
 export function StatusBadge({ tone = "neutral", children }) {
   return (
     <span
-      className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium whitespace-nowrap ${
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-semibold whitespace-nowrap ${
         BADGE_TONES[tone] || BADGE_TONES.neutral
       }`}
     >
@@ -29,15 +29,15 @@ export function AdminPageHeader({
   actions,
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="flex flex-wrap items-center justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-base leading-tight font-semibold">{title}</h1>
+        <h1 className="text-[22px] leading-tight font-bold tracking-tight">{title}</h1>
         {description && (
-          <p className="text-xs text-ink/55">{description}</p>
+          <p className="mt-0.5 text-[14px] text-ink/55">{description}</p>
         )}
       </div>
       {(actions || onRefresh) && (
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           {actions}
           {onRefresh && (
             <Button
@@ -108,7 +108,7 @@ export function AdminPagination({ pagination, onPage }) {
   }
 
   return (
-    <div className="flex items-center justify-between border-t border-ink/10 px-3 py-2 text-xs text-ink/55">
+    <div className="flex items-center justify-between border-t border-ink/10 px-3.5 py-2.5 text-[13px] text-ink/55">
       <span>
         Page {pagination.page} of {pagination.pages} · {pagination.total} total
       </span>

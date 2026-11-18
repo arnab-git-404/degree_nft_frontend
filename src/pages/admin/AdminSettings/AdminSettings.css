@@ -5,7 +5,7 @@
   @apply max-w-3xl space-y-3;
 
   & .settings-card {
-    @apply overflow-hidden rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+    @apply overflow-hidden rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   & .settings-head {
@@ -25,7 +25,7 @@
   }
 
   & .state-pill {
-    @apply shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium bg-ink/5 text-ink/60;
+    @apply shrink-0 rounded px-1.5 py-0.5 text-[12px] font-medium bg-ink/5 text-ink/60;
 
     &.is-on {
       @apply bg-green-600/10 text-green-700;
@@ -49,7 +49,7 @@
   }
 
   & .toggle {
-    @apply flex cursor-pointer items-start gap-2 rounded-md border border-ink/10 bg-paper px-3 py-2 text-[13px];
+    @apply flex cursor-pointer items-start gap-2 rounded-md border border-ink/10 bg-paper px-3 py-2 text-[14px];
 
     & > span {
       @apply flex flex-col;
@@ -73,7 +73,7 @@
   }
 
   & .test-row {
-    @apply flex flex-col gap-2 border-t border-ink/10 px-4 py-3 text-[13px] sm:flex-row sm:items-center;
+    @apply flex flex-col gap-2 border-t border-ink/10 px-4 py-3 text-[14px] sm:flex-row sm:items-center;
   }
 
   & .test-input {

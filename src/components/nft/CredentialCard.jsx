@@ -25,7 +25,7 @@ export function CredentialCard({ nft, getNftExplorerLink }) {
   }, [nft.uri]);
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-md border border-ink/10 bg-paper-soft transition-colors hover:border-cobalt/50">
+    <div className="group flex flex-col overflow-hidden rounded-xl border border-ink/10 bg-paper-soft transition-colors hover:border-cobalt/50">
       {/* NFT Image */}
       {(nft.image || metadata?.image) && (
         <div className="relative h-28 w-full overflow-hidden bg-paper-deep">
@@ -48,35 +48,35 @@ export function CredentialCard({ nft, getNftExplorerLink }) {
       {/* NFT Info */}
       <div className="flex flex-1 flex-col gap-1.5 p-3">
         <div>
-          <h4 className="truncate text-[13px] font-semibold text-cobalt">
+          <h4 className="truncate text-[14px] font-semibold text-cobalt">
             {nft.name}
           </h4>
-          <p className="text-[11px] text-ink/50">{nft.symbol}</p>
+          <p className="text-[12px] text-ink/50">{nft.symbol}</p>
         </div>
 
         {/* Description */}
         {metadata?.description && (
-          <p className="line-clamp-2 text-[11px] text-ink/50">
+          <p className="line-clamp-2 text-[12px] text-ink/50">
             {metadata.description}
           </p>
         )}
 
         {/* Key Attributes */}
         {loadingMetadata ? (
-          <div className="flex items-center gap-1.5 py-1 text-[11px] text-ink/55">
+          <div className="flex items-center gap-1.5 py-1 text-[12px] text-ink/55">
             <Loader2 className="h-3.5 w-3.5 animate-spin text-cobalt" />
             Loading details...
           </div>
         ) : metadata?.attributes && (
           <div className="space-y-0.5 border-t border-ink/10 pt-1.5">
             {metadata.attributes.slice(0, 3).map((attr, idx) => (
-              <div key={idx} className="flex justify-between gap-2 text-[11px]">
+              <div key={idx} className="flex justify-between gap-2 text-[12px]">
                 <span className="shrink-0 text-ink/45">{attr.trait_type}</span>
                 <span className="truncate font-medium text-ink/75">{attr.value}</span>
               </div>
             ))}
             {metadata.attributes.length > 3 && (
-              <p className="text-[11px] text-cobalt">
+              <p className="text-[12px] text-cobalt">
                 +{metadata.attributes.length - 3} more details
               </p>
             )}
@@ -84,7 +84,7 @@ export function CredentialCard({ nft, getNftExplorerLink }) {
         )}
 
         {/* Dates */}
-        <div className="flex flex-wrap gap-x-3 border-t border-ink/10 pt-1.5 text-[11px] text-ink/45">
+        <div className="flex flex-wrap gap-x-3 border-t border-ink/10 pt-1.5 text-[12px] text-ink/45">
           {nft.allocatedAt && (
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
@@ -105,7 +105,7 @@ export function CredentialCard({ nft, getNftExplorerLink }) {
           href={getNftExplorerLink(nft.nftAddress, nft.signature, "address")}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-auto flex h-7 items-center justify-center gap-1 rounded border border-cobalt/40 bg-cobalt/5 text-[11px] font-medium text-cobalt transition-colors hover:bg-cobalt/15"
+          className="mt-auto flex h-7 items-center justify-center gap-1 rounded border border-cobalt/40 bg-cobalt/5 text-[12px] font-medium text-cobalt transition-colors hover:bg-cobalt/15"
         >
           View on Explorer
           <ExternalLink className="h-3 w-3" />

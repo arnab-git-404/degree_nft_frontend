@@ -9,24 +9,24 @@
   }
 
   & .page-title {
-    @apply text-base leading-tight font-semibold;
+    @apply text-[22px] leading-tight font-bold tracking-tight;
   }
 
   & .page-sub {
-    @apply max-w-2xl text-xs text-ink/55;
+    @apply mt-0.5 max-w-2xl text-[14px] text-ink/55;
   }
 
   & .public-tag {
-    @apply inline-flex items-center gap-1 rounded bg-acid px-2 py-0.5 text-[11px] font-medium text-cobalt;
+    @apply inline-flex items-center gap-1 rounded bg-acid px-2 py-0.5 text-[12px] font-medium text-cobalt;
   }
 
   & .layout {
-    @apply grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_300px];
+    @apply grid grid-cols-[minmax(0,1fr)] items-start gap-3 lg:grid-cols-[minmax(0,1fr)_300px];
   }
 
   /* ---- Lookup card ---- */
   & .lookup {
-    @apply space-y-2 rounded-md border border-ink/10 bg-paper-soft p-4 shadow-xs;
+    @apply space-y-2 rounded-xl border border-ink/10 bg-paper-soft p-4 shadow-xs;
   }
 
   & .lookup-row {
@@ -34,11 +34,11 @@
   }
 
   & .sample {
-    @apply flex w-full items-center justify-between gap-2 rounded border border-dashed border-ink/15 px-2 py-1 text-left font-mono text-[10px] text-ink/50 transition-colors hover:border-cobalt hover:text-cobalt;
+    @apply flex w-full items-center justify-between gap-2 rounded border border-dashed border-ink/15 px-2 py-1 text-left font-mono text-[11px] text-ink/50 transition-colors hover:border-cobalt hover:text-cobalt;
   }
 
   & .privacy {
-    @apply text-[11px] text-ink/45;
+    @apply text-[12px] text-ink/45;
   }
 
   & .result {
@@ -67,7 +67,7 @@
 
   /* ---- How it works ---- */
   & .how {
-    @apply rounded-md border border-ink/10 bg-paper-soft p-4 shadow-xs;
+    @apply rounded-xl border border-ink/10 bg-paper-soft p-4 shadow-xs;
   }
 
   & .steps {
@@ -79,11 +79,11 @@
   }
 
   & .step-num {
-    @apply flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-acid text-[10px] font-semibold text-cobalt;
+    @apply flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-acid text-[11px] font-semibold text-cobalt;
   }
 
   & .step-title {
-    @apply text-[13px] leading-tight font-medium;
+    @apply text-[14px] leading-tight font-medium;
   }
 
   & .step-text {
@@ -91,6 +91,6 @@
   }
 
   & .how-foot {
-    @apply mt-3 flex items-center gap-1.5 border-t border-ink/10 pt-2.5 text-[11px] text-ink/50;
+    @apply mt-3 flex items-center gap-1.5 border-t border-ink/10 pt-2.5 text-[12px] text-ink/50;
   }
 }

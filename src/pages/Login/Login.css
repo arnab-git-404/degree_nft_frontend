@@ -34,7 +34,7 @@
   }
 
   & .highlight-title {
-    @apply block text-[13px] font-medium text-white;
+    @apply block text-[14px] font-medium text-white;
   }
 
   & .highlight-text {
@@ -87,10 +87,10 @@
   }
 
   & .divider-text {
-    @apply text-[11px] text-ink/40;
+    @apply text-[12px] text-ink/40;
   }
 
   & .mobile-note {
-    @apply mt-4 text-[11px] leading-4 text-ink/50 lg:hidden;
+    @apply mt-4 text-[12px] leading-4 text-ink/50 lg:hidden;
   }
 }

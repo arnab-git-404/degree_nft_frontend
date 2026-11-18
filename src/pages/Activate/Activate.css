@@ -9,7 +9,7 @@
   }
 
   & .card {
-    @apply relative w-full max-w-md rounded-md border border-ink/10 bg-paper-soft shadow-sm;
+    @apply relative w-full max-w-md rounded-xl border border-ink/10 bg-paper-soft shadow-sm;
   }
 
   & .card-head {
@@ -17,7 +17,7 @@
   }
 
   & .tag {
-    @apply rounded bg-paper px-1.5 py-0.5 text-[11px] text-ink/55;
+    @apply rounded bg-paper px-1.5 py-0.5 text-[12px] text-ink/55;
   }
 
   & .card-body {
@@ -69,6 +69,6 @@
   }
 
   & .card-foot {
-    @apply flex items-center justify-between border-t border-ink/10 px-4 py-2 text-[11px] text-ink/40;
+    @apply flex items-center justify-between border-t border-ink/10 px-4 py-2 text-[12px] text-ink/40;
   }
 }

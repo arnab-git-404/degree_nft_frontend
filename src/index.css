@@ -13,6 +13,13 @@
   --font-sans: "Inter", system-ui, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-serif: "Inter", system-ui, Arial, sans-serif;
+  /* 1px above Tailwind defaults to match the bumped px sizes */
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  /* Shape follows the College ERP (icare) frontend: 9px controls and tiles (rounded-md), 14px cards (rounded-xl), soft card shadow */
+  --radius-md: 0.5625rem;
+  --radius-xl: 0.875rem;
+  --shadow-xs: 0 1px 3px rgb(0 0 0 / 0.06);
 }
 
 :root {
@@ -31,7 +38,7 @@
   }
 
   body {
-    @apply bg-paper font-sans text-[13px] text-ink antialiased;
+    @apply bg-paper font-sans text-[14px] text-ink antialiased;
   }
 
   ::selection {
@@ -64,39 +71,39 @@
   }
 
   .field-label {
-    @apply text-xs font-medium text-ink/70;
+    @apply text-xs font-semibold text-ink/70;
   }
 
   .input-field {
-    @apply h-8 w-full rounded-md border border-ink/15 bg-paper-soft px-2.5 text-[13px] text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
+    @apply h-9 w-full rounded-md border border-ink/15 bg-paper px-3 text-[14px] text-ink transition placeholder:text-ink/40 focus:border-cobalt focus:bg-paper-soft focus:ring-3 focus:ring-cobalt/15 focus:outline-none;
   }
 
   .textarea-field {
-    @apply min-h-20 w-full resize-y rounded-md border border-ink/15 bg-paper-soft px-2.5 py-1.5 text-[13px] text-ink shadow-xs transition-colors placeholder:text-ink/40 focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
+    @apply min-h-20 w-full resize-y rounded-md border border-ink/15 bg-paper px-3 py-2 text-[14px] text-ink transition placeholder:text-ink/40 focus:border-cobalt focus:bg-paper-soft focus:ring-3 focus:ring-cobalt/15 focus:outline-none;
   }
 
   .select-field {
-    @apply h-8 w-full appearance-none rounded-md border border-ink/15 bg-paper-soft px-2.5 text-[13px] text-ink shadow-xs transition-colors focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 focus:outline-none;
+    @apply h-9 w-full appearance-none rounded-md border border-ink/15 bg-paper px-3 text-[14px] font-medium text-ink transition hover:border-cobalt/60 hover:bg-paper-soft focus:border-cobalt focus:bg-paper-soft focus:ring-3 focus:ring-cobalt/15 focus:outline-none;
   }
 
   .btn-primary {
-    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-cobalt px-3 text-[13px] font-medium text-white shadow-xs transition-colors hover:bg-cobalt-strong disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-cobalt px-4 text-[14px] font-semibold text-white shadow-[0_3px_10px_rgb(79_70_229/0.3)] transition hover:-translate-y-px hover:bg-cobalt-strong disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none;
   }
 
   .btn-outline {
-    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-ink/15 bg-paper-soft px-3 text-[13px] font-medium text-ink shadow-xs transition-colors hover:bg-paper disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-ink/15 bg-paper-soft px-4 text-[14px] font-semibold text-ink transition hover:-translate-y-px hover:border-cobalt/30 hover:bg-acid/60 hover:text-cobalt disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1 text-[13px] font-medium text-ink/70 transition-colors hover:bg-paper-deep hover:text-ink disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[14px] font-medium text-ink/70 transition-colors hover:bg-paper-deep hover:text-ink disabled:pointer-events-none disabled:opacity-50;
   }
 
   .panel {
-    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   .panel-deep {
-    @apply rounded-md border border-ink/10 bg-paper;
+    @apply rounded-xl border border-ink/10 bg-paper;
   }
 
   .link-underline {
@@ -104,24 +111,28 @@
   }
 
   .stat-value {
-    @apply text-xl font-semibold tabular-nums;
+    @apply text-[22px] font-bold tabular-nums;
   }
 
   .app-card {
-    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs transition-colors hover:border-cobalt/40;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs transition hover:-translate-y-0.5 hover:border-cobalt/40 hover:shadow-[0_4px_20px_rgb(0_0_0/0.08)];
   }
 
-  /* Dense table: put className="data-table" on <table>; cells need no padding classes. */
+  /* Table: put className="data-table" on <table>; cells need no padding classes. */
   .data-table {
-    @apply w-full text-left text-[13px];
+    @apply w-full text-left text-[14px];
   }
 
   .data-table thead th {
-    @apply bg-paper px-3 py-2 text-[11px] font-semibold tracking-wide whitespace-nowrap text-ink/55 uppercase;
+    @apply border-b border-ink/10 bg-paper px-3.5 py-3 text-[12px] font-semibold tracking-wide whitespace-nowrap text-ink/55 uppercase;
   }
 
   .data-table tbody td {
-    @apply border-t border-ink/10 px-3 py-1.5 align-middle;
+    @apply border-t border-ink/10 px-3.5 py-2.5 align-middle;
+  }
+
+  .data-table tbody tr:first-child td {
+    @apply border-t-0;
   }
 
   .data-table tbody tr:hover td {
@@ -130,7 +141,7 @@
 
   /* Bordered box around a table + its pagination footer */
   .table-card {
-    @apply overflow-hidden rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+    @apply overflow-hidden rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   .table-scroll {
@@ -152,7 +163,7 @@
 
   /* Small uppercase heading above a group of cards */
   .section-label {
-    @apply text-[11px] font-semibold tracking-wide text-ink/50 uppercase;
+    @apply text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
   }
 }
 
@@ -184,12 +195,12 @@
 
 .wallet-adapter-button {
   font-family: var(--font-sans) !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  border-radius: 6px !important;
-  height: 30px !important;
-  line-height: 30px !important;
-  padding: 0 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 9px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  padding: 0 14px !important;
   background: var(--paper-soft) !important;
   color: var(--ink) !important;
   border: 1px solid rgba(22, 24, 39, 0.15) !important;
@@ -207,7 +218,7 @@
 
 .wallet-adapter-dropdown-list,
 .wallet-adapter-modal {
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   background: var(--paper-soft) !important;
   border: 1px solid rgba(22, 24, 39, 0.12) !important;
   box-shadow: 0 10px 30px rgba(22, 24, 39, 0.12) !important;
@@ -220,7 +231,7 @@
 .wallet-adapter-dropdown-list-item {
   border-radius: 6px !important;
   font-family: var(--font-sans) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   color: var(--ink) !important;
 }
 

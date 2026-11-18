@@ -9,11 +9,11 @@
   }
 
   & .page-title {
-    @apply text-base leading-tight font-semibold;
+    @apply text-[22px] leading-tight font-bold tracking-tight;
   }
 
   & .page-sub {
-    @apply max-w-2xl text-xs text-ink/55;
+    @apply mt-0.5 max-w-2xl text-[14px] text-ink/55;
   }
 
   & .head-actions {
@@ -26,7 +26,7 @@
 
   /* ---- Identity card ---- */
   & .id-card {
-    @apply space-y-3 rounded-md border border-ink/10 bg-paper-soft p-3 shadow-xs lg:sticky lg:top-16;
+    @apply space-y-3 rounded-xl border border-ink/10 bg-paper-soft p-3 shadow-xs lg:sticky lg:top-20;
   }
 
   & .id-top {
@@ -42,11 +42,11 @@
   }
 
   & .id-name {
-    @apply truncate text-[15px] leading-tight font-semibold;
+    @apply truncate text-[16px] leading-tight font-semibold;
   }
 
   & .role-pill {
-    @apply mt-1 inline-flex items-center gap-1 rounded bg-acid px-1.5 py-0.5 text-[11px] font-medium text-cobalt;
+    @apply mt-1 inline-flex items-center gap-1 rounded bg-acid px-1.5 py-0.5 text-[12px] font-medium text-cobalt;
   }
 
   & .bio {
@@ -62,7 +62,7 @@
   }
 
   & .stat-label {
-    @apply text-[11px] text-ink/50;
+    @apply text-[12px] text-ink/50;
   }
 
   & .stat-number {
@@ -70,7 +70,7 @@
   }
 
   & .stat-text {
-    @apply text-[13px] font-medium;
+    @apply text-[14px] font-medium;
   }
 
   & .summary {
@@ -95,7 +95,7 @@
   }
 
   & .card {
-    @apply rounded-md border border-ink/10 bg-paper-soft shadow-xs;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   & .card-head {
@@ -103,11 +103,11 @@
   }
 
   & .card-title {
-    @apply text-[13px] font-semibold;
+    @apply text-[14px] font-semibold;
   }
 
   & .card-sub {
-    @apply text-[11px] text-ink/50;
+    @apply text-[12px] text-ink/50;
   }
 
   & .card-body {
@@ -160,11 +160,11 @@
   }
 
   & .primary-tag {
-    @apply rounded bg-cobalt px-1.5 py-px font-sans text-[10px] font-medium text-white;
+    @apply rounded bg-cobalt px-1.5 py-px font-sans text-[11px] font-medium text-white;
   }
 
   & .wallet-status {
-    @apply flex items-center gap-1 text-[11px] text-ink/45;
+    @apply flex items-center gap-1 text-[12px] text-ink/45;
   }
 
   & .wallet-actions {
@@ -180,12 +180,12 @@
   }
 
   & .text-btn {
-    @apply h-7 rounded border border-ink/10 px-2 text-[11px] text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-50;
+    @apply h-7 rounded border border-ink/10 px-2 text-[12px] text-ink/60 transition-colors hover:border-cobalt hover:text-cobalt disabled:opacity-50;
   }
 
   /* ---- Sign-in details ---- */
   & .details {
-    @apply divide-y divide-ink/10 px-3 text-[13px];
+    @apply divide-y divide-ink/10 px-3 text-[14px];
 
     & > div {
       @apply flex flex-col gap-0.5 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3;

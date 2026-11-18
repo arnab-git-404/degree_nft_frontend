@@ -51,7 +51,7 @@
   }
 
   & .detail-note {
-    @apply mt-2 text-[11px] text-ink/45;
+    @apply mt-2 text-[12px] text-ink/45;
   }
 
   & .chips {
@@ -59,11 +59,11 @@
   }
 
   & .chip {
-    @apply rounded border border-ink/10 bg-paper-soft px-1.5 py-0.5 text-[11px] font-medium;
+    @apply rounded border border-ink/10 bg-paper-soft px-1.5 py-0.5 text-[12px] font-medium;
   }
 
   & .user-list {
-    @apply divide-y divide-ink/10 rounded-md border border-ink/10 bg-paper-soft;
+    @apply divide-y divide-ink/10 rounded-xl border border-ink/10 bg-paper-soft;
   }
 
   & .user-item {
@@ -76,7 +76,7 @@
   }
 
   & .editor {
-    @apply my-4 w-full max-w-5xl rounded-md border border-ink/10 bg-paper-soft shadow-2xl;
+    @apply my-4 w-full max-w-5xl rounded-xl border border-ink/10 bg-paper-soft shadow-2xl;
   }
 
   & .editor-head {
@@ -84,7 +84,7 @@
   }
 
   & .editor-kicker {
-    @apply text-[11px] text-ink/50;
+    @apply text-[12px] text-ink/50;
   }
 
   & .editor-title {
@@ -124,7 +124,7 @@
   }
 
   & .perm-count {
-    @apply ml-2 rounded bg-acid px-1.5 py-0.5 text-[11px] font-semibold text-cobalt tabular-nums;
+    @apply ml-2 rounded bg-acid px-1.5 py-0.5 text-[12px] font-semibold text-cobalt tabular-nums;
   }
 
   & .admin-note {
@@ -136,7 +136,7 @@
   }
 
   & .perm-group-label {
-    @apply mb-1 text-[11px] font-semibold tracking-wide text-ink/50 uppercase;
+    @apply mb-1 text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
   }
 
   /* 1 / 2 / 3 columns so long permission lists need less scrolling */
@@ -153,15 +153,15 @@
   }
 
   & .perm-label {
-    @apply block text-[13px] leading-tight font-medium;
+    @apply block text-[14px] leading-tight font-medium;
   }
 
   & .perm-key {
-    @apply block font-mono text-[10px] text-ink/40;
+    @apply block font-mono text-[11px] text-ink/40;
   }
 
   & .perm-desc {
-    @apply mt-0.5 line-clamp-2 block text-[11px] leading-4 text-ink/55;
+    @apply mt-0.5 line-clamp-2 block text-[12px] leading-4 text-ink/55;
   }
 
   & .editor-foot {
