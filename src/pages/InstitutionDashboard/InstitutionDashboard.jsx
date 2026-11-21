@@ -10,7 +10,12 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/api";
+import { Select } from "../../components/CatalogPage/CatalogPage";
 import "./InstitutionDashboard.css";
+
+// Mirrors CREDENTIAL_TYPES in the backend nft model.
+const CREDENTIAL_TYPES = ["DEGREE", "PROVISIONAL", "MARKSHEET", "TRANSCRIPT", "CERTIFICATE", "OTHER"];
+const typeLabel = (type) => type.charAt(0) + type.slice(1).toLowerCase();
 
 export function InstitutionDashboard() {
   const EXTERNAL_API_URL = "https://degree-nft.vercel.app/";
@@ -52,6 +57,39 @@ export function InstitutionDashboard() {
     major: "",
     honors: "",
   });
+
+  // P06-04: a credential is issued for one exact enrollment + type.
+  const [enrollments, setEnrollments] = useState([]);
+  const [enrollmentSearch, setEnrollmentSearch] = useState("");
+  const [enrollmentId, setEnrollmentId] = useState("");
+  const [credentialType, setCredentialType] = useState("DEGREE");
+
+  useEffect(() => {
+    if (!isAuthenticated || !activeInstitutionId) return;
+    // shortcut: first 100 matches only, so the search box is how a big college finds a student.
+    const timer = setTimeout(() => {
+      api
+        .get("/institution/enrollments", { params: { search: enrollmentSearch.trim() || undefined, limit: 100 } })
+        .then(({ data }) => setEnrollments(data.enrollments.filter((e) => e.status !== "CANCELLED")))
+        .catch(() => setEnrollments([]));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [isAuthenticated, activeInstitutionId, enrollmentSearch]);
+
+  const chooseEnrollment = (id) => {
+    setEnrollmentId(id);
+    const enrollment = enrollments.find((e) => e._id === id);
+    if (!enrollment) return;
+    const { programId: program, programSessionId: session, studentId: student } = enrollment;
+    setFormData((prev) => ({
+      ...prev,
+      studentName: student?.fullName || "",
+      studentAddress: student?.walletHint || "",
+      major: program?.name || "",
+      graduationYear: session?.endYear ? String(session.endYear) : "",
+      programDuration: session?.startYear && session?.endYear ? `${session.endYear - session.startYear} years` : "",
+    }));
+  };
 
   useEffect(() => {
     // No selected college means no active membership: show how to join.
@@ -118,6 +156,10 @@ export function InstitutionDashboard() {
           value: formData.institutionName,
         },
         {
+          trait_type: "Credential Type",
+          value: credentialType,
+        },
+        {
           trait_type: "Degree",
           value: formData.degreeType,
         },
@@ -178,6 +220,8 @@ export function InstitutionDashboard() {
 
   const validateForm = () => {
     // Institution information validation
+    if (!enrollmentId) return "Choose the student's enrollment";
+
     if (!formData.institutionName?.trim()) return "Institution name is required";
 
     // Student information validation
@@ -266,7 +310,7 @@ export function InstitutionDashboard() {
       toast.dismiss();
       // toast.success("Degree NFT created successfully!");
 
-      // Reset form
+      // Reset form (the enrollment stays chosen so a second credential type is one click away)
       setFormData({
         institutionName: formData.institutionName,
         studentName: "",
@@ -279,6 +323,7 @@ export function InstitutionDashboard() {
         major: "",
         honors: "",
       });
+      chooseEnrollment(enrollmentId);
 
       toast.success("Degree credential issued successfully!");
     } catch (error) {
@@ -302,6 +347,8 @@ export function InstitutionDashboard() {
         uri: metadataUri,
         ipfsHash: ipfsHash,
         sellerFeeBasisPoints: 500,
+        enrollmentId,
+        credentialType,
       });
       console.log("Data Uploaded TO Backend");
       return response.data;
@@ -467,6 +514,31 @@ export function InstitutionDashboard() {
               </legend>
               <div className="fields-3">
                 <Input
+                  label="Find enrollment"
+                  placeholder="Student name, reg. no. or enrollment code"
+                  value={enrollmentSearch}
+                  onChange={(e) => setEnrollmentSearch(e.target.value)}
+                />
+                <div className="space-y-1">
+                  <label className="field-label block">Enrollment</label>
+                  <Select value={enrollmentId} onChange={(e) => chooseEnrollment(e.target.value)} required>
+                    <option value="">Choose student and batch…</option>
+                    {enrollments.map((e) => (
+                      <option key={e._id} value={e._id}>
+                        {e.studentId?.fullName} · {e.programId?.code} {e.programSessionId?.startYear}–{e.programSessionId?.endYear}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <label className="field-label block">Credential type</label>
+                  <Select value={credentialType} onChange={(e) => setCredentialType(e.target.value)}>
+                    {CREDENTIAL_TYPES.map((type) => (
+                      <option key={type} value={type}>{typeLabel(type)}</option>
+                    ))}
+                  </Select>
+                </div>
+                <Input
                   label="Institution name"
                   name="institutionName"
                   placeholder="e.g. Harvard Institution"
@@ -595,6 +667,7 @@ export function InstitutionDashboard() {
             <Button
               type="submit"
               disabled={
+                !enrollmentId ||
                 !formData.institutionName ||
                 !formData.studentName ||
                 !isValidPublicKey(formData.studentAddress) ||

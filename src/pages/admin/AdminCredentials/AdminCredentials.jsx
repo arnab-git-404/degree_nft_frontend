@@ -111,7 +111,7 @@ export function AdminCredentials() {
                       </p>
                     </td>
                     <td>
-                      <p>{allocation.studentId?.name || "—"}</p>
+                      <p>{allocation.userId?.name || "—"}</p>
                       <p className="cell-mono">
                         {shortenAddress(allocation.studentWallet || "")}
                       </p>
