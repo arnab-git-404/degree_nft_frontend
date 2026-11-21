@@ -51,6 +51,12 @@
   & .tone-amber .stat-number {
     @apply text-amber-600;
   }
+  & .tone-red .stat-icon {
+    @apply bg-red-500/15 text-red-600;
+  }
+  & .tone-red .stat-number {
+    @apply text-red-600;
+  }
   & .tone-ink .stat-icon {
     @apply bg-ink/5 text-ink/60;
   }
@@ -158,6 +164,9 @@
   }
   & .actions .tone-warning .select-field {
     @apply text-amber-700;
+  }
+  & .actions .tone-danger .select-field {
+    @apply text-red-600;
   }
   & .actions .tone-info .select-field {
     @apply text-cobalt;

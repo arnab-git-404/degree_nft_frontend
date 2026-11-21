@@ -10,7 +10,7 @@ import { CatalogModal, ItemTitle, RowActions, StatCards, StatusPill } from "../.
 import "./InstitutionRoles.css";
 
 // Nothing is deleted: a role that is no longer used is set to Inactive, and its members lose access.
-const ROLE_STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "warning" } };
+const ROLE_STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "danger" } };
 
 // Add / edit / copy a college role. Only college permissions are offered (the server checks again).
 function RoleForm({ role, copyOf, permissionGroups, onClose, onSaved }) {

@@ -13,11 +13,11 @@ import "./InstitutionBatches.css";
 // Nothing is deleted anywhere: a batch that is no longer used is set to Inactive.
 const BATCH_STATUSES = {
   ACTIVE: { label: "Active", tone: "success" },
-  INACTIVE: { label: "Inactive", tone: "warning" },
+  INACTIVE: { label: "Inactive", tone: "danger" },
 };
 const STATUS_CHOICES = [
   { value: "ACTIVE", label: "Active", hint: "Students can be enrolled", tone: "success" },
-  { value: "INACTIVE", label: "Inactive", hint: "Hidden when enrolling students", tone: "neutral" },
+  { value: "INACTIVE", label: "Inactive", hint: "Hidden when enrolling students", tone: "danger" },
 ];
 
 // Create a batch, or (with `batch`) edit one: name, colour, passing-out year and status. Course, year and code are fixed.
@@ -306,7 +306,7 @@ export function InstitutionBatches() {
   const stats = [
     { label: "Batches", value: data?.batches.length ?? 0, icon: Layers, tone: "cobalt" },
     { label: "Active", value: active, icon: Layers, tone: "green" },
-    { label: "Inactive", value: (data?.batches.length ?? 0) - active, icon: Layers, tone: "amber" },
+    { label: "Inactive", value: (data?.batches.length ?? 0) - active, icon: Layers, tone: "red" },
   ];
 
   return (

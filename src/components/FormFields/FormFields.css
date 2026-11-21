@@ -49,6 +49,12 @@
 .status-card.is-on.is-info b {
   @apply text-indigo-600;
 }
+.status-card.is-on.is-danger {
+  @apply border-red-300 bg-red-50;
+}
+.status-card.is-on.is-danger b {
+  @apply text-red-600;
+}
 .status-card.is-on.is-neutral {
   @apply border-ink/30 bg-ink/5;
 }

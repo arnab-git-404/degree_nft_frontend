@@ -20,10 +20,10 @@ import {
 import { ColorField, FormPreview, StatusCards } from "../../components/FormFields/FormFields";
 import "./InstitutionPrograms.css";
 
-const STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "warning" } };
+const STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "danger" } };
 const STATUS_CHOICES = [
   { value: "ACTIVE", label: "Active", hint: "Batches can be created for this program", tone: "success" },
-  { value: "INACTIVE", label: "Inactive", hint: "Hidden when creating new batches", tone: "neutral" },
+  { value: "INACTIVE", label: "Inactive", hint: "Hidden when creating new batches", tone: "danger" },
 ];
 
 function ProgramForm({ program, onClose, onSaved }) {
@@ -162,7 +162,7 @@ export function InstitutionPrograms() {
   const stats = [
     { label: "Total programs", value: total, icon: BookOpen, tone: "cobalt" },
     { label: "Active", value: active, icon: CheckCircle2, tone: "green" },
-    { label: "Inactive", value: total - active, icon: PauseCircle, tone: "amber" },
+    { label: "Inactive", value: total - active, icon: PauseCircle, tone: "red" },
   ];
 
   const visible = useMemo(() => {

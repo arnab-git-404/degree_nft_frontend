@@ -10,11 +10,11 @@ import { CatalogModal, ItemTitle, StatusPill } from "../../components/CatalogPag
 import { ColorField, FormPreview, StatusCards } from "../../components/FormFields/FormFields";
 import "./InstitutionAcademicSessions.css";
 
-const YEAR_STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "neutral" } };
+const YEAR_STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "danger" } };
 
 const STATUS_CHOICES = [
   { value: "ACTIVE", label: "Active", hint: "Batches can be created in this year", tone: "success" },
-  { value: "INACTIVE", label: "Inactive", hint: "Hidden when creating new batches", tone: "neutral" },
+  { value: "INACTIVE", label: "Inactive", hint: "Hidden when creating new batches", tone: "danger" },
 ];
 
 function SessionForm({ onClose, onSaved }) {
@@ -127,7 +127,7 @@ export function InstitutionAcademicSessions() {
   const tags = [
     { label: "Total", value: sessions?.length ?? 0, tone: "total" },
     { label: "Active", value: active, tone: "active" },
-    { label: "Inactive", value: (sessions?.length ?? 0) - active, tone: "inactive" },
+    { label: "Inactive", value: (sessions?.length ?? 0) - active, tone: "red" },
     ...(current ? [{ label: "Current", value: sessionLabel(current), tone: "current" }] : []),
   ];
   const shown = sessions?.filter((session) => sessionLabel(session).includes(search.trim())) ?? [];

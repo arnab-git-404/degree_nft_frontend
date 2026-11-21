@@ -25,10 +25,10 @@ import { ImportRows, SheetActions } from "../../components/SheetImport/SheetImpo
 import { EnrollForm } from "../InstitutionEnrollments/EnrollForm";
 import "./InstitutionStudents.css";
 
-const STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "warning" } };
+const STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "danger" } };
 const STATUS_CHOICES = [
   { value: "ACTIVE", label: "Active", hint: "Can be invited and enrolled", tone: "success" },
-  { value: "INACTIVE", label: "Inactive", hint: "Hidden when enrolling students", tone: "neutral" },
+  { value: "INACTIVE", label: "Inactive", hint: "Hidden when enrolling students", tone: "danger" },
 ];
 // Where a student is in proving their wallet: the college invites them, they sign with a wallet, the profile is linked.
 const CLAIM_STATUSES = {
@@ -209,7 +209,7 @@ export function InstitutionStudents() {
   const stats = [
     { label: "Total students", value: data?.stats.total ?? 0, icon: UsersRound, tone: "cobalt" },
     { label: "Active", value: data?.stats.active ?? 0, icon: CheckCircle2, tone: "green" },
-    { label: "Inactive", value: data?.stats.inactive ?? 0, icon: PauseCircle, tone: "amber" },
+    { label: "Inactive", value: data?.stats.inactive ?? 0, icon: PauseCircle, tone: "red" },
   ];
   const hasFilters = Boolean(query.status || search);
   const emptyMessage = hasFilters ? "No students match these filters." : "No students yet.";
