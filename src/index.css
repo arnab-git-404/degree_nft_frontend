@@ -1,113 +1,197 @@
 @import "tailwindcss";
 
+/* Token names kept from the old theme so every page picks up the palette without edits. */
 @theme {
-  --color-paper: #f3efe6;
-  --color-paper-soft: #fffdf8;
-  --color-paper-deep: #e7e1d3;
-  --color-ink: #11100e;
-  --color-cobalt: #2b2bea;
-  --color-acid: #d9ff43;
-  --font-sans: "Geist", Arial, Helvetica, sans-serif;
-  --font-mono: "Geist Mono", "Courier New", monospace;
-  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --color-paper: #f4f5f9;
+  --color-paper-soft: #ffffff;
+  --color-paper-deep: #e7e9f1;
+  --color-ink: #161827;
+  --color-cobalt: #4f46e5;
+  --color-cobalt-strong: #4338ca;
+  --color-acid: #e0e7ff;
+  --color-rail: #15162b;
+  --font-sans: "Inter", system-ui, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-serif: "Inter", system-ui, Arial, sans-serif;
+  /* 1px above Tailwind defaults to match the bumped px sizes */
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  /* Shape follows the College ERP (icare) frontend: 9px controls and tiles (rounded-md), 14px cards (rounded-xl), soft card shadow */
+  --radius-md: 0.5625rem;
+  --radius-xl: 0.875rem;
+  --shadow-xs: 0 1px 3px rgb(0 0 0 / 0.06);
 }
 
 :root {
   color-scheme: light;
-  --paper: #f3efe6;
-  --paper-soft: #fffdf8;
-  --paper-deep: #e7e1d3;
-  --ink: #11100e;
-  --cobalt: #2b2bea;
-  --acid: #d9ff43;
+  --paper: #f4f5f9;
+  --paper-soft: #ffffff;
+  --paper-deep: #e7e9f1;
+  --ink: #161827;
+  --cobalt: #4f46e5;
+  --acid: #e0e7ff;
+}
+
+/* Dark mode: overrides the same tokens, so every bg-paper / text-ink / border-ink/x utility flips with no per-page edits. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #0f111a;
+  --color-paper-soft: #181b27;
+  --color-paper-deep: #252938;
+  --color-ink: #e6e8f2;
+  --color-cobalt: #6d74f0;
+  --color-cobalt-strong: #565de0;
+  --color-acid: #2b2f5e;
+  --paper: #0f111a;
+  --paper-soft: #181b27;
+  --paper-deep: #252938;
+  --ink: #e6e8f2;
+  --cobalt: #8b92f8;
+  --acid: #2b2f5e;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: rgba(230, 232, 242, 0.2);
+}
+
+:root[data-theme="dark"] .hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(230, 232, 242, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(230, 232, 242, 0.05) 1px, transparent 1px);
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     background: var(--paper);
   }
 
   body {
-    @apply bg-paper font-sans text-ink antialiased;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 80;
-    pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    @apply bg-paper font-sans text-[14px] text-ink antialiased;
   }
 
   ::selection {
-    background: var(--cobalt);
-    color: var(--paper);
+    background: var(--acid);
+    color: var(--ink);
   }
 
   :focus-visible {
     outline: 2px solid var(--cobalt);
     outline-offset: 2px;
   }
+
+  /* Tailwind v4 dropped the pointer cursor on buttons; restore it app-wide. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  summary,
+  select:not(:disabled),
+  label:has(input[type="checkbox"]:not(:disabled)) {
+    cursor: pointer;
+  }
 }
 
 @layer components {
   .eyebrow {
-    @apply font-mono text-[9px] uppercase tracking-[0.2em] text-ink/55;
+    @apply text-xs font-medium text-ink/55;
   }
 
   .eyebrow-cobalt {
-    @apply font-mono text-[9px] uppercase tracking-[0.2em] text-cobalt;
+    @apply text-xs font-semibold text-cobalt;
   }
 
   .field-label {
-    @apply font-mono text-[9px] uppercase tracking-[0.18em] text-ink/60;
+    @apply text-xs font-semibold text-ink/70;
   }
 
   .input-field {
-    @apply h-11 w-full border border-ink/25 bg-paper-soft px-3.5 text-sm text-ink placeholder:text-ink/35 transition-colors focus:border-cobalt focus:outline-none;
+    @apply h-9 w-full rounded-md border border-ink/15 bg-paper px-3 text-[14px] text-ink transition placeholder:text-ink/40 focus:border-cobalt focus:bg-paper-soft focus:ring-3 focus:ring-cobalt/15 focus:outline-none;
   }
 
   .textarea-field {
-    @apply min-h-24 w-full resize-y border border-ink/25 bg-paper-soft px-3.5 py-3 text-sm text-ink placeholder:text-ink/35 transition-colors focus:border-cobalt focus:outline-none;
+    @apply min-h-20 w-full resize-y rounded-md border border-ink/15 bg-paper px-3 py-2 text-[14px] text-ink transition placeholder:text-ink/40 focus:border-cobalt focus:bg-paper-soft focus:ring-3 focus:ring-cobalt/15 focus:outline-none;
   }
 
   .select-field {
-    @apply h-11 w-full appearance-none border border-ink/25 bg-paper-soft px-3.5 text-sm text-ink transition-colors focus:border-cobalt focus:outline-none;
+    @apply h-9 w-full appearance-none rounded-md border border-ink/15 bg-paper px-3 text-[14px] font-medium text-ink transition hover:border-cobalt/60 hover:bg-paper-soft focus:border-cobalt focus:bg-paper-soft focus:ring-3 focus:ring-cobalt/15 focus:outline-none;
   }
 
   .btn-primary {
-    @apply inline-flex h-11 items-center justify-center gap-2 bg-cobalt px-5 font-mono text-[10px] uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-cobalt px-4 text-[14px] font-semibold text-white shadow-[0_3px_10px_rgb(79_70_229/0.3)] transition hover:-translate-y-px hover:bg-cobalt-strong disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none;
   }
 
   .btn-outline {
-    @apply inline-flex h-11 items-center justify-center gap-2 border border-ink/30 px-5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink transition-colors hover:border-cobalt hover:text-cobalt disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-ink/15 bg-paper-soft px-4 text-[14px] font-semibold text-ink transition hover:-translate-y-px hover:border-cobalt/30 hover:bg-acid/60 hover:text-cobalt disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/60 transition-colors hover:text-cobalt disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[14px] font-medium text-ink/70 transition-colors hover:bg-paper-deep hover:text-ink disabled:pointer-events-none disabled:opacity-50;
   }
 
   .panel {
-    @apply border border-ink/20 bg-paper-soft;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
   }
 
   .panel-deep {
-    @apply border border-ink/20 bg-paper-deep;
+    @apply rounded-xl border border-ink/10 bg-paper;
   }
 
   .link-underline {
-    @apply border-b border-ink/40 pb-1 transition-colors hover:border-cobalt hover:text-cobalt;
+    @apply text-cobalt hover:underline;
   }
 
   .stat-value {
-    @apply font-serif text-3xl leading-none tracking-tight sm:text-4xl;
+    @apply text-[22px] font-bold tabular-nums;
   }
 
   .app-card {
-    @apply border border-ink/20 bg-paper-soft transition-colors hover:border-cobalt/60;
+    @apply rounded-xl border border-ink/10 bg-paper-soft shadow-xs transition hover:-translate-y-0.5 hover:border-cobalt/40 hover:shadow-[0_4px_20px_rgb(0_0_0/0.08)];
+  }
+
+  /* Table: put className="data-table" on <table>; cells need no padding classes. */
+  .data-table {
+    @apply w-full text-left text-[14px];
+  }
+
+  .data-table thead th {
+    @apply border-b border-ink/10 bg-paper px-3.5 py-3 text-[12px] font-semibold tracking-wide whitespace-nowrap text-ink/55 uppercase;
+  }
+
+  .data-table tbody td {
+    @apply border-t border-ink/10 px-3.5 py-2.5 align-middle;
+  }
+
+  .data-table tbody tr:first-child td {
+    @apply border-t-0;
+  }
+
+  .data-table tbody tr:hover td {
+    @apply bg-paper/70;
+  }
+
+  /* Bordered box around a table + its pagination footer */
+  .table-card {
+    @apply overflow-hidden rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
+  }
+
+  .table-scroll {
+    @apply overflow-x-auto;
+  }
+
+  /* Two-line table cell: bold first line, muted second line */
+  .cell-title {
+    @apply leading-tight font-medium;
+  }
+
+  .cell-sub {
+    @apply text-xs text-ink/55;
+  }
+
+  .cell-mono {
+    @apply font-mono text-xs whitespace-nowrap text-ink/70;
+  }
+
+  /* Small uppercase heading above a group of cards */
+  .section-label {
+    @apply text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
   }
 }
 
@@ -117,64 +201,41 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #e7e1d3;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(17, 16, 14, 0.25);
+  border-radius: 4px;
+  background-color: rgba(22, 24, 39, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(17, 16, 14, 0.4);
+  background-color: rgba(22, 24, 39, 0.35);
 }
 
 .hero-grid {
   background-image:
-    linear-gradient(to right, rgba(17, 16, 14, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(17, 16, 14, 0.055) 1px, transparent 1px);
-  background-size: 56px 56px;
+    linear-gradient(to right, rgba(22, 24, 39, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(22, 24, 39, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
   mask-image: linear-gradient(to bottom, black, transparent 92%);
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.marquee-track {
-  animation: marquee 32s linear infinite;
-}
-
-.marquee-track:hover {
-  animation-play-state: paused;
-}
-
 .wallet-adapter-button {
-  font-family: var(--font-mono) !important;
-  font-size: 10px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.14em !important;
-  text-transform: uppercase !important;
-  border-radius: 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 9px !important;
   height: 36px !important;
   line-height: 36px !important;
   padding: 0 14px !important;
-  background: var(--ink) !important;
-  color: var(--paper) !important;
-  transition: background-color 150ms ease !important;
+  background: var(--paper-soft) !important;
+  color: var(--ink) !important;
+  border: 1px solid rgba(22, 24, 39, 0.15) !important;
 }
 
 .wallet-adapter-button:not([disabled]):hover {
-  background: var(--cobalt) !important;
-}
-
-.wallet-adapter-button-trigger {
-  background: var(--ink) !important;
-  color: var(--paper) !important;
+  background: var(--paper) !important;
 }
 
 .wallet-adapter-button-start-icon,
@@ -184,61 +245,42 @@
 }
 
 .wallet-adapter-dropdown-list,
-.wallet-adapter-modal,
-.wallet-adapter-modal-list {
-  border-radius: 0 !important;
+.wallet-adapter-modal {
+  border-radius: 12px !important;
+  background: var(--paper-soft) !important;
+  border: 1px solid rgba(22, 24, 39, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(22, 24, 39, 0.12) !important;
 }
 
 .wallet-adapter-dropdown-list {
-  border: 1px solid var(--ink) !important;
-  background: var(--paper) !important;
-  box-shadow: 8px 8px 0 0 rgba(17, 16, 14, 0.12) !important;
   padding: 6px !important;
 }
 
 .wallet-adapter-dropdown-list-item {
-  border-radius: 0 !important;
-  font-family: var(--font-mono) !important;
-  font-size: 10px !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase !important;
+  border-radius: 6px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 14px !important;
   color: var(--ink) !important;
 }
 
 .wallet-adapter-dropdown-list-item:not([disabled]):hover {
-  background: var(--cobalt) !important;
-  color: var(--paper) !important;
+  background: var(--paper) !important;
 }
 
 .wallet-adapter-modal-wrapper {
-  background: rgba(17, 16, 14, 0.55) !important;
-  backdrop-filter: blur(3px);
-}
-
-.wallet-adapter-modal {
-  background: var(--paper) !important;
-  border: 1px solid var(--ink) !important;
-  box-shadow: 16px 16px 0 0 rgba(17, 16, 14, 0.15) !important;
+  background: rgba(22, 24, 39, 0.45) !important;
 }
 
 .wallet-adapter-modal-title {
-  font-family: var(--font-serif) !important;
-  font-size: 2rem !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.02em !important;
+  font-family: var(--font-sans) !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
   color: var(--ink) !important;
 }
 
 .wallet-adapter-modal-list .wallet-adapter-button {
-  background: var(--paper-soft) !important;
-  color: var(--ink) !important;
-  border: 1px solid rgba(17, 16, 14, 0.18) !important;
-  height: 48px !important;
-  line-height: 48px !important;
-}
-
-.wallet-adapter-modal-list .wallet-adapter-button:hover {
-  background: var(--paper-deep) !important;
+  height: 44px !important;
+  line-height: 44px !important;
 }
 
 .wallet-adapter-modal-list-more {
@@ -246,19 +288,9 @@
 }
 
 .wallet-adapter-modal-button-close {
-  background: var(--ink) !important;
+  background: var(--paper) !important;
 }
 
 .wallet-adapter-modal-button-close svg {
-  fill: var(--paper) !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .marquee-track {
-    animation: none;
-  }
+  fill: var(--ink) !important;
 }

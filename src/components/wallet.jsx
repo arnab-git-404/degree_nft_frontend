@@ -2,7 +2,7 @@ const { Keypair, PublicKey, LAMPORTS_PER_SOL } = require('@solana/web3.js');
 const fs = require('fs');
 const { connection } = require('./connection');
 
-// Generate a new wallet for university or student
+// Generate a new wallet for institution or student
 function generateWallet(label) {
   const wallet = Keypair.generate();
   
@@ -68,11 +68,11 @@ async function requestAirdrop(wallet, amountInSOL = 2) {
 
 // Example usage
 if (require.main === module) {
-  // Create university wallet
-  const universityWallet = generateWallet('university');
+  // Create institution wallet
+  const institutionWallet = generateWallet('institution');
   
   // Request airdrop
-  requestAirdrop(universityWallet)
+  requestAirdrop(institutionWallet)
     .then(signature => {
       console.log('Airdrop successful:', signature);
     })

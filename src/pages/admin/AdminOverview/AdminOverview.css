@@ -1,0 +1,72 @@
+@reference "../../../index.css";
+
+/* Admin › Overview. Everything is scoped under .admin-overview. */
+.admin-overview {
+  @apply space-y-3;
+
+  /* KPI tiles: 2 per row on phones, 4 on desktop */
+  & .stats {
+    @apply grid grid-cols-2 gap-2 lg:grid-cols-4;
+  }
+
+  & .stat {
+    @apply flex items-center gap-3 rounded-xl border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs transition-colors hover:border-cobalt/50;
+  }
+
+  & .stat-icon {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-acid text-cobalt;
+  }
+
+  & .stat-body {
+    @apply min-w-0 flex-1;
+  }
+
+  & .stat-label {
+    @apply truncate text-xs text-ink/55;
+  }
+
+  & .stat-number {
+    @apply text-xl leading-tight font-semibold tabular-nums;
+  }
+
+  & .stat-detail {
+    @apply hidden shrink-0 self-end rounded bg-paper px-1.5 py-0.5 text-[12px] text-ink/60 sm:inline;
+  }
+
+  /* Moderation queues: one compact row each */
+  & .queues-title {
+    @apply pt-1 text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
+  }
+
+  & .queues {
+    @apply grid grid-cols-1 gap-2 lg:grid-cols-2;
+  }
+
+  & .queue {
+    @apply flex items-center gap-3 rounded-xl border border-ink/10 bg-paper-soft px-3 py-2.5 shadow-xs;
+  }
+
+  & .queue-count {
+    @apply flex h-9 min-w-9 shrink-0 items-center justify-center rounded-md px-2 text-sm font-semibold tabular-nums;
+  }
+
+  & .queue-count.is-busy {
+    @apply bg-amber-100 text-amber-800;
+  }
+
+  & .queue-count.is-clear {
+    @apply bg-green-600/10 text-green-700;
+  }
+
+  & .queue-body {
+    @apply min-w-0 flex-1;
+  }
+
+  & .queue-title {
+    @apply text-[14px] font-medium;
+  }
+
+  & .queue-text {
+    @apply truncate text-xs text-ink/55;
+  }
+}

@@ -1,0 +1,171 @@
+@reference "../../../index.css";
+
+/* Admin › Roles & permissions. Scoped under .admin-roles (the editor modal renders inside it). */
+.admin-roles {
+  @apply space-y-3;
+
+  & .col-actions {
+    @apply text-right;
+  }
+
+  & .empty {
+    @apply py-8 text-center text-ink/55;
+  }
+
+  /* ---- Table rows ---- */
+  & .role-row.is-open td {
+    @apply bg-acid/40;
+  }
+
+  & .role-toggle {
+    @apply flex items-center gap-2 text-left;
+  }
+
+  & .chevron {
+    @apply h-3.5 w-3.5 shrink-0 text-ink/40 transition-transform;
+  }
+
+  & .role-row.is-open .chevron {
+    @apply rotate-90 text-cobalt;
+  }
+
+  & .role-name {
+    @apply flex flex-wrap items-center gap-1.5;
+  }
+
+  /* ---- Expanded detail row ---- */
+  & .detail-row td {
+    @apply bg-paper/60 px-3 py-3;
+  }
+
+  & .data-table tbody .detail-row:hover td {
+    @apply bg-paper/60;
+  }
+
+  & .detail-grid {
+    @apply grid gap-4 pl-5 lg:grid-cols-2;
+  }
+
+  & .detail-head {
+    @apply mb-1.5 flex items-center justify-between gap-3;
+  }
+
+  & .detail-note {
+    @apply mt-2 text-[12px] text-ink/45;
+  }
+
+  & .chips {
+    @apply flex flex-wrap gap-1;
+  }
+
+  & .chip {
+    @apply rounded border border-ink/10 bg-paper-soft px-1.5 py-0.5 text-[12px] font-medium;
+  }
+
+  & .user-list {
+    @apply divide-y divide-ink/10 rounded-xl border border-ink/10 bg-paper-soft;
+  }
+
+  & .user-item {
+    @apply flex items-center justify-between gap-3 px-2.5 py-1.5;
+  }
+
+  /* ---- Role editor modal ---- */
+  & .editor-backdrop {
+    @apply fixed inset-0 z-[120] flex overflow-y-auto bg-ink/50 p-3 backdrop-blur-sm;
+  }
+
+  /* m-auto centres both ways and still scrolls from the top when taller than the screen */
+  & .editor {
+    @apply m-auto w-full max-w-5xl rounded-xl border border-ink/10 bg-paper-soft shadow-2xl;
+  }
+
+  & .editor-head {
+    @apply flex items-center justify-between gap-3 border-b border-ink/10 px-4 py-2.5;
+  }
+
+  & .editor-kicker {
+    @apply text-[12px] text-ink/50;
+  }
+
+  & .editor-title {
+    @apply text-base leading-tight font-semibold;
+  }
+
+  & .icon-btn {
+    @apply flex h-7 w-7 items-center justify-center rounded-md text-ink/55 transition-colors hover:bg-paper hover:text-ink disabled:opacity-40;
+  }
+
+  & .editor-body {
+    @apply space-y-3 px-4 py-3;
+  }
+
+  & .field-grid {
+    @apply grid gap-3 sm:grid-cols-2;
+  }
+
+  & .field-wide {
+    @apply space-y-1 sm:col-span-2;
+  }
+
+  & .active-toggle {
+    @apply flex cursor-pointer flex-wrap items-center gap-x-2 gap-y-0.5 rounded-md border border-ink/10 bg-paper px-3 py-2;
+  }
+
+  & .active-toggle .hint {
+    @apply text-xs text-ink/50;
+  }
+
+  & .check {
+    @apply h-4 w-4 shrink-0 accent-cobalt disabled:opacity-40;
+  }
+
+  & .perm-head {
+    @apply mb-2 flex flex-wrap items-center justify-between gap-2;
+  }
+
+  & .perm-count {
+    @apply ml-2 rounded bg-acid px-1.5 py-0.5 text-[12px] font-semibold text-cobalt tabular-nums;
+  }
+
+  & .admin-note {
+    @apply rounded-md border border-cobalt/25 bg-cobalt/5 px-3 py-2 text-xs text-ink/70;
+  }
+
+  & .perm-groups {
+    @apply space-y-3;
+  }
+
+  & .perm-group-label {
+    @apply mb-1 text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
+  }
+
+  /* 1 / 2 / 3 columns so long permission lists need less scrolling */
+  & .perm-grid {
+    @apply grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  & .perm {
+    @apply flex cursor-pointer items-start gap-2 rounded-md border border-ink/10 px-2.5 py-1.5 transition-colors hover:border-ink/30;
+  }
+
+  & .perm.is-checked {
+    @apply border-cobalt/60 bg-cobalt/5;
+  }
+
+  & .perm-label {
+    @apply block text-[14px] leading-tight font-medium;
+  }
+
+  & .perm-key {
+    @apply block font-mono text-[11px] text-ink/40;
+  }
+
+  & .perm-desc {
+    @apply mt-0.5 line-clamp-2 block text-[12px] leading-4 text-ink/55;
+  }
+
+  & .editor-foot {
+    @apply flex flex-wrap items-center justify-between gap-2 border-t border-ink/10 px-4 py-2.5;
+  }
+}

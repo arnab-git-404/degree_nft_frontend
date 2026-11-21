@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f3efe6" />
+    <meta name="theme-color" content="#f1f5f9" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Instrument+Serif:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
@@ -18,12 +18,22 @@
       name="description"
       content="DegreeNFT academic registry workspace for universities, students, and verification teams."
     />
-    <meta name="keywords" content="Solana, credentials, NFT, university, verification, DegreeNFT" />
+    <meta
+      name="keywords"
+      content="Solana, credentials, NFT, university, verification, DegreeNFT"
+    />
     <meta name="author" content="DegreeNFT" />
 
     <script>
       window.global = window;
       window.process = window.process || { env: {} };
+    </script>
+    <script>
+      // Apply the saved theme before first paint so there is no light flash.
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("theme") || "light";
+      } catch {}
     </script>
   </head>
   <body>

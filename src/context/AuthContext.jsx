@@ -9,7 +9,13 @@ import {
 } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Buffer } from "buffer";
-import api, { AUTH_TOKEN_KEY, AUTH_WALLET_KEY } from "../lib/api";
+import api, {
+  ACCESS_REVOKED_EVENT,
+  ACTIVE_INSTITUTION_KEY,
+  AUTH_TOKEN_KEY,
+  AUTH_WALLET_KEY,
+} from "../lib/api";
+import { getActiveMemberships, getRevokedMemberships } from "../lib/roles";
 
 const AuthContext = createContext(null);
 
@@ -30,14 +36,32 @@ export function AuthProvider({ children }) {
   const [isRestoring, setIsRestoring] = useState(Boolean(getStoredToken()));
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authError, setAuthError] = useState("");
+  // True when the server said the user's role is inactive (code ACCESS_REVOKED): the app shows the "access revoked" page.
+  const [accessRevoked, setAccessRevoked] = useState(false);
+  const [activeInstitutionId, setActiveInstitutionIdState] = useState(() =>
+    localStorage.getItem(ACTIVE_INSTITUTION_KEY)
+  );
+
+  // Stored first so the api interceptor sends the new X-Institution-Id on the very next request.
+  const selectInstitution = useCallback((institutionId) => {
+    if (institutionId) {
+      localStorage.setItem(ACTIVE_INSTITUTION_KEY, institutionId);
+    } else {
+      localStorage.removeItem(ACTIVE_INSTITUTION_KEY);
+    }
+    setActiveInstitutionIdState(institutionId || null);
+  }, []);
 
   const clearSession = useCallback(() => {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_WALLET_KEY);
+    localStorage.removeItem(ACTIVE_INSTITUTION_KEY);
+    setActiveInstitutionIdState(null);
     setToken(null);
     setUser(null);
     setSessionWallet(null);
     setAuthError("");
+    setAccessRevoked(false);
   }, []);
 
   const persistSession = useCallback((nextToken, nextUser, walletKey = null) => {
@@ -53,6 +77,13 @@ export function AuthProvider({ children }) {
     setUser(nextUser);
     setSessionWallet(walletKey);
     setAuthError("");
+    setAccessRevoked(false);
+  }, []);
+
+  useEffect(() => {
+    const onRevoked = () => setAccessRevoked(true);
+    window.addEventListener(ACCESS_REVOKED_EVENT, onRevoked);
+    return () => window.removeEventListener(ACCESS_REVOKED_EVENT, onRevoked);
   }, []);
 
   useEffect(() => {
@@ -62,7 +93,6 @@ export function AuthProvider({ children }) {
     }
 
     let cancelled = false;
-
     const restoreSession = async () => {
       try {
         const { data } = await api.get("/auth/me");
@@ -71,9 +101,11 @@ export function AuthProvider({ children }) {
 
         setUser(data.user);
         setSessionWallet(getStoredWallet());
-      } catch {
+      } catch (error) {
         if (!cancelled) {
-          clearSession();
+          // A revoked role keeps the session so "Check again" works; anything else signs the user out.
+          if (error.response?.data?.code === "ACCESS_REVOKED") setAccessRevoked(true);
+          else clearSession();
         }
       } finally {
         if (!cancelled) {
@@ -146,6 +178,45 @@ export function AuthProvider({ children }) {
     }
   }, [wallet, persistSession]);
 
+  // Student invite: sign a challenge with the wallet to prove it is theirs; the server links the college's profile
+  // to the account holding that wallet, and signs the student in.
+  const claimStudentInvite = useCallback(
+    async (inviteToken) => {
+      if (!wallet.connected || !wallet.publicKey) {
+        throw new Error("Connect a wallet first");
+      }
+
+      if (typeof wallet.signMessage !== "function") {
+        throw new Error("This wallet does not support message signing");
+      }
+
+      setIsAuthenticating(true);
+      setAuthError("");
+
+      try {
+        const address = wallet.publicKey.toBase58();
+        const { data: nonceData } = await api.post("/auth/nonce", { walletAddress: address });
+        const signatureBytes = await wallet.signMessage(new TextEncoder().encode(nonceData.message), "utf8");
+        const signature = Buffer.from(signatureBytes).toString("base64");
+
+        const { data } = await api.post(`/auth/student-invite/${inviteToken}/claim`, {
+          walletAddress: address,
+          signature,
+        });
+
+        persistSession(data.token, data.user, address);
+
+        return data.user;
+      } catch (error) {
+        setAuthError(getErrorMessage(error, "Failed to link the wallet"));
+        throw error;
+      } finally {
+        setIsAuthenticating(false);
+      }
+    },
+    [wallet, persistSession]
+  );
+
   const loginWithEmail = useCallback(
     async (email, password) => {
       setIsAuthenticating(true);
@@ -165,31 +236,6 @@ export function AuthProvider({ children }) {
       }
     },
     [persistSession]
-  );
-
-  const registerWithEmail = useCallback(
-    async ({ name, email, password, role }) => {
-      setIsAuthenticating(true);
-      setAuthError("");
-
-      try {
-        const { data } = await api.post("/auth/register", {
-          name,
-          email,
-          password,
-          role,
-        });
-
-        return data;
-      } catch (error) {
-        const message = getErrorMessage(error, "Failed to create account");
-        setAuthError(message);
-        throw error;
-      } finally {
-        setIsAuthenticating(false);
-      }
-    },
-    []
   );
 
   const activateAccount = useCallback(
@@ -274,27 +320,44 @@ export function AuthProvider({ children }) {
   const refreshUser = useCallback(async () => {
     const { data } = await api.get("/auth/me");
     setUser(data.user);
+    // The account works again; a revoked college role is worked out from the fresh memberships below.
+    setAccessRevoked(false);
 
     return data.user;
   }, []);
 
   const roleName = user?.roleId?.name || null;
+  const memberships = useMemo(() => getActiveMemberships(user), [user]);
+  const revokedMemberships = useMemo(() => getRevokedMemberships(user), [user]);
+  // Member of a college, but every role there is inactive: no college access left.
+  const hasRevokedCollegeAccess = revokedMemberships.length > 0 && memberships.length === 0;
+  const activeMembership =
+    memberships.find((membership) => membership.institutionId._id === activeInstitutionId) || null;
+
+  // Keep the selection valid: default to the first college, clear it when the user has none.
+  useEffect(() => {
+    if (!user) return;
+    if (!activeMembership) selectInstitution(memberships[0]?.institutionId._id || null);
+  }, [user, memberships, activeMembership, selectInstitution]);
+
+  // Account role permissions plus the selected college's membership role (UI only; the API re-checks).
   const permissions = useMemo(
-    () => user?.roleId?.permissions || [],
-    [user]
+    () => [
+      ...(user?.roleId?.permissions || []),
+      ...(activeMembership?.roleId?.permissions || []),
+    ],
+    [user, activeMembership]
   );
   const isAuthenticated = Boolean(token && user);
-
-  const hasRole = useCallback(
-    (...roles) => Boolean(roleName && roles.includes(roleName)),
-    [roleName]
-  );
 
   const hasPermission = useCallback(
     (permission) =>
       permissions.includes("*") || permissions.includes(permission),
     [permissions]
   );
+
+  // Admin panel access comes from the role's permissions, same rule as the backend.
+  const canManagePlatform = hasPermission("platform:manage");
 
   const hasAnyPermission = useCallback(
     (...required) =>
@@ -312,13 +375,15 @@ export function AuthProvider({ children }) {
       walletAddress,
       sessionWallet,
       isAuthenticated,
+      canManagePlatform,
       isRestoring,
       isAuthenticating,
       authError,
       signIn,
       signOut,
       loginWithEmail,
-      registerWithEmail,
+      claimStudentInvite,
+
       activateAccount,
       resendActivation,
       updateProfile,
@@ -327,11 +392,24 @@ export function AuthProvider({ children }) {
       unlinkWallet,
       setPrimaryWallet,
       refreshUser,
-      hasRole,
       hasPermission,
       hasAnyPermission,
+      memberships,
+      activeMembership,
+      activeInstitutionId,
+      selectInstitution,
+      accessRevoked,
+      revokedMemberships,
+      hasRevokedCollegeAccess,
     }),
     [
+      accessRevoked,
+      revokedMemberships,
+      hasRevokedCollegeAccess,
+      memberships,
+      activeMembership,
+      activeInstitutionId,
+      selectInstitution,
       user,
       token,
       roleName,
@@ -339,13 +417,15 @@ export function AuthProvider({ children }) {
       walletAddress,
       sessionWallet,
       isAuthenticated,
+      canManagePlatform,
       isRestoring,
       isAuthenticating,
       authError,
       signIn,
       signOut,
       loginWithEmail,
-      registerWithEmail,
+      claimStudentInvite,
+
       activateAccount,
       resendActivation,
       updateProfile,
@@ -354,7 +434,6 @@ export function AuthProvider({ children }) {
       unlinkWallet,
       setPrimaryWallet,
       refreshUser,
-      hasRole,
       hasPermission,
       hasAnyPermission,
     ]

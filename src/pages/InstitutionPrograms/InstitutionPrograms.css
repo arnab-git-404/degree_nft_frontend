@@ -1,0 +1,20 @@
+@reference "../../index.css";
+
+/* Institution › Programs. Shared layout comes from .catalog-page (components/CatalogPage). */
+.institution-programs {
+  & .program-desc {
+    @apply line-clamp-2 max-w-md text-[13px] text-ink/60;
+  }
+}
+
+/* Add / edit modal (rendered outside .institution-programs, so not nested). */
+.program-form {
+  @apply space-y-5;
+
+  & .program-textarea {
+    @apply h-auto resize-none py-2;
+  }
+  & .program-preview-code {
+    @apply rounded-md bg-ink/10 px-2 py-0.5 text-[12px] font-semibold tracking-wide text-ink/70;
+  }
+}

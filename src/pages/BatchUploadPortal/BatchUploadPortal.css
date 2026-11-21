@@ -1,0 +1,294 @@
+@reference "../../index.css";
+
+/* Batch upload: stats board (StatCards from CatalogPage), stepper, step card + help panel. */
+.batch-page {
+  @apply space-y-4;
+
+  /* ---- Wallet not connected ---- */
+  & .guard-card {
+    @apply mx-auto mt-[15vh] flex max-w-md items-start gap-3 rounded-xl border border-ink/10 bg-paper-soft p-5 shadow-xs;
+  }
+
+  & .guard-icon {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-acid text-cobalt;
+  }
+
+  & .guard-title {
+    @apply text-[16px] leading-tight font-semibold;
+  }
+
+  & .guard-text {
+    @apply mt-0.5 text-[14px] text-ink/60;
+  }
+
+  & .wallet-chip {
+    @apply inline-flex h-8 items-center gap-1.5 rounded-full border border-cobalt/25 bg-acid/50 px-3 font-mono text-[12px] font-semibold text-cobalt;
+  }
+
+  /* ---- Stepper ---- */
+  & .stepper {
+    @apply grid grid-cols-2 overflow-hidden rounded-xl border border-ink/10 bg-paper-soft shadow-xs sm:grid-cols-4;
+
+    & li {
+      @apply relative flex items-center gap-3 px-4 py-3 text-ink/50;
+    }
+
+    & li.is-current {
+      @apply bg-acid/40 text-ink;
+
+      &::after {
+        @apply absolute inset-x-0 bottom-0 h-0.5 bg-cobalt content-[''];
+      }
+    }
+
+    & li.is-done {
+      @apply text-ink;
+    }
+  }
+
+  & .stepper-dot {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink/15 text-[12px] font-bold;
+  }
+
+  & li.is-current .stepper-dot {
+    @apply border-cobalt bg-cobalt text-white shadow-[0_3px_10px_rgb(79_70_229/0.3)];
+  }
+
+  & li.is-done .stepper-dot {
+    @apply border-transparent bg-green-600/10 text-green-700;
+  }
+
+  & .stepper-text {
+    @apply min-w-0;
+  }
+
+  & .stepper-label {
+    @apply block text-[14px] leading-tight font-semibold;
+  }
+
+  & .stepper-sub {
+    @apply block truncate text-[12px] text-ink/50;
+  }
+
+  /* ---- Layout ---- */
+  & .layout {
+    @apply grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_280px];
+  }
+
+  & .card {
+    @apply min-w-0 rounded-xl border border-ink/10 bg-paper-soft shadow-xs;
+  }
+
+  & .card-head {
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 px-5 py-3.5;
+  }
+
+  & .card-title {
+    @apply text-[16px] leading-tight font-semibold;
+  }
+
+  & .card-sub {
+    @apply mt-0.5 text-[14px] text-ink/55;
+  }
+
+  & .card-body {
+    @apply space-y-4 p-5;
+  }
+
+  & .card-foot {
+    @apply flex flex-wrap justify-between gap-2 rounded-b-xl border-t border-ink/10 bg-paper/60 px-5 py-3;
+  }
+
+  /* ---- Upload step ---- */
+  & .dropzone {
+    @apply flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-ink/15 bg-paper px-4 py-10 text-center transition-colors focus-within:border-cobalt focus-within:ring-3 focus-within:ring-cobalt/15 hover:border-cobalt/50 hover:bg-acid/30;
+  }
+
+  & .dropzone.is-dragging {
+    @apply border-cobalt bg-acid/50;
+  }
+
+  & .dropzone-icon {
+    @apply mb-1.5 flex h-14 w-14 items-center justify-center rounded-full bg-paper-soft text-cobalt shadow-xs;
+  }
+
+  & .dropzone-title {
+    @apply text-[16px] font-semibold;
+  }
+
+  & .dropzone-sub {
+    @apply text-[12px] text-ink/50;
+  }
+
+  & .template-row {
+    @apply flex flex-wrap items-center justify-between gap-3 rounded-md border border-ink/10 px-4 py-3;
+  }
+
+  & .template-info {
+    @apply flex items-center gap-3;
+  }
+
+  & .columns {
+    @apply flex flex-wrap gap-1.5;
+
+    & code {
+      @apply rounded-md border border-ink/10 bg-paper px-2 py-1 font-mono text-[12px] text-ink/70;
+    }
+
+    & code.optional {
+      @apply border-dashed text-ink/45;
+    }
+  }
+
+  /* ---- Review step ---- */
+  & .file-chip {
+    @apply flex min-w-0 items-center gap-3;
+  }
+
+  & .pills {
+    @apply flex flex-wrap gap-1.5;
+  }
+
+  & .pill {
+    @apply rounded-full px-2.5 py-0.5 text-[12px] font-semibold;
+  }
+
+  & .pill.is-ok {
+    @apply bg-green-600/10 text-green-700;
+  }
+
+  & .pill.is-bad {
+    @apply bg-red-600/10 text-red-700;
+  }
+
+  & .errors {
+    @apply rounded-md border border-red-600/25 bg-red-600/5 px-4 py-3;
+  }
+
+  & .errors-title {
+    @apply flex items-center gap-1.5 text-[14px] font-semibold text-red-700;
+  }
+
+  & .errors-list {
+    @apply mt-2 max-h-48 divide-y divide-red-600/15 overflow-y-auto;
+  }
+
+  & .error-item {
+    @apply py-1.5 text-[14px];
+
+    & ul {
+      @apply list-inside list-disc text-[12px] text-red-700;
+    }
+  }
+
+  & .nowrap {
+    @apply whitespace-nowrap;
+  }
+
+  & .table-note {
+    @apply border-t border-ink/10 px-3.5 py-2 text-[12px] text-ink/55;
+  }
+
+  /* ---- Processing / complete ---- */
+  & .progress-box {
+    @apply space-y-2 rounded-md border border-ink/10 bg-paper px-4 py-3;
+  }
+
+  & .progress-top {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  & .progress-now {
+    @apply flex min-w-0 items-center gap-2 truncate font-semibold;
+  }
+
+  & .progress-count {
+    @apply shrink-0 font-bold text-cobalt tabular-nums;
+  }
+
+  & .progress {
+    @apply h-2.5 overflow-hidden rounded-full bg-paper-deep;
+  }
+
+  & .progress-fill {
+    @apply h-full rounded-full bg-cobalt transition-all duration-300;
+  }
+
+  & .progress-meta {
+    @apply text-[12px] text-ink/55;
+  }
+
+  /* Scroll inside the table wrapper so the sticky header has a scroll container to stick to */
+  & .results .table-scroll {
+    @apply max-h-80 overflow-y-auto;
+
+    & thead th {
+      @apply sticky top-0;
+    }
+  }
+
+  & .complete-head {
+    @apply flex items-center gap-3;
+  }
+
+  & .complete-icon {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-600/10 text-green-700;
+  }
+
+  & .complete-icon.is-bad {
+    @apply bg-red-600/10 text-red-700;
+  }
+
+  & .totals {
+    @apply grid grid-cols-3 gap-3;
+
+    & > div {
+      @apply rounded-md border border-ink/10 px-4 py-3;
+    }
+
+    & > .is-ok {
+      @apply border-green-700/25 bg-green-600/5;
+
+      & .total-value {
+        @apply text-green-700;
+      }
+    }
+
+    & > .is-bad {
+      @apply border-red-700/25 bg-red-600/5;
+
+      & .total-value {
+        @apply text-red-700;
+      }
+    }
+  }
+
+  & .total-label {
+    @apply text-[12px] font-semibold tracking-wide text-ink/55 uppercase;
+  }
+
+  & .total-value {
+    @apply mt-0.5 text-[22px] leading-tight font-bold tabular-nums;
+  }
+
+  /* ---- Help panel ---- */
+  & .help {
+    @apply rounded-xl border border-ink/10 bg-paper-soft p-4 shadow-xs;
+  }
+
+  & .help-title {
+    @apply flex items-center gap-1.5 text-[14px] font-semibold;
+  }
+
+  & .help-list {
+    @apply mt-3 space-y-3 text-[14px] text-ink/65;
+
+    & li {
+      @apply flex items-start gap-2.5;
+    }
+  }
+
+  & .help-icon {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-acid text-cobalt;
+  }
+}

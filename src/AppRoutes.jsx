@@ -1,23 +1,41 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "./context/AuthContext";
-import { getHomePath } from "./lib/roles";
-import { NotFound } from "./pages/NotFound";
-import { UniversityDashboard } from "./pages/UniversityDashboard";
-import { VerificationPortal } from "./pages/VerificationPortal";
-import { StudentDashboard } from "./pages/StudentDashboard";
-import { BatchUploadPortal } from "./pages/BatchUploadPortal";
+import {
+  getHomePath,
+  STUDENT_DESK_PERMISSIONS,
+  INSTITUTION_DESK_PERMISSIONS,
+} from "./lib/roles";
+import { NotFound } from "./pages/NotFound/NotFound";
+import { AccessRevoked } from "./pages/AccessRevoked/AccessRevoked";
+import { InstitutionDashboard } from "./pages/InstitutionDashboard/InstitutionDashboard";
+import { InstitutionStaff } from "./pages/InstitutionStaff/InstitutionStaff";
+import { InstitutionPrograms } from "./pages/InstitutionPrograms/InstitutionPrograms";
+import { InstitutionBatches } from "./pages/InstitutionBatches/InstitutionBatches";
+import { InstitutionRoles } from "./pages/InstitutionRoles/InstitutionRoles";
+import { InstitutionStudents } from "./pages/InstitutionStudents/InstitutionStudents";
+import { InstitutionEnrollments } from "./pages/InstitutionEnrollments/InstitutionEnrollments";
+import { InstitutionSettings } from "./pages/InstitutionSettings/InstitutionSettings";
+import { VerificationPortal } from "./pages/VerificationPortal/VerificationPortal";
+import { StudentDashboard } from "./pages/StudentDashboard/StudentDashboard";
+import { BatchUploadPortal } from "./pages/BatchUploadPortal/BatchUploadPortal";
 import { AdminLayout } from "./layouts/AdminLayout";
-import { AdminOverview } from "./pages/admin/AdminOverview";
-import { AdminUniversities } from "./pages/admin/AdminUniversities";
-import { AdminUsers } from "./pages/admin/AdminUsers";
-import { AdminRoles } from "./pages/admin/AdminRoles";
-import { AdminCredentials } from "./pages/admin/AdminCredentials";
-import { AdminReports } from "./pages/admin/AdminReports";
-import { Faucet } from "./pages/Faucet";
-import { Login } from "./pages/Login";
-import { Activate } from "./pages/Activate";
-import { Profile } from "./pages/Profile";
+import { AdminOverview } from "./pages/admin/AdminOverview/AdminOverview";
+import { AdminInstitutions } from "./pages/admin/AdminInstitutions/AdminInstitutions";
+import { AdminUsers } from "./pages/admin/AdminUsers/AdminUsers";
+import { AdminRoles } from "./pages/admin/AdminRoles/AdminRoles";
+import { AdminCredentials } from "./pages/admin/AdminCredentials/AdminCredentials";
+import { AdminReports } from "./pages/admin/AdminReports/AdminReports";
+import { AdminRegistrationLinks } from "./pages/admin/AdminRegistrationLinks/AdminRegistrationLinks";
+import { AdminActivity, CollegeActivity } from "./pages/admin/AdminActivity/AdminActivity";
+import { AdminApplications } from "./pages/admin/AdminApplications/AdminApplications";
+import { AdminSettings } from "./pages/admin/AdminSettings/AdminSettings";
+import { Apply } from "./pages/Apply/Apply";
+import { StudentClaim } from "./pages/StudentClaim/StudentClaim";
+import { Faucet } from "./pages/Faucet/Faucet";
+import { Login } from "./pages/Login/Login";
+import { Activate } from "./pages/Activate/Activate";
+import { Profile } from "./pages/Profile/Profile";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function RoleRedirect() {
@@ -36,13 +54,26 @@ function RoleRedirect() {
   );
 }
 
+// When the server says the user's role is inactive, every page leads to the "access revoked" page.
+function RevokedGate({ children }) {
+  const { accessRevoked } = useAuth();
+  const { pathname } = useLocation();
+
+  if (accessRevoked && pathname !== "/access-revoked") return <Navigate to="/access-revoked" replace />;
+  return children;
+}
+
 const AppRoutes = () => {
   return (
+    <RevokedGate>
     <Routes>
       <Route path="/" element={<RoleRedirect />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/access-revoked" element={<AccessRevoked />} />
       <Route path="/activate" element={<Activate />} />
       <Route path="/activate/:token" element={<Activate />} />
+      <Route path="/apply/:token" element={<Apply />} />
+      <Route path="/claim/:token" element={<StudentClaim />} />
       <Route
         path="/profile"
         element={
@@ -52,16 +83,109 @@ const AppRoutes = () => {
         }
       />
       <Route path="/verify" element={<VerificationPortal />} />
-      <Route path="/student" element={<StudentDashboard />} />
-      <Route path="/university" element={<UniversityDashboard />} />
-      <Route path="/batch-upload" element={<BatchUploadPortal />} />
+      <Route
+        path="/student"
+        element={
+          <ProtectedRoute anyOf={STUDENT_DESK_PERMISSIONS}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution"
+        element={
+          <ProtectedRoute anyOf={INSTITUTION_DESK_PERMISSIONS}>
+            <InstitutionDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/administration/staff"
+        element={
+          <ProtectedRoute anyOf={["staff:read"]}>
+            <InstitutionStaff />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/administration/roles"
+        element={
+          <ProtectedRoute anyOf={["role:manage"]}>
+            <InstitutionRoles />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/students"
+        element={
+          <ProtectedRoute anyOf={["student:read"]}>
+            <InstitutionStudents />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/enrollments"
+        element={
+          <ProtectedRoute anyOf={["enrollment:read"]}>
+            <InstitutionEnrollments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/administration/activity"
+        element={
+          <ProtectedRoute anyOf={["audit:read"]}>
+            <CollegeActivity />
+          </ProtectedRoute>
+        }
+      />
+      {/* Old address of the Staff page (before College Administration) */}
+      <Route path="/institution/staff" element={<Navigate to="/administration/staff" replace />} />
+      <Route
+        path="/institution/programs"
+        element={
+          <ProtectedRoute anyOf={["program:read"]}>
+            <InstitutionPrograms />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/batches"
+        element={
+          <ProtectedRoute anyOf={["programSession:read"]}>
+            <InstitutionBatches />
+          </ProtectedRoute>
+        }
+      />
+      {/* Academic years now live on the Settings page */}
+      <Route path="/administration/academic-sessions" element={<Navigate to="/administration/settings" replace />} />
+      <Route
+        path="/administration/settings"
+        element={
+          <ProtectedRoute anyOf={INSTITUTION_DESK_PERMISSIONS}>
+            <InstitutionSettings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/batch-upload"
+        element={
+          <ProtectedRoute anyOf={["batch:upload"]}>
+            <BatchUploadPortal />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminOverview />} />
-        <Route path="universities" element={<AdminUniversities />} />
+        <Route path="institutions" element={<AdminInstitutions />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="roles" element={<AdminRoles />} />
         <Route path="credentials" element={<AdminCredentials />} />
         <Route path="reports" element={<AdminReports />} />
+        <Route path="registration-links" element={<AdminRegistrationLinks />} />
+        <Route path="activity" element={<AdminActivity />} />
+        <Route path="applications" element={<AdminApplications />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
       <Route path="/faucet" element={<Faucet />} />
 
@@ -70,6 +194,7 @@ const AppRoutes = () => {
       {/* <Route path="/profile/:id" element={<Profile />} /> */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </RevokedGate>
   );
 };
 

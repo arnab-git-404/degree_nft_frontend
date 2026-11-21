@@ -18,6 +18,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['stream'], // Ensure stream is bundled during development
   },
-  base: "",
+  // Absolute so deep links like /apply/:token and /activate/:token load their assets.
+  base: "/",
 })
 

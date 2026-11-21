@@ -1,0 +1,37 @@
+@reference "../../index.css";
+
+/* Excel Template | Import buttons and the import window. Rendered inside a .catalog-page. */
+.catalog-page {
+  /* Joined like one control, as in the College ERP header */
+  & .sheet-actions {
+    @apply inline-flex;
+
+    & button {
+      @apply rounded-none hover:translate-y-0;
+    }
+
+    & button:first-child {
+      @apply rounded-l-md;
+    }
+
+    & button:last-child {
+      @apply -ml-px rounded-r-md;
+    }
+  }
+
+  & .import-summary {
+    @apply text-[14px] text-ink/80;
+  }
+
+  & .import-table {
+    @apply max-h-72 overflow-auto rounded-md border border-ink/10;
+  }
+
+  & .import-note {
+    @apply rounded-md bg-acid/50 px-3 py-2 text-[13px] text-ink/70;
+  }
+
+  & .modal:has(.import-table) {
+    @apply max-w-2xl;
+  }
+}

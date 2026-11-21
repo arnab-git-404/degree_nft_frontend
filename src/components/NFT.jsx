@@ -2,10 +2,10 @@ const { Keypair, PublicKey } = require('@solana/web3.js');
 const { Metaplex, keypairIdentity, bundlrStorage } = require('@metaplex-foundation/js');
 const { connection } = require('./connection');
 
-// Create Metaplex instance with university wallet
-function getMetaplex(universityWallet) {
+// Create Metaplex instance with institution wallet
+function getMetaplex(institutionWallet) {
   return Metaplex.make(connection)
-    .use(keypairIdentity(universityWallet))
+    .use(keypairIdentity(institutionWallet))
     .use(bundlrStorage({
       address: 'https://devnet.bundlr.network',
       providerUrl: 'https://api.testnet.solana.com',
@@ -17,15 +17,15 @@ function getMetaplex(universityWallet) {
 async function createDiplomaMetadata(
   metaplex,
   student,
-  university,
+  institution,
   imageUrl
 ) {
-  console.log(`Creating metadata for ${student.name}'s diploma from ${university.name}`);
+  console.log(`Creating metadata for ${student.name}'s diploma from ${institution.name}`);
   
   const metadata = {
-    name: `${university.name} - ${student.program} - ${student.name}`,
-    description: `Official diploma certifying that ${student.name} has completed the requirements for ${student.program} in ${student.major} at ${university.name}.`,
-    image: imageUrl || "https://your-university-domain.edu/diploma-template.png", // Replace with actual image
+    name: `${institution.name} - ${student.program} - ${student.name}`,
+    description: `Official diploma certifying that ${student.name} has completed the requirements for ${student.program} in ${student.major} at ${institution.name}.`,
+    image: imageUrl || "https://your-institution-domain.edu/diploma-template.png", // Replace with actual image
     external_url: `https://your-verification-portal.com/verify`,
     attributes: [
       { trait_type: "Student Name", value: student.name },
@@ -33,14 +33,14 @@ async function createDiplomaMetadata(
       { trait_type: "Program", value: student.program },
       { trait_type: "Major", value: student.major },
       { trait_type: "Graduation Date", value: student.graduationDate },
-      { trait_type: "University", value: university.name },
-      { trait_type: "Accreditation ID", value: university.accreditationId },
-      { trait_type: "Issue Date", value: university.issueDate }
+      { trait_type: "Institution", value: institution.name },
+      { trait_type: "Accreditation ID", value: institution.accreditationId },
+      { trait_type: "Issue Date", value: institution.issueDate }
     ],
     properties: {
       files: [
         {
-          uri: imageUrl || "https://your-university-domain.edu/diploma-template.png",
+          uri: imageUrl || "https://your-institution-domain.edu/diploma-template.png",
           type: "image/png"
         }
       ],
@@ -77,7 +77,7 @@ async function mintDiplomaNFT(
   metadataUri,
   studentWalletAddress,
   student,
-  university
+  institution
 ) {
   console.log(`Minting diploma NFT for ${student.name} to wallet ${studentWalletAddress}`);
   
@@ -86,7 +86,7 @@ async function mintDiplomaNFT(
     
     const { nft } = await metaplex.nfts().create({
       uri: metadataUri,
-      name: `${university.name} - ${student.program} - ${student.name}`,
+      name: `${institution.name} - ${student.program} - ${student.name}`,
       sellerFeeBasisPoints: 0, // No royalties for diploma NFTs
       tokenOwner: recipientAddress,
     });
