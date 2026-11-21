@@ -20,13 +20,13 @@ const FILTER_OPTIONS = [
 
 const credentialTone = (allocation) => {
   if (
-    allocation.nftStatus === "MINTED" ||
-    allocation.nftStatus === "CONFIRMED"
+    allocation.status === "MINTED" ||
+    allocation.status === "CONFIRMED"
   ) {
     return "success";
   }
 
-  if (allocation.nftStatus === "AUTO_CONFIRMED") {
+  if (allocation.status === "AUTO_CONFIRMED") {
     return "info";
   }
 
@@ -34,12 +34,12 @@ const credentialTone = (allocation) => {
 };
 
 const credentialLabel = (allocation) =>
-  allocation.nftStatus?.replaceAll("_", " ") ||
+  allocation.status?.replaceAll("_", " ") ||
   (allocation.minted ? "MINTED" : "UNMINTED");
 
 export function AdminCredentials() {
   const {
-    items: allocations,
+    items: credentials,
     pagination,
     isLoading,
     error,
@@ -51,8 +51,8 @@ export function AdminCredentials() {
     refresh,
     handleSearch,
   } = useAdminList({
-    endpoint: "/admin/nfts",
-    listKey: "allocations",
+    endpoint: "/admin/credentials",
+    listKey: "credentials",
     filterParam: "minted",
   });
 
@@ -93,7 +93,7 @@ export function AdminCredentials() {
                 </tr>
               </thead>
               <tbody>
-                {allocations.map((allocation) => (
+                {credentials.map((allocation) => (
                   <tr key={allocation._id}>
                     <td>
                       <p className="cell-title">{allocation.name}</p>
@@ -124,7 +124,7 @@ export function AdminCredentials() {
                     <td className="date">{formatDate(allocation.allocatedAt)}</td>
                   </tr>
                 ))}
-                {allocations.length === 0 && (
+                {credentials.length === 0 && (
                   <AdminEmpty colSpan={5} message="No credentials found" />
                 )}
               </tbody>

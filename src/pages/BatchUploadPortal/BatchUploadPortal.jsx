@@ -273,7 +273,7 @@ export function BatchUploadPortal() {
   };
 
   const createNftAllocation = async (ipfsHash, studentData) => {
-    const response = await api.post("/create-nft-ipfsHash-allocation", {
+    const response = await api.post("/institution/credentials", {
       studentWallet: studentData.studentAddress.trim(),
       name: studentData.degreeType,
       symbol: "DegreeNFT",

@@ -26,7 +26,7 @@ export function InstitutionDashboard() {
   } = useAuth();
   const navigate = useNavigate();
   const canIssueCredentials =
-    hasPermission("nft:create") || hasPermission("batch:upload");
+    hasPermission("credential:create") || hasPermission("batch:upload");
 
   const [issuingNftData, setIssuingNftData] = useState(false);
   const [institutionProfile, setInstitutionProfile] = useState(null);
@@ -351,7 +351,7 @@ export function InstitutionDashboard() {
 
 
     try {
-      const response = await api.post("/create-nft-ipfsHash-allocation", {
+      const response = await api.post("/institution/credentials", {
         studentWallet: formData.studentAddress,
         name: formData.degreeType,
         symbol: "DegreeNFT",

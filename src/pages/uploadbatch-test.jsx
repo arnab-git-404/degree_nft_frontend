@@ -230,7 +230,7 @@ export function BatchUploadPortal() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5001/api/create-nft-ipfsHash-allocation",
+        "http://localhost:5001/api/institution/credentials",
         {
           studentWallet: studentData.studentAddress,
           institutionWallet: publicKey.toString(),

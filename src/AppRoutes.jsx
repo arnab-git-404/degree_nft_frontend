@@ -11,6 +11,7 @@ import { AccessRevoked } from "./pages/AccessRevoked/AccessRevoked";
 import { InstitutionDashboard } from "./pages/InstitutionDashboard/InstitutionDashboard";
 import { InstitutionStaff } from "./pages/InstitutionStaff/InstitutionStaff";
 import { InstitutionPrograms } from "./pages/InstitutionPrograms/InstitutionPrograms";
+import { InstitutionCredentials } from "./pages/InstitutionCredentials/InstitutionCredentials";
 import { InstitutionBatches } from "./pages/InstitutionBatches/InstitutionBatches";
 import { InstitutionRoles } from "./pages/InstitutionRoles/InstitutionRoles";
 import { InstitutionStudents } from "./pages/InstitutionStudents/InstitutionStudents";
@@ -146,6 +147,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute anyOf={["program:read"]}>
             <InstitutionPrograms />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/credentials"
+        element={
+          <ProtectedRoute anyOf={["credential:read"]}>
+            <InstitutionCredentials />
           </ProtectedRoute>
         }
       />

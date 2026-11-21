@@ -1,6 +1,6 @@
 // Pages are opened by permission, never by role name (custom roles can have any name).
-export const INSTITUTION_DESK_PERMISSIONS = ["nft:create", "batch:upload", "student:read"];
-export const STUDENT_DESK_PERMISSIONS = ["nft:read", "nft:confirm", "report:create"];
+export const INSTITUTION_DESK_PERMISSIONS = ["credential:create", "batch:upload", "student:read"];
+export const STUDENT_DESK_PERMISSIONS = ["credential:read", "credential:confirm", "report:create"];
 
 // Colleges the user can work in (the API already returns only ACTIVE memberships).
 export const getActiveMemberships = (user) =>

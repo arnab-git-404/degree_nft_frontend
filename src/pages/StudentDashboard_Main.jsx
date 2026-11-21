@@ -36,7 +36,7 @@ export function StudentDashboard() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [nftInfo, setNftInfo] = useState(null);
+  const [credentialInfo, setCredentialInfo] = useState(null);
   const [authorizationError, setAuthorizationError] = useState("");
 
   const [isMinting, setIsMinting] = useState(false);
@@ -63,7 +63,7 @@ export function StudentDashboard() {
     const checkAuthorization = async () => {
       if (!connected || !walletAddress) {
         setIsAuthorized(false);
-        setNftInfo(null);
+        setCredentialInfo(null);
         setAuthorizationError("");
         setIsLoading(false);
         setMintSuccess(false);
@@ -80,24 +80,24 @@ export function StudentDashboard() {
 
       try {
         const response = await axios.get(
-          `${API_BASE_URL}/check-authorization/${walletAddress}`
+          `${API_BASE_URL}/student/credentials/next/${walletAddress}`
         );
 
-        if (response.data.authorized && response.data.nftInfo) {
+        if (response.data.authorized && response.data.credential) {
           setIsAuthorized(true);
-          setNftInfo(response.data.nftInfo);
+          setCredentialInfo(response.data.credential);
           toast.success("Found credentials ready to mint!");
         } else {
           setIsAuthorized(false);
-          setNftInfo(null);
+          setCredentialInfo(null);
           setAuthorizationError(
-            response.data.message || "No NFT allocation found for this wallet."
+            response.data.message || "No credential found for this wallet."
           );
         }
       } catch (error) {
         console.error("Error checking authorization:", error);
         setIsAuthorized(false);
-        setNftInfo(null);
+        setCredentialInfo(null);
         setAuthorizationError(
           error.response?.data?.message || "Failed to check authorization. Please try again."
         );
@@ -115,7 +115,7 @@ export function StudentDashboard() {
 
   // Handle Minting using UMI directly in the frontend
   const handleMintNft = async () => {
-    if (!umi || !publicKey || !nftInfo || !nftInfo.uri || !nftInfo.name) {
+    if (!umi || !publicKey || !credentialInfo || !credentialInfo.uri || !credentialInfo.name) {
       setMintError("Cannot mint: Missing wallet connection, UMI instance, or NFT metadata");
       toast.error("Missing required information for minting");
       return;
@@ -135,9 +135,9 @@ export function StudentDashboard() {
       await umi.use(mplTokenMetadata());
       const { signature } = await createNft(umi, {
         mint: mint, 
-        name: nftInfo.name,
-        symbol: nftInfo.symbol,
-        uri: nftInfo.uri,
+        name: credentialInfo.name,
+        symbol: credentialInfo.symbol,
+        uri: credentialInfo.uri,
         sellerFeeBasisPoints: percentAmount(0),
         creators: [
           { 
@@ -151,9 +151,9 @@ export function StudentDashboard() {
       const mintedNftData = {
         address: mint.publicKey.toString(),
         signature: signature.toString(),
-        name: nftInfo.name,
-        symbol: nftInfo.symbol || "CRED",
-        uri: nftInfo.uri,
+        name: credentialInfo.name,
+        symbol: credentialInfo.symbol || "CRED",
+        uri: credentialInfo.uri,
         dateIssued: new Date().toISOString()
       };
 
@@ -166,7 +166,7 @@ export function StudentDashboard() {
 
       // Notify backend about successful mint
       try {
-        await axios.post(`${API_BASE_URL}/confirm-mint`, {
+        await axios.post(`${API_BASE_URL}/student/credentials/mint`, {
           walletAddress: walletAddress,
           nft_Mint_Address: mint.publicKey.toString(),
         });
@@ -197,7 +197,7 @@ export function StudentDashboard() {
     
     setLoadingNfts(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/minted-nfts/${walletAddress}`);
+      const response = await axios.get(`${API_BASE_URL}/student/credentials/minted/${walletAddress}`);
       
       if (response.data.nfts) {
         setMintedNfts(response.data.nfts || []);
@@ -305,7 +305,7 @@ export function StudentDashboard() {
       )}
 
       {/* Display Available NFT to Mint */}
-      {isAuthorized && nftInfo && !mintSuccess && (
+      {isAuthorized && credentialInfo && !mintSuccess && (
         <div className="rounded-none border border-cobalt bg-cobalt/5 p-6 shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] hover:shadow-[8px_8px_0_0_rgba(17,16,14,0.10)] transition-all">
           <h3 className="text-xl font-semibold text-cobalt">
             <Award className="inline-block mr-2 h-5 w-5" />
@@ -314,21 +314,21 @@ export function StudentDashboard() {
           <div className="mt-4 space-y-2 text-ink/70">
             <p>
               <span className="font-medium text-ink">Name:</span>{" "}
-              {nftInfo.name}
+              {credentialInfo.name}
             </p>
             <p>
               <span className="font-medium text-ink">Symbol:</span>{" "}
-              {nftInfo.symbol || "CRED"}
+              {credentialInfo.symbol || "CRED"}
             </p>
             <p>
               <span className="font-medium text-ink">Metadata URI:</span>{" "}
               <a 
-                href={nftInfo.uri} 
+                href={credentialInfo.uri} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="underline hover:text-cobalt break-all cursor-pointer"
               >
-                {nftInfo.uri}
+                {credentialInfo.uri}
               </a>
             </p>
           </div>
@@ -445,7 +445,7 @@ export function StudentDashboard() {
           <div className="flex flex-col items-center justify-center text-center py-8 text-ink/60">
             <Award className="h-12 w-12 text-ink/50 mb-3" />
             <p>You haven't minted any credential NFTs yet.</p>
-            {isAuthorized && nftInfo && (
+            {isAuthorized && credentialInfo && (
               <p className="mt-2 text-cobalt">
                 You have a credential ready to mint above!
               </p>

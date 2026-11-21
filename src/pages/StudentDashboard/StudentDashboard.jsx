@@ -51,7 +51,7 @@ export function StudentDashboard() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [nftInfo, setNftInfo] = useState(null);
+  const [credentialInfo, setCredentialInfo] = useState(null);
   const [authorizationError, setAuthorizationError] = useState("");
 
   const [isMinting, setIsMinting] = useState(false);
@@ -142,21 +142,21 @@ export function StudentDashboard() {
 
       try {
         const response = await api.get(
-          `/check-authorization/${walletAddress}`,
+          `/student/credentials/next/${walletAddress}`,
         );
 
-        if (response.data.authorized && response.data.nftInfo) {
+        if (response.data.authorized && response.data.credential) {
           setIsAuthorized(true);
-          setNftInfo(response.data.nftInfo);
-          fetchMetadata(response.data.nftInfo.uri);
+          setCredentialInfo(response.data.credential);
+          fetchMetadata(response.data.credential.uri);
 
           if (response.data.existingReport) {
             setAlreadyReported(true);
           }
           // Set confirmation status and deadline
-          if (response.data.nftInfo.confirmationStatus) {
+          if (response.data.credential.confirmationStatus) {
             setIsConfirmed(
-              response.data.nftInfo.confirmationStatus === "CONFIRMED",
+              response.data.credential.confirmationStatus === "CONFIRMED",
             );
             setConfirmationDeadline(response.data.confirmationDeadline);
           } else {
@@ -170,15 +170,15 @@ export function StudentDashboard() {
           }
         } else {
           setIsAuthorized(false);
-          setNftInfo(null);
+          setCredentialInfo(null);
           setAuthorizationError(
-            response.data.message || "No NFT allocation found for this wallet.",
+            response.data.message || "No credential found for this wallet.",
           );
         }
       } catch (error) {
         console.error("Error checking authorization:", error);
         setIsAuthorized(false);
-        setNftInfo(null);
+        setCredentialInfo(null);
         setAuthorizationError(
           error.response?.data?.message ||
             "Failed to check authorization. Please try again.",
@@ -191,7 +191,7 @@ export function StudentDashboard() {
 
     const resetStates = () => {
       setIsAuthorized(false);
-      setNftInfo(null);
+      setCredentialInfo(null);
       setAuthorizationError("");
       setIsLoading(false);
       setMintSuccess(false);
@@ -221,7 +221,7 @@ export function StudentDashboard() {
   }, [connected, walletAddress, isAuthenticated]);
 
   const handleConfirm = async () => {
-    if (!walletAddress || !nftInfo) return;
+    if (!walletAddress || !credentialInfo) return;
 
     if (alreadyReported) {
       toast.error("You have already reported an issue for this credential.");
@@ -231,10 +231,10 @@ export function StudentDashboard() {
     setIsSavingChanges(true);
 
     try {
-      const response = await api.post("/confirm-nft-credential", {
+      const response = await api.post("/student/credentials/confirm", {
         walletAddress,
-        nftId: nftInfo._id,
-        revision: nftInfo.revision,
+        credentialId: credentialInfo._id,
+        revision: credentialInfo.revision,
       });
 
       if (response.data.success) {
@@ -255,8 +255,8 @@ export function StudentDashboard() {
   const handleMintNft = async () => {
     const minimumBalance = 0.01;
 
-    // Check if UMI, publicKey, and nftInfo are available
-    if (!umi || !publicKey || !nftInfo || !nftInfo.uri || !nftInfo.name) {
+    // Check if UMI, publicKey, and credentialInfo are available
+    if (!umi || !publicKey || !credentialInfo || !credentialInfo.uri || !credentialInfo.name) {
       setMintError(
         "Cannot mint: Missing wallet connection, UMI instance, or NFT metadata",
       );
@@ -311,9 +311,9 @@ export function StudentDashboard() {
 
       const { signature } = await createNft(umi, {
         mint: mint,
-        name: nftInfo.name,
-        symbol: nftInfo.symbol,
-        uri: nftInfo.uri,
+        name: credentialInfo.name,
+        symbol: credentialInfo.symbol,
+        uri: credentialInfo.uri,
         sellerFeeBasisPoints: 500, // 5% royalty
         creators: [
           {
@@ -327,9 +327,9 @@ export function StudentDashboard() {
       const mintedNftData = {
         address: mint.publicKey.toString(),
         signature: signature.toString(),
-        name: nftInfo.name,
-        symbol: nftInfo.symbol || "CRED",
-        uri: nftInfo.uri,
+        name: credentialInfo.name,
+        symbol: credentialInfo.symbol || "CRED",
+        uri: credentialInfo.uri,
         dateIssued: new Date().toISOString(),
       };
 
@@ -342,11 +342,11 @@ export function StudentDashboard() {
 
       // Notify backend about successful mint
       try {
-        await api.post("/confirm-mint", {
+        await api.post("/student/credentials/mint", {
           walletAddress: walletAddress,
           nft_Mint_Address: mint.publicKey.toString(),
-          nftId: nftInfo._id,
-          revision: nftInfo.revision,
+          credentialId: credentialInfo._id,
+          revision: credentialInfo.revision,
         });
         console.log("Backend notified of successful mint.");
       } catch (backendError) {
@@ -374,7 +374,7 @@ export function StudentDashboard() {
 
     setLoadingNfts(true);
     try {
-      const response = await api.get(`/minted-nfts/${walletAddress}`);
+      const response = await api.get(`/student/credentials/minted/${walletAddress}`);
 
       if (response.data.nfts) {
         setMintedNfts(response.data.nfts || []);
@@ -437,7 +437,7 @@ export function StudentDashboard() {
 
   // Handle submitting the issue
   const handleSubmitIssue = async () => {
-    if (!walletAddress || !nftInfo || !issueDescription.trim()) {
+    if (!walletAddress || !credentialInfo || !issueDescription.trim()) {
       toast.error("Please provide a description of the issue");
       return;
     }
@@ -446,17 +446,17 @@ export function StudentDashboard() {
 
     try {
       // Fetch NFT data from Pinata
-      const nftUriDataFromPinata = await fetch(nftInfo.uri);
+      const nftUriDataFromPinata = await fetch(credentialInfo.uri);
       const nftUriData = await nftUriDataFromPinata.json();
       // console.log("NFT Data:", nftUriData);
 
-      const response = await api.post("/report-issue", {
+      const response = await api.post("/student/credentials/report", {
         //  institutionWallet: we need to extract this from the NFT uri or metadata. So Do it Later || Done (9.17PM , 19.06.2025)
         institutionWallet:
           nftUriData.properties.creators[0].institutionWalletAddress || "",
         studentWallet: walletAddress,
-        nftIpfsHash: nftInfo.uri,
-        reportType: "NFT Credential Issue",
+        credentialId: credentialInfo._id,
+        reportType: "Credential Issue",
         reportDetails: issueDescription.trim(),
       });
 
@@ -638,7 +638,7 @@ export function StudentDashboard() {
       )}
 
       {/* Credential to review / mint */}
-      {isAuthorized && nftInfo && !mintSuccess && (
+      {isAuthorized && credentialInfo && !mintSuccess && (
         <div className="review">
           <div className="review-head">
             <h3 className="review-title">
@@ -653,6 +653,19 @@ export function StudentDashboard() {
               </span>
             )}
           </div>
+
+          {credentialInfo.revision > 1 && (
+            <p className="mx-4 mb-2 rounded-lg bg-amber-50 px-3 py-2 text-[13px] text-amber-800">
+              <b>Corrected by your institution (revision {credentialInfo.revision}).</b>
+              {credentialInfo.revisionNote ? ` Reason: ${credentialInfo.revisionNote}.` : ""} Your earlier confirmation no longer applies, so please review the details and
+              confirm again.
+            </p>
+          )}
+          {alreadyReported && (
+            <p className="mx-4 mb-2 rounded-lg bg-red-50 px-3 py-2 text-[13px] text-red-700">
+              You have an open report on this credential. Minting is on hold until your institution corrects or resolves it.
+            </p>
+          )}
 
           {isReportingIssue ? (
             <div className="review-body report">
@@ -715,22 +728,22 @@ export function StudentDashboard() {
                 <dl className="basic">
                   <div>
                     <dt>Name</dt>
-                    <dd>{nftInfo.name}</dd>
+                    <dd>{credentialInfo.name}</dd>
                   </div>
                   <div>
                     <dt>Symbol</dt>
-                    <dd>{nftInfo.symbol || "CRED"}</dd>
+                    <dd>{credentialInfo.symbol || "CRED"}</dd>
                   </div>
                   <div>
                     <dt>Metadata URI</dt>
                     <dd>
                       <a
-                        href={nftInfo.uri}
+                        href={credentialInfo.uri}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="uri"
                       >
-                        {nftInfo.uri}
+                        {credentialInfo.uri}
                       </a>
                     </dd>
                   </div>
@@ -874,7 +887,7 @@ export function StudentDashboard() {
         <div className="pending">
           <Calendar className="h-4 w-4 shrink-0 text-ink/50" />
           <span className="font-medium">
-            Pending credentials: {nftInfo ? nftInfo.length : "None"}
+            Pending credentials: {credentialInfo ? credentialInfo.length : "None"}
           </span>
           <span className="cell-sub">
             {authorizationError ||
@@ -911,7 +924,7 @@ export function StudentDashboard() {
           <div className="empty">
             <Award className="h-6 w-6 text-ink/40" />
             <p>You haven't minted any credential NFTs yet.</p>
-            {isAuthorized && nftInfo && (
+            {isAuthorized && credentialInfo && (
               <p className="text-cobalt">
                 You have a credential ready to {isConfirmed ? "mint" : "review"}{" "}
                 above!
