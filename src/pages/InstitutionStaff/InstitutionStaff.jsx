@@ -14,15 +14,13 @@ export function InstitutionStaff() {
         title="Staff"
         description={`People who work at ${institution?.name || "your institution"}. Only the Super Admin can add or change Institution Admins.`}
       />
-      <div className="table-card">
-        {/* key: reload when the user switches college */}
-        <StaffManager
-          key={institution?._id}
-          endpoint="/institution/staff"
-          canInvite={hasPermission("staff:invite")}
-          canManage={hasPermission("staff:manage")}
-        />
-      </div>
+      {/* key: reload when the user switches college */}
+      <StaffManager
+        key={institution?._id}
+        endpoint="/institution/staff"
+        canInvite={hasPermission("staff:invite")}
+        canManage={hasPermission("staff:manage")}
+      />
     </div>
   );
 }

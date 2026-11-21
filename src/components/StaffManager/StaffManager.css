@@ -1,15 +1,13 @@
 @reference "../../index.css";
 
-/* College members table + invite form. Scoped under .staff-manager. */
+/* College staff: stats, filters, table and the invite/edit modal. Layout comes from .catalog-page. */
 .staff-manager {
-  @apply space-y-2;
-
-  & .invite-form {
-    @apply grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_10rem_auto];
+  & .staff-head {
+    @apply flex justify-end;
   }
 
   & .invite-result {
-    @apply space-y-1 rounded-md border border-cobalt/20 bg-cobalt/5 p-2 text-xs;
+    @apply space-y-1 rounded-md border border-cobalt/20 bg-cobalt/5 p-3 text-xs;
   }
 
   & .invite-link {
@@ -20,20 +18,33 @@
     }
   }
 
-  & .head-badge {
-    @apply ml-1.5 inline-flex items-center gap-0.5 rounded bg-yellow-500/15 px-1 py-0.5 text-[11px] font-medium text-yellow-800;
+  & .staff-avatar {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-bold text-white;
   }
 
-  & .role-select {
-    @apply h-7 w-auto py-0 text-xs;
+  & .staff-email {
+    @apply mt-0.5 text-[12px] text-ink/55;
+  }
+
+  & .head-badge {
+    @apply ml-2 inline-flex items-center gap-0.5 rounded-full bg-yellow-500/15 px-1.5 py-0.5 text-[11px] font-semibold text-yellow-800;
   }
 
   & .col-actions {
     @apply text-right;
   }
 
-  & .actions {
-    @apply inline-flex flex-wrap justify-end gap-1;
+  & .row-end {
+    @apply flex items-center justify-end gap-2;
+  }
+}
+
+/* Modal content (rendered inside .catalog-page, but kept separate like the other forms). */
+.staff-form {
+  @apply space-y-5;
+
+  & .staff-preview-role {
+    @apply rounded-md bg-ink/10 px-2 py-0.5 text-[12px] font-semibold text-ink/70;
   }
 }
 

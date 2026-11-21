@@ -59,14 +59,16 @@ export function CatalogToolbar({ children, search, onSearch, placeholder, hasFil
       <span className="count-pill">
         {shown} of {total}
       </span>
-      <div className="view-toggle" role="group" aria-label="View">
-        <button type="button" aria-pressed={view === "grid"} aria-label="Grid view" title="Grid view" onClick={() => onView("grid")}>
-          <LayoutGrid className="h-4 w-4" />
-        </button>
-        <button type="button" aria-pressed={view === "table"} aria-label="Table view" title="Table view" onClick={() => onView("table")}>
-          <List className="h-4 w-4" />
-        </button>
-      </div>
+      {onView && (
+        <div className="view-toggle" role="group" aria-label="View">
+          <button type="button" aria-pressed={view === "grid"} aria-label="Grid view" title="Grid view" onClick={() => onView("grid")}>
+            <LayoutGrid className="h-4 w-4" />
+          </button>
+          <button type="button" aria-pressed={view === "table"} aria-label="Table view" title="Table view" onClick={() => onView("table")}>
+            <List className="h-4 w-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

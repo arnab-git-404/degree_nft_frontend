@@ -15,7 +15,9 @@ export function statusTone(value) {
 
 // An academic session as colleges write it: "2024-25", or "2024" for a calendar year.
 export const sessionLabel = ({ startYear, endYear }) =>
-  endYear === startYear ? String(startYear) : `${startYear}-${String(endYear).slice(-2)}`;
+  endYear === startYear
+    ? String(startYear)
+    : `${startYear}-${String(endYear).slice(-2)}`;
 
 // Default colours the server gives a new record; the forms preview them as the "Auto" swatch.
 // Mirror of degree_nft_backend/utils/color.js (colorFromSeed, hashString); keep both in sync.
@@ -31,11 +33,19 @@ export function colorFromSeed(seed) {
   };
   return `#${channel(0)}${channel(8)}${channel(4)}`;
 }
-const hashString = (text) => [...String(text)].reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7);
+const hashString = (text) =>
+  [...String(text)].reduce(
+    (hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0,
+    7,
+  );
 
 export const yearColor = colorFromSeed;
+// Staff are coloured from their lowercased email (matches staffService.js).
+export const emailColor = (email) =>
+  colorFromSeed(hashString(String(email).trim().toLowerCase()));
 // Programs are coloured from their (uppercased) code.
-export const codeColor = (code) => colorFromSeed(hashString(String(code).trim().toUpperCase()));
+export const codeColor = (code) =>
+  colorFromSeed(hashString(String(code).trim().toUpperCase()));
 
 // A batch's name, code and colour, computed the way the server does for batches saved before those fields existed.
 export const batchView = (batch, program) => {
