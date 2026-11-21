@@ -32,6 +32,34 @@
   --acid: #e0e7ff;
 }
 
+/* Dark mode: overrides the same tokens, so every bg-paper / text-ink / border-ink/x utility flips with no per-page edits. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #0f111a;
+  --color-paper-soft: #181b27;
+  --color-paper-deep: #252938;
+  --color-ink: #e6e8f2;
+  --color-cobalt: #6d74f0;
+  --color-cobalt-strong: #565de0;
+  --color-acid: #2b2f5e;
+  --paper: #0f111a;
+  --paper-soft: #181b27;
+  --paper-deep: #252938;
+  --ink: #e6e8f2;
+  --cobalt: #8b92f8;
+  --acid: #2b2f5e;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: rgba(230, 232, 242, 0.2);
+}
+
+:root[data-theme="dark"] .hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(230, 232, 242, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(230, 232, 242, 0.05) 1px, transparent 1px);
+}
+
 @layer base {
   html {
     background: var(--paper);

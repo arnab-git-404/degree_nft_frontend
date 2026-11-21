@@ -18,12 +18,22 @@
       name="description"
       content="DegreeNFT academic registry workspace for universities, students, and verification teams."
     />
-    <meta name="keywords" content="Solana, credentials, NFT, university, verification, DegreeNFT" />
+    <meta
+      name="keywords"
+      content="Solana, credentials, NFT, university, verification, DegreeNFT"
+    />
     <meta name="author" content="DegreeNFT" />
 
     <script>
       window.global = window;
       window.process = window.process || { env: {} };
+    </script>
+    <script>
+      // Apply the saved theme before first paint so there is no light flash.
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("theme") || "light";
+      } catch {}
     </script>
   </head>
   <body>

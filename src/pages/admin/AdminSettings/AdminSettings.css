@@ -169,7 +169,7 @@
   }
 
   & .test-error {
-    @apply mt-2 rounded-md bg-white/70 px-2.5 py-1.5 font-mono text-[12px] leading-relaxed break-words;
+    @apply mt-2 rounded-md bg-paper-soft/70 px-2.5 py-1.5 font-mono text-[12px] leading-relaxed break-words;
   }
 
   /* Address in the left column (lined up with the fields above), button in the right; stacked on phones */

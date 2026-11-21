@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight, Menu } from "lucide-react";
+import { ChevronRight, Menu, Moon, Sun } from "lucide-react";
 import { WalletButton } from "./WalletButton";
 import { useAuth } from "../context/AuthContext";
 import { SECTIONS, getInitials } from "./AppSidebar";
@@ -10,13 +11,24 @@ const PAGES = Object.fromEntries(
     section.modules.map((module) => [
       module.to,
       { section: section.label, title: module.label },
-    ])
-  )
+    ]),
+  ),
 );
 
 export function Navbar({ onMenuClick }) {
   const { isAuthenticated, user, roleName } = useAuth();
   const { pathname } = useLocation();
+  const [dark, setDark] = useState(
+    () => document.documentElement.dataset.theme === "dark",
+  );
+  const toggleTheme = () => {
+    const next = dark ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {}
+    setDark(!dark);
+  };
   const page = PAGES[pathname.replace(/\/+$/, "") || "/"];
   const section = page?.section || "Workspace";
   const title = page?.title || "Workspace";
@@ -32,9 +44,15 @@ export function Navbar({ onMenuClick }) {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[14px]">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex min-w-0 items-center gap-1.5 text-[14px]"
+        >
           <span className="hidden text-ink/45 sm:inline">{section}</span>
-          <ChevronRight className="hidden h-3.5 w-3.5 shrink-0 text-ink/25 sm:inline" aria-hidden="true" />
+          <ChevronRight
+            className="hidden h-3.5 w-3.5 shrink-0 text-ink/25 sm:inline"
+            aria-hidden="true"
+          />
           <span className="truncate font-semibold">{title}</span>
         </nav>
       </div>
@@ -43,6 +61,19 @@ export function Navbar({ onMenuClick }) {
         <span className="hidden rounded-full bg-amber-100 px-2.5 py-1 text-[12px] font-semibold text-amber-800 md:inline">
           Devnet
         </span>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-ink/10 text-ink/60 transition-colors hover:bg-acid hover:text-cobalt"
+          aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+          title={dark ? "Light mode" : "Dark mode"}
+        >
+          {dark ? (
+            <Sun className="h-[18px] w-[18px]" />
+          ) : (
+            <Moon className="h-[18px] w-[18px]" />
+          )}
+        </button>
         <div className="hidden sm:block">
           <WalletButton />
         </div>

@@ -33,8 +33,8 @@ export function Layout({ children }) {
       position="top-right"
       toastOptions={{
         style: {
-          background: "#ffffff",
-          color: "#161827",
+          background: "var(--paper-soft)",
+          color: "var(--ink)",
           border: "1px solid rgba(15, 23, 42, 0.1)",
           borderRadius: 12,
           fontSize: "14px",
@@ -65,7 +65,9 @@ export function Layout({ children }) {
       >
         <AppSidebar
           collapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed((collapsed) => !collapsed)}
+          onToggleCollapse={() =>
+            setIsSidebarCollapsed((collapsed) => !collapsed)
+          }
         />
       </aside>
 

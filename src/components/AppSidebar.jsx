@@ -1,5 +1,11 @@
 import { useEffect, useId, useState } from "react";
-import { Link, NavLink, matchPath, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  matchPath,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   BadgeCheck,
@@ -62,12 +68,47 @@ export const SECTIONS = [
     icon: School,
     modules: [
       // No permissions on the desk: it is where an applicant registers, before any role exists.
-      { to: "/institution", label: "Registration & desk", icon: School, end: true },
-      { to: "/institution/programs", label: "Programs", icon: BookOpen, permissions: ["program:read"], collegeOnly: true },
-      { to: "/institution/batches", label: "Batches", icon: Layers, permissions: ["programSession:read"], collegeOnly: true },
-      { to: "/institution/students", label: "Students", icon: Users, permissions: ["student:read"], collegeOnly: true },
-      { to: "/institution/enrollments", label: "Enrollments", icon: ClipboardList, permissions: ["enrollment:read"], collegeOnly: true },
-      { to: "/batch-upload", label: "Batch upload", icon: Upload, permissions: ["batch:upload"], collegeOnly: true },
+      {
+        to: "/institution",
+        label: "Registration & desk",
+        icon: School,
+        end: true,
+      },
+      {
+        to: "/institution/programs",
+        label: "Programs",
+        icon: BookOpen,
+        permissions: ["program:read"],
+        collegeOnly: true,
+      },
+      {
+        to: "/institution/batches",
+        label: "Batches",
+        icon: Layers,
+        permissions: ["programSession:read"],
+        collegeOnly: true,
+      },
+      {
+        to: "/institution/students",
+        label: "Students",
+        icon: Users,
+        permissions: ["student:read"],
+        collegeOnly: true,
+      },
+      {
+        to: "/institution/enrollments",
+        label: "Enrollments",
+        icon: ClipboardList,
+        permissions: ["enrollment:read"],
+        collegeOnly: true,
+      },
+      {
+        to: "/batch-upload",
+        label: "Batch upload",
+        icon: Upload,
+        permissions: ["batch:upload"],
+        collegeOnly: true,
+      },
     ],
   },
   {
@@ -75,10 +116,34 @@ export const SECTIONS = [
     label: "Administration",
     icon: Landmark,
     modules: [
-      { to: "/administration/staff", label: "Staff", icon: UsersRound, permissions: ["staff:read"], collegeOnly: true },
-      { to: "/administration/roles", label: "Roles", icon: KeyRound, permissions: ["role:manage"], collegeOnly: true },
-      { to: "/administration/activity", label: "Activity log", icon: History, permissions: ["audit:read"], collegeOnly: true },
-      { to: "/administration/settings", label: "Settings", icon: Settings, permissions: ["academicSession:read"], collegeOnly: true },
+      {
+        to: "/administration/staff",
+        label: "Staff",
+        icon: UsersRound,
+        permissions: ["staff:read"],
+        collegeOnly: true,
+      },
+      {
+        to: "/administration/roles",
+        label: "Roles",
+        icon: KeyRound,
+        permissions: ["role:manage"],
+        collegeOnly: true,
+      },
+      {
+        to: "/administration/activity",
+        label: "Activity log",
+        icon: History,
+        permissions: ["audit:read"],
+        collegeOnly: true,
+      },
+      {
+        to: "/administration/settings",
+        label: "Settings",
+        icon: Settings,
+        permissions: ["academicSession:read"],
+        collegeOnly: true,
+      },
     ],
   },
   {
@@ -86,16 +151,62 @@ export const SECTIONS = [
     label: "Platform Admin",
     icon: ShieldCheck,
     modules: [
-      { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true, adminOnly: true },
-      { to: "/admin/institutions", label: "Institutions", icon: Building2, adminOnly: true },
-      { to: "/admin/applications", label: "Applications", icon: ClipboardCheck, adminOnly: true },
-      { to: "/admin/registration-links", label: "Registration links", icon: Link2, adminOnly: true },
+      {
+        to: "/admin",
+        label: "Overview",
+        icon: LayoutDashboard,
+        end: true,
+        adminOnly: true,
+      },
+      {
+        to: "/admin/institutions",
+        label: "Institutions",
+        icon: Building2,
+        adminOnly: true,
+      },
+      {
+        to: "/admin/applications",
+        label: "Applications",
+        icon: ClipboardCheck,
+        adminOnly: true,
+      },
+      {
+        to: "/admin/registration-links",
+        label: "Registration links",
+        icon: Link2,
+        adminOnly: true,
+      },
       { to: "/admin/users", label: "Users", icon: Users, adminOnly: true },
-      { to: "/admin/roles", label: "Roles & permissions", icon: KeyRound, adminOnly: true },
-      { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck, adminOnly: true },
-      { to: "/admin/reports", label: "Reports", icon: FileWarning, adminOnly: true },
-      { to: "/admin/activity", label: "Activity log", icon: History, adminOnly: true },
-      { to: "/admin/settings", label: "Settings", icon: Settings, adminOnly: true },
+      {
+        to: "/admin/roles",
+        label: "Roles & permissions",
+        icon: KeyRound,
+        adminOnly: true,
+      },
+      {
+        to: "/admin/credentials",
+        label: "Credentials",
+        icon: BadgeCheck,
+        adminOnly: true,
+      },
+      {
+        to: "/admin/reports",
+        label: "Reports",
+        icon: FileWarning,
+        adminOnly: true,
+      },
+      {
+        to: "/admin/activity",
+        label: "Activity log",
+        icon: History,
+        adminOnly: true,
+      },
+      {
+        to: "/admin/settings",
+        label: "Settings",
+        icon: Settings,
+        adminOnly: true,
+      },
     ],
   },
   {
@@ -122,7 +233,9 @@ function SidebarLink({ module, onNavigate, collapsed = false }) {
         const tone = isActive
           ? "bg-cobalt text-white shadow-[0_4px_14px_rgb(79_70_229/0.35)]"
           : "text-ink/60 hover:bg-ink/5 hover:text-ink";
-        const dot = isActive ? "before:bg-white/75" : "before:bg-ink/25 hover:before:bg-cobalt";
+        const dot = isActive
+          ? "before:bg-white/75"
+          : "before:bg-ink/25 hover:before:bg-cobalt";
         // No ::before when collapsed: an empty pseudo-element would become a flex item and shift the icon.
         const shape = collapsed
           ? "justify-center py-2.5"
@@ -137,7 +250,14 @@ function SidebarLink({ module, onNavigate, collapsed = false }) {
 }
 
 // Main module: header button that opens its child modules.
-function SidebarGroup({ section, id, isOpen, hasActive, onToggle, onNavigate }) {
+function SidebarGroup({
+  section,
+  id,
+  isOpen,
+  hasActive,
+  onToggle,
+  onNavigate,
+}) {
   const Icon = section.icon;
 
   return (
@@ -176,7 +296,11 @@ function SidebarGroup({ section, id, isOpen, hasActive, onToggle, onNavigate }) 
         <div className="overflow-hidden">
           <div className="relative space-y-0.5 pt-0.5 pb-1.5 before:absolute before:top-1 before:bottom-2.5 before:left-[19px] before:w-px before:bg-ink/10">
             {section.modules.map((module) => (
-              <SidebarLink key={module.to} module={module} onNavigate={onNavigate} />
+              <SidebarLink
+                key={module.to}
+                module={module}
+                onNavigate={onNavigate}
+              />
             ))}
           </div>
         </div>
@@ -197,7 +321,12 @@ export const getInitials = (name) => {
   return initials || "?";
 };
 
-export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCollapse }) {
+export function AppSidebar({
+  onNavigate,
+  onClose,
+  collapsed = false,
+  onToggleCollapse,
+}) {
   const { publicKey } = useWallet();
   const {
     user,
@@ -218,7 +347,12 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
   const displayName = user?.name || "Guest";
   // userType is the display category (e.g. SUPER_ADMIN -> "Super Admin").
   const roleLabel = user?.userType
-    ? user.userType.toLowerCase().replace(/(^|_)(\w)/g, (_, sep, c) => `${sep ? " " : ""}${c.toUpperCase()}`)
+    ? user.userType
+        .toLowerCase()
+        .replace(
+          /(^|_)(\w)/g,
+          (_, sep, c) => `${sep ? " " : ""}${c.toUpperCase()}`,
+        )
     : "Not signed in";
   const canSee = (module) =>
     (!module.adminOnly || canManagePlatform) &&
@@ -232,7 +366,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
   const { pathname } = useLocation();
   const groupIdPrefix = useId();
   const activeSection = visibleSections.find((section) =>
-    section.modules.some((module) => isModuleActive(module, pathname))
+    section.modules.some((module) => isModuleActive(module, pathname)),
   )?.label;
   // One group open at a time, like the College ERP sidebar.
   const [openSection, setOpenSection] = useState(activeSection);
@@ -250,7 +384,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
   };
 
   return (
-    <div className="relative flex h-full flex-col bg-white text-ink/70">
+    <div className="relative flex h-full flex-col bg-paper-soft text-ink/70">
       {onToggleCollapse ? (
         <button
           type="button"
@@ -317,7 +451,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
             value={activeInstitutionId || ""}
             onChange={(event) => selectInstitution(event.target.value)}
             disabled={memberships.length === 1}
-            className="h-9 w-full rounded-md border border-ink/15 bg-white px-2.5 text-[13px] font-medium text-ink transition-colors hover:border-cobalt/60 focus:border-cobalt focus:outline-none disabled:opacity-100 disabled:hover:border-ink/15"
+            className="h-9 w-full rounded-md border border-ink/15 bg-paper-soft px-2.5 text-[13px] font-medium text-ink transition-colors hover:border-cobalt/60 focus:border-cobalt focus:outline-none disabled:opacity-100 disabled:hover:border-ink/15"
           >
             {memberships.map((membership) => (
               <option
@@ -325,7 +459,8 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
                 value={membership.institutionId._id}
                 className="text-ink"
               >
-                {membership.institutionId.name} · {membership.roleId.displayName}
+                {membership.institutionId.name} ·{" "}
+                {membership.roleId.displayName}
               </option>
             ))}
           </select>
@@ -341,22 +476,29 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
               className="space-y-0.5 border-t border-ink/10 pt-1.5 pb-1 first:border-t-0 first:pt-0"
             >
               {section.modules.map((module) => (
-                <SidebarLink key={module.to} module={module} onNavigate={onNavigate} collapsed />
+                <SidebarLink
+                  key={module.to}
+                  module={module}
+                  onNavigate={onNavigate}
+                  collapsed
+                />
               ))}
             </div>
           ) : (
-          <SidebarGroup
-            key={section.label}
-            section={section}
-            id={`${groupIdPrefix}-group-${index}`}
-            isOpen={openSection === section.label}
-            hasActive={activeSection === section.label}
-            onToggle={() =>
-              setOpenSection((current) => (current === section.label ? null : section.label))
-            }
-            onNavigate={onNavigate}
-          />
-          )
+            <SidebarGroup
+              key={section.label}
+              section={section}
+              id={`${groupIdPrefix}-group-${index}`}
+              isOpen={openSection === section.label}
+              hasActive={activeSection === section.label}
+              onToggle={() =>
+                setOpenSection((current) =>
+                  current === section.label ? null : section.label,
+                )
+              }
+              onNavigate={onNavigate}
+            />
+          ),
         )}
       </nav>
 
@@ -368,7 +510,9 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
             }`}
           >
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span className={collapsed ? "sr-only" : undefined}>Restoring session...</span>
+            <span className={collapsed ? "sr-only" : undefined}>
+              Restoring session...
+            </span>
           </div>
         ) : isAuthenticated ? (
           <>
@@ -383,7 +527,11 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cobalt to-cobalt-strong text-[12px] font-extrabold text-white">
                 {getInitials(displayName)}
               </span>
-              <span className={collapsed ? "sr-only" : "min-w-0 flex-1 leading-tight"}>
+              <span
+                className={
+                  collapsed ? "sr-only" : "min-w-0 flex-1 leading-tight"
+                }
+              >
                 <span className="block truncate text-[13px] font-semibold text-ink">
                   {displayName}
                 </span>
@@ -393,7 +541,10 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
                 </span>
               </span>
               {!collapsed && (
-                <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_5px_rgb(16_185_129/0.5)]" aria-hidden="true" />
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_5px_rgb(16_185_129/0.5)]"
+                  aria-hidden="true"
+                />
               )}
             </Link>
             <div className="mx-2 my-1.5 h-px bg-ink/10" />
@@ -401,7 +552,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
               type="button"
               onClick={handleSignOut}
               title={collapsed ? "Log out" : undefined}
-              className={`flex w-full items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium text-ink/60 transition-colors hover:bg-red-50 hover:text-red-600 ${
+              className={`flex w-full items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium text-ink/60 transition-colors hover:bg-red-500/10 hover:text-red-600 ${
                 collapsed ? "justify-center" : "px-2.5"
               }`}
             >

@@ -29,7 +29,7 @@
   @apply grid gap-3;
 }
 .status-card {
-  @apply flex flex-col gap-0.5 rounded-xl border border-ink/12 bg-white p-3 text-left;
+  @apply flex flex-col gap-0.5 rounded-xl border border-ink/12 bg-paper-soft p-3 text-left;
 }
 .status-card b {
   @apply text-[14px];
@@ -64,7 +64,7 @@
   @apply max-h-48 space-y-1.5 overflow-y-auto rounded-xl border border-ink/10 bg-paper p-1.5;
 }
 .pick-row {
-  @apply flex w-full items-center gap-3 rounded-lg border border-transparent bg-white px-3 py-2 text-left text-[14px];
+  @apply flex w-full items-center gap-3 rounded-lg border border-transparent bg-paper-soft px-3 py-2 text-left text-[14px];
 }
 .pick-row i {
   @apply h-3 w-3 shrink-0 rounded-full;
