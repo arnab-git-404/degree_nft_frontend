@@ -233,6 +233,8 @@ export function StudentDashboard() {
     try {
       const response = await api.post("/confirm-nft-credential", {
         walletAddress,
+        nftId: nftInfo._id,
+        revision: nftInfo.revision,
       });
 
       if (response.data.success) {
@@ -343,6 +345,8 @@ export function StudentDashboard() {
         await api.post("/confirm-mint", {
           walletAddress: walletAddress,
           nft_Mint_Address: mint.publicKey.toString(),
+          nftId: nftInfo._id,
+          revision: nftInfo.revision,
         });
         console.log("Backend notified of successful mint.");
       } catch (backendError) {
