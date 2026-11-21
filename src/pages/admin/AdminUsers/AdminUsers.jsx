@@ -28,6 +28,8 @@ const USER_TYPE_OPTIONS = [
 export function AdminUsers() {
   const [searchParams] = useSearchParams();
   const [roles, setRoles] = useState([]);
+  const [institutions, setInstitutions] = useState([]);
+  const [college, setCollege] = useState(searchParams.get("institutionId") || "");
   const [busyId, setBusyId] = useState("");
   const {
     items: users,
@@ -40,14 +42,26 @@ export function AdminUsers() {
     changeFilter,
     setPage,
     refresh,
-    replaceItem,
+    replaceItem: replaceListItem,
     handleSearch,
   } = useAdminList({
     endpoint: "/admin/users",
     listKey: "users",
     filterParam: "role",
     initialFilter: searchParams.get("role") || "all",
+    extraParams: college ? { institutionId: college } : undefined,
   });
+
+  // Update replies carry the account only; keep the colleges already shown for that user.
+  const replaceItem = (id, next) =>
+    replaceListItem(id, { ...next, memberships: users.find((user) => user._id === id)?.memberships || [] });
+
+  useEffect(() => {
+    api
+      .get("/admin/institutions", { params: { limit: 100 } })
+      .then(({ data }) => setInstitutions(data.institutions || []))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -140,7 +154,24 @@ export function AdminUsers() {
         onFilterChange={changeFilter}
         filterOptions={roleFilterOptions}
         placeholder="Search by name or email..."
-      />
+      >
+        <select
+          aria-label="Filter by college"
+          value={college}
+          onChange={(event) => {
+            setCollege(event.target.value);
+            setPage(1);
+          }}
+          className="select-field sm:w-56"
+        >
+          <option value="">All colleges</option>
+          {institutions.map((institution) => (
+            <option key={institution._id} value={institution._id}>
+              {institution.name}
+            </option>
+          ))}
+        </select>
+      </AdminToolbar>
 
       <AdminError message={error} />
 
@@ -154,7 +185,8 @@ export function AdminUsers() {
                 <tr>
                   <th>User</th>
                   <th>Wallet</th>
-                  <th>Role</th>
+                  <th>Colleges</th>
+                  <th>Account role</th>
                   <th>User type</th>
                   <th>Status</th>
                   <th>Joined</th>
@@ -183,6 +215,23 @@ export function AdminUsers() {
                           user.wallets?.[0]?.address ||
                           ""
                       ) || "—"}
+                    </td>
+                    <td>
+                      {user.memberships?.length ? (
+                        <ul className="colleges">
+                          {user.memberships.map((membership) => (
+                            <li key={membership._id} title={`${membership.institution.name} · ${membership.role?.displayName} · ${membership.status}`}>
+                              <span className="college-name">{membership.institution.code || membership.institution.name}</span>
+                              <span className="college-role">{membership.role?.displayName || "—"}</span>
+                              {membership.status !== "ACTIVE" && (
+                                <StatusBadge tone={membership.status === "INVITED" ? "warning" : "danger"}>{membership.status}</StatusBadge>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="muted">—</span>
+                      )}
                     </td>
                     <td>
                       <select
@@ -242,7 +291,7 @@ export function AdminUsers() {
                   </tr>
                 ))}
                 {users.length === 0 && (
-                  <AdminEmpty colSpan={7} message="No users found" />
+                  <AdminEmpty colSpan={8} message="No users found" />
                 )}
               </tbody>
             </table>

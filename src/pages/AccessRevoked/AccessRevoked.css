@@ -1,0 +1,21 @@
+@reference "../../index.css";
+
+.access-revoked {
+  @apply mx-auto mt-10 max-w-xl rounded-xl border border-red-700/20 bg-paper-soft p-8 text-center shadow-xs;
+
+  & .access-revoked__icon {
+    @apply mx-auto h-14 w-14 rounded-2xl bg-red-50 p-3 text-red-700;
+  }
+  & .access-revoked__eyebrow {
+    @apply mt-5 text-red-700;
+  }
+  & .access-revoked__title {
+    @apply mt-2 text-[22px] leading-tight font-bold tracking-tight;
+  }
+  & .access-revoked__text {
+    @apply mt-3 text-[14px] leading-6 text-ink/60;
+  }
+  & .access-revoked__actions {
+    @apply mt-6 flex flex-wrap justify-center gap-2;
+  }
+}

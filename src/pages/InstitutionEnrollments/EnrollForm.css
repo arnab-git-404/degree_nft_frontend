@@ -1,0 +1,43 @@
+@reference "../../index.css";
+
+/* Enroll form (used on Students and Enrollments). Rendered inside a .catalog-page. */
+.enroll-form {
+  @apply space-y-5;
+}
+.enroll-preview-batch {
+  @apply rounded-md bg-ink/10 px-2 py-0.5 text-[12px] font-semibold tracking-wide text-ink/70;
+}
+
+.catalog-page {
+  & .picked-student {
+    @apply flex items-center justify-between gap-2 rounded-md border border-cobalt/30 bg-acid/40 px-3 py-2;
+
+    & strong {
+      @apply block leading-tight;
+    }
+  }
+
+  & .picked-sub {
+    @apply block text-[12px] text-ink/55;
+  }
+
+  & .student-picker {
+    @apply space-y-1.5;
+
+    & .search {
+      @apply w-full;
+    }
+  }
+
+  & .matches {
+    @apply max-h-56 divide-y divide-ink/10 overflow-y-auto rounded-md border border-ink/10;
+
+    & button {
+      @apply w-full px-3 py-2 text-left transition-colors hover:bg-acid/40;
+    }
+
+    & strong {
+      @apply block leading-tight font-semibold;
+    }
+  }
+}

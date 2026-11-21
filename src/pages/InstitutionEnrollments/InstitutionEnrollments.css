@@ -1,0 +1,16 @@
+@reference "../../index.css";
+
+/* Institution › Enrollments. Shared layout comes from .catalog-page (components/CatalogPage). */
+.institution-enrollments {
+  & .batch-years {
+    @apply font-semibold whitespace-nowrap tabular-nums;
+  }
+
+  & .code {
+    @apply font-mono text-[12px] whitespace-nowrap;
+  }
+
+  & .pager-only:empty {
+    @apply hidden;
+  }
+}

@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 // `anyOf`: the page opens if the user's role has at least one of these permissions.
 export function ProtectedRoute({ children, anyOf }) {
-  const { isAuthenticated, isRestoring, hasAnyPermission } = useAuth();
+  const { isAuthenticated, isRestoring, hasAnyPermission, hasRevokedCollegeAccess } = useAuth();
   const location = useLocation();
 
   if (isRestoring) {
@@ -22,6 +22,9 @@ export function ProtectedRoute({ children, anyOf }) {
   }
 
   if (anyOf && !hasAnyPermission(...anyOf)) {
+    // Their college role was made inactive: say so, instead of "no permission".
+    if (hasRevokedCollegeAccess) return <Navigate to="/access-revoked" replace />;
+
     return (
       <div className="rounded-lg mx-auto max-w-xl border border-red-700/30 bg-paper-soft p-8 text-center">
         <XCircle className="mx-auto h-12 w-12 text-red-700" />

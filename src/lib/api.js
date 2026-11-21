@@ -28,7 +28,22 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getErrorMessage = (error, fallback = "Something went wrong") =>
+// A role made inactive revokes its members' access. Any request that hits that wall tells the app, which
+// shows the "access revoked" page. /auth/me is skipped: its caller handles it, and it would loop.
+export const ACCESS_REVOKED_EVENT = "degreenft:access-revoked";
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.data?.code === "ACCESS_REVOKED" && !error.config?.url?.includes("/auth/me")) {
+      window.dispatchEvent(new Event(ACCESS_REVOKED_EVENT));
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export const getErrorMessage =(error, fallback = "Something went wrong") =>
   error.response?.data?.message || error.message || fallback;
 
 export default api;

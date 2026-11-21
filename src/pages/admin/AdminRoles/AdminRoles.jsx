@@ -5,7 +5,6 @@ import {
   Loader2,
   Pencil,
   Plus,
-  Trash2,
   Users,
   X,
 } from "lucide-react";
@@ -28,7 +27,6 @@ function RoleEditor({
   isSaving,
   onClose,
   onSave,
-  onDelete,
 }) {
   const isEditing = Boolean(role?._id);
   const isAdminRole = role?.name === "admin";
@@ -69,8 +67,7 @@ function RoleEditor({
   const selectedPermissions = isAdminRole
     ? allPermissionKeys
     : form.permissions;
-  const deactivationLocked =
-    isEditing && (role.isSystem || (role.userCount || 0) > 0);
+  const deactivationLocked = isEditing && role.isSystem;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -208,9 +205,9 @@ function RoleEditor({
               <span className="hint">
                 {isAdminRole || role?.isSystem
                   ? "System roles stay available at all times."
-                  : deactivationLocked
-                    ? "Reassign this role's users before deactivating it."
-                    : "Inactive roles cannot be assigned to new users."}
+                  : isEditing && (role.userCount || 0) > 0
+                    ? `Inactive roles cannot be assigned. ${role.userCount} user${role.userCount === 1 ? "" : "s"} with this role will lose access.`
+                    : "Inactive roles cannot be assigned. People who hold one lose access."}
               </span>
             </label>
 
@@ -305,20 +302,7 @@ function RoleEditor({
           </div>
 
           <div className="editor-foot">
-            <div>
-              {isEditing && !role.isSystem && (role.userCount || 0) === 0 && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => onDelete(role)}
-                  disabled={isSaving}
-                  className="text-red-700 hover:text-red-800"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete role
-                </Button>
-              )}
-            </div>
+            <div />
             <div className="flex gap-1.5">
               <Button
                 type="button"
@@ -464,29 +448,6 @@ export function AdminRoles() {
     }
   };
 
-  const deleteRole = async (role) => {
-    const confirmed = window.confirm(
-      `Delete the "${role.displayName}" role? This cannot be undone.`
-    );
-
-    if (!confirmed) return;
-
-    setIsSaving(true);
-
-    try {
-      await api.delete(`/admin/roles/${role._id}`);
-      toast.success("Role deleted");
-      setEditor(null);
-      setExpandedId((current) => (current === role._id ? "" : current));
-      setRoleUsers({});
-      await loadData();
-    } catch (deleteError) {
-      toast.error(getErrorMessage(deleteError, "Failed to delete role"));
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div className="admin-roles">
       <AdminPageHeader
@@ -563,7 +524,6 @@ export function AdminRoles() {
             if (!isSaving) setEditor(null);
           }}
           onSave={saveRole}
-          onDelete={deleteRole}
         />
       )}
     </div>
@@ -593,7 +553,12 @@ function RoleRows({
               <span className="role-name">
                 <span className="cell-title">{role.displayName}</span>
                 {role.isSystem && <StatusBadge tone="info">System</StatusBadge>}
-                {role.scope === "INSTITUTION" && <StatusBadge>College</StatusBadge>}
+                {role.scope === "INSTITUTION" &&
+                  (role.institution ? (
+                    <StatusBadge tone="warning">Made by {role.institution.code || role.institution.name}</StatusBadge>
+                  ) : (
+                    <StatusBadge>College</StatusBadge>
+                  ))}
               </span>
               <span className="cell-mono">{role.name}</span>
             </span>

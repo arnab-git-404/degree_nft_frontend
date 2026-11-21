@@ -10,11 +10,12 @@ import {
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Buffer } from "buffer";
 import api, {
+  ACCESS_REVOKED_EVENT,
   ACTIVE_INSTITUTION_KEY,
   AUTH_TOKEN_KEY,
   AUTH_WALLET_KEY,
 } from "../lib/api";
-import { getActiveMemberships } from "../lib/roles";
+import { getActiveMemberships, getRevokedMemberships } from "../lib/roles";
 
 const AuthContext = createContext(null);
 
@@ -35,6 +36,8 @@ export function AuthProvider({ children }) {
   const [isRestoring, setIsRestoring] = useState(Boolean(getStoredToken()));
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authError, setAuthError] = useState("");
+  // True when the server said the user's role is inactive (code ACCESS_REVOKED): the app shows the "access revoked" page.
+  const [accessRevoked, setAccessRevoked] = useState(false);
   const [activeInstitutionId, setActiveInstitutionIdState] = useState(() =>
     localStorage.getItem(ACTIVE_INSTITUTION_KEY)
   );
@@ -58,6 +61,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setSessionWallet(null);
     setAuthError("");
+    setAccessRevoked(false);
   }, []);
 
   const persistSession = useCallback((nextToken, nextUser, walletKey = null) => {
@@ -73,6 +77,13 @@ export function AuthProvider({ children }) {
     setUser(nextUser);
     setSessionWallet(walletKey);
     setAuthError("");
+    setAccessRevoked(false);
+  }, []);
+
+  useEffect(() => {
+    const onRevoked = () => setAccessRevoked(true);
+    window.addEventListener(ACCESS_REVOKED_EVENT, onRevoked);
+    return () => window.removeEventListener(ACCESS_REVOKED_EVENT, onRevoked);
   }, []);
 
   useEffect(() => {
@@ -90,9 +101,11 @@ export function AuthProvider({ children }) {
 
         setUser(data.user);
         setSessionWallet(getStoredWallet());
-      } catch {
+      } catch (error) {
         if (!cancelled) {
-          clearSession();
+          // A revoked role keeps the session so "Check again" works; anything else signs the user out.
+          if (error.response?.data?.code === "ACCESS_REVOKED") setAccessRevoked(true);
+          else clearSession();
         }
       } finally {
         if (!cancelled) {
@@ -268,12 +281,17 @@ export function AuthProvider({ children }) {
   const refreshUser = useCallback(async () => {
     const { data } = await api.get("/auth/me");
     setUser(data.user);
+    // The account works again; a revoked college role is worked out from the fresh memberships below.
+    setAccessRevoked(false);
 
     return data.user;
   }, []);
 
   const roleName = user?.roleId?.name || null;
   const memberships = useMemo(() => getActiveMemberships(user), [user]);
+  const revokedMemberships = useMemo(() => getRevokedMemberships(user), [user]);
+  // Member of a college, but every role there is inactive: no college access left.
+  const hasRevokedCollegeAccess = revokedMemberships.length > 0 && memberships.length === 0;
   const activeMembership =
     memberships.find((membership) => membership.institutionId._id === activeInstitutionId) || null;
 
@@ -340,8 +358,14 @@ export function AuthProvider({ children }) {
       activeMembership,
       activeInstitutionId,
       selectInstitution,
+      accessRevoked,
+      revokedMemberships,
+      hasRevokedCollegeAccess,
     }),
     [
+      accessRevoked,
+      revokedMemberships,
+      hasRevokedCollegeAccess,
       memberships,
       activeMembership,
       activeInstitutionId,

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "./context/AuthContext";
 import {
@@ -7,9 +7,15 @@ import {
   INSTITUTION_DESK_PERMISSIONS,
 } from "./lib/roles";
 import { NotFound } from "./pages/NotFound/NotFound";
+import { AccessRevoked } from "./pages/AccessRevoked/AccessRevoked";
 import { InstitutionDashboard } from "./pages/InstitutionDashboard/InstitutionDashboard";
 import { InstitutionStaff } from "./pages/InstitutionStaff/InstitutionStaff";
 import { InstitutionPrograms } from "./pages/InstitutionPrograms/InstitutionPrograms";
+import { InstitutionBatches } from "./pages/InstitutionBatches/InstitutionBatches";
+import { InstitutionRoles } from "./pages/InstitutionRoles/InstitutionRoles";
+import { InstitutionStudents } from "./pages/InstitutionStudents/InstitutionStudents";
+import { InstitutionEnrollments } from "./pages/InstitutionEnrollments/InstitutionEnrollments";
+import { InstitutionSettings } from "./pages/InstitutionSettings/InstitutionSettings";
 import { VerificationPortal } from "./pages/VerificationPortal/VerificationPortal";
 import { StudentDashboard } from "./pages/StudentDashboard/StudentDashboard";
 import { BatchUploadPortal } from "./pages/BatchUploadPortal/BatchUploadPortal";
@@ -21,7 +27,7 @@ import { AdminRoles } from "./pages/admin/AdminRoles/AdminRoles";
 import { AdminCredentials } from "./pages/admin/AdminCredentials/AdminCredentials";
 import { AdminReports } from "./pages/admin/AdminReports/AdminReports";
 import { AdminRegistrationLinks } from "./pages/admin/AdminRegistrationLinks/AdminRegistrationLinks";
-import { AdminActivity } from "./pages/admin/AdminActivity/AdminActivity";
+import { AdminActivity, CollegeActivity } from "./pages/admin/AdminActivity/AdminActivity";
 import { AdminApplications } from "./pages/admin/AdminApplications/AdminApplications";
 import { AdminSettings } from "./pages/admin/AdminSettings/AdminSettings";
 import { Apply } from "./pages/Apply/Apply";
@@ -47,11 +53,22 @@ function RoleRedirect() {
   );
 }
 
+// When the server says the user's role is inactive, every page leads to the "access revoked" page.
+function RevokedGate({ children }) {
+  const { accessRevoked } = useAuth();
+  const { pathname } = useLocation();
+
+  if (accessRevoked && pathname !== "/access-revoked") return <Navigate to="/access-revoked" replace />;
+  return children;
+}
+
 const AppRoutes = () => {
   return (
+    <RevokedGate>
     <Routes>
       <Route path="/" element={<RoleRedirect />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/access-revoked" element={<AccessRevoked />} />
       <Route path="/activate" element={<Activate />} />
       <Route path="/activate/:token" element={<Activate />} />
       <Route path="/apply/:token" element={<Apply />} />
@@ -81,7 +98,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/institution/staff"
+        path="/administration/staff"
         element={
           <ProtectedRoute anyOf={["staff:read"]}>
             <InstitutionStaff />
@@ -89,10 +106,62 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/administration/roles"
+        element={
+          <ProtectedRoute anyOf={["role:manage"]}>
+            <InstitutionRoles />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/students"
+        element={
+          <ProtectedRoute anyOf={["student:read"]}>
+            <InstitutionStudents />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/enrollments"
+        element={
+          <ProtectedRoute anyOf={["enrollment:read"]}>
+            <InstitutionEnrollments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/administration/activity"
+        element={
+          <ProtectedRoute anyOf={["audit:read"]}>
+            <CollegeActivity />
+          </ProtectedRoute>
+        }
+      />
+      {/* Old address of the Staff page (before College Administration) */}
+      <Route path="/institution/staff" element={<Navigate to="/administration/staff" replace />} />
+      <Route
         path="/institution/programs"
         element={
           <ProtectedRoute anyOf={["program:read"]}>
             <InstitutionPrograms />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/institution/batches"
+        element={
+          <ProtectedRoute anyOf={["programSession:read"]}>
+            <InstitutionBatches />
+          </ProtectedRoute>
+        }
+      />
+      {/* Academic years now live on the Settings page */}
+      <Route path="/administration/academic-sessions" element={<Navigate to="/administration/settings" replace />} />
+      <Route
+        path="/administration/settings"
+        element={
+          <ProtectedRoute anyOf={INSTITUTION_DESK_PERMISSIONS}>
+            <InstitutionSettings />
           </ProtectedRoute>
         }
       />
@@ -123,6 +192,7 @@ const AppRoutes = () => {
       {/* <Route path="/profile/:id" element={<Profile />} /> */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </RevokedGate>
   );
 };
 

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import api from "../../../lib/api";
+import { useAuth } from "../../../context/AuthContext";
 import { Eye, X } from "lucide-react";
 import { useAdminList } from "../../../hooks/useAdminList";
 import { formatDate } from "../../../lib/admin";
@@ -22,11 +24,14 @@ const FILTER_OPTIONS = [
   ["FAILURE", "Failed attempts"],
 ];
 
-const SCOPE_LABELS = {
-  PLATFORM: "Admin panel",
+// In a college's own log, PLATFORM entries are changes the Super Admin made to that college.
+const scopeLabels = (college) => ({
+  PLATFORM: college ? "Super Admin" : "Admin panel",
   INSTITUTION: "Institution",
   ACCOUNT: "Account",
-};
+});
+
+const COLLEGE_FILTER_LABELS = { PLATFORM: "Super Admin changes", INSTITUTION: "College actions" };
 
 const METHOD_TONES = {
   POST: "info",
@@ -50,7 +55,8 @@ function OutcomeBadge({ outcome }) {
   );
 }
 
-function LogDetailsModal({ log, onClose }) {
+function LogDetailsModal({ log, onClose, college }) {
+  const SCOPE_LABELS = scopeLabels(college);
   useEffect(() => {
     const onKey = (event) => event.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -124,7 +130,18 @@ function LogDetailsModal({ log, onClose }) {
   );
 }
 
-export function AdminActivity() {
+// Settings › Activity log: the selected college's own history (remounts when the college changes).
+export function CollegeActivity() {
+  const { activeMembership } = useAuth();
+  const college = activeMembership?.institutionId;
+  return <AdminActivity key={college?._id} college={college} />;
+}
+
+// Platform Admin › Activity log, or (with `college`) one college's own log without IP or browser details.
+export function AdminActivity({ college = null }) {
+  const SCOPE_LABELS = scopeLabels(college);
+  const [institutions, setInstitutions] = useState([]);
+  const [institutionId, setInstitutionId] = useState("");
   const [method, setMethod] = useState("all");
   const [selected, setSelected] = useState(null);
   const {
@@ -141,11 +158,19 @@ export function AdminActivity() {
     refresh,
     handleSearch,
   } = useAdminList({
-    endpoint: "/admin/audit-logs",
+    endpoint: college ? "/institution/activity" : "/admin/audit-logs",
     listKey: "logs",
     filterParam: "type",
-    extraParams: method === "all" ? {} : { method },
+    extraParams: { ...(method !== "all" && { method }), ...(institutionId && { institutionId }) },
   });
+
+  useEffect(() => {
+    if (college) return;
+    api
+      .get("/admin/institutions", { params: { limit: 100 } })
+      .then(({ data }) => setInstitutions(data.institutions || []))
+      .catch(() => {});
+  }, [college]);
 
   const stats = data?.stats;
   const tiles = [
@@ -159,7 +184,11 @@ export function AdminActivity() {
     <div className="admin-activity">
       <AdminPageHeader
         title="Activity log"
-        description="Who did what, and when: sign-ins, admin changes and institution actions. Newest first."
+        description={
+          college
+            ? `Who did what at ${college.name}: staff, roles, programs, credentials and Super Admin changes. Newest first.`
+            : "Who did what, and when: sign-ins, admin changes and institution actions. Newest first."
+        }
         onRefresh={refresh}
         isRefreshing={isLoading}
       />
@@ -179,9 +208,27 @@ export function AdminActivity() {
         onSubmit={handleSearch}
         filter={filter}
         onFilterChange={changeFilter}
-        filterOptions={FILTER_OPTIONS}
+        filterOptions={college ? FILTER_OPTIONS.map(([value, label]) => [value, COLLEGE_FILTER_LABELS[value] || label]) : FILTER_OPTIONS}
         placeholder="Search by action, person, summary or ID..."
       >
+        {!college && (
+          <select
+            aria-label="Filter by college"
+            value={institutionId}
+            onChange={(event) => {
+              setInstitutionId(event.target.value);
+              setPage(1);
+            }}
+            className="select-field sm:w-52"
+          >
+            <option value="">All colleges</option>
+            {institutions.map((institution) => (
+              <option key={institution._id} value={institution._id}>
+                {institution.name}
+              </option>
+            ))}
+          </select>
+        )}
         <select
           aria-label="Method"
           value={method}
@@ -237,7 +284,7 @@ export function AdminActivity() {
                     </td>
                     <td className="where">
                       <p>{SCOPE_LABELS[log.scope] || log.scope}</p>
-                      {log.institutionId?.name && (
+                      {!college && log.institutionId?.name && (
                         <p className="cell-sub">
                           {log.institutionId.name} ({log.institutionId.code})
                         </p>
@@ -267,7 +314,7 @@ export function AdminActivity() {
         </div>
       )}
 
-      {selected && <LogDetailsModal log={selected} onClose={() => setSelected(null)} />}
+      {selected && <LogDetailsModal log={selected} college={college} onClose={() => setSelected(null)} />}
     </div>
   );
 }

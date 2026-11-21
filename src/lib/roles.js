@@ -9,6 +9,13 @@ export const getActiveMemberships = (user) =>
       membership.institutionId?.status === "ACTIVE" && membership.roleId?.isActive !== false
   );
 
+// Colleges where the user is a member but the role has been made inactive: their access there is revoked.
+export const getRevokedMemberships = (user) =>
+  (user?.memberships || []).filter(
+    (membership) =>
+      membership.institutionId?.status === "ACTIVE" && membership.roleId?.isActive === false
+  );
+
 // Account role permissions plus those of every active college membership. UI only: the backend
 // checks college permissions against the selected college's membership on each request.
 export const getPermissions = (user) => {

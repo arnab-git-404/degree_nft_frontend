@@ -1,83 +1,54 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  BookOpen,
-  CheckCircle2,
-  ChevronDown,
-  LayoutGrid,
-  List,
-  PauseCircle,
-  Pencil,
-  Plus,
-  RotateCcw,
-  Search,
-  X,
-} from "lucide-react";
+import { BookOpen, CheckCircle2, PauseCircle, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getErrorMessage } from "../../lib/api";
+import { codeColor } from "../../lib/admin";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
-import { AdminError, AdminLoading, AdminPageHeader, StatusBadge } from "../../components/admin/AdminUI";
+import { AdminError, AdminLoading, AdminPageHeader } from "../../components/admin/AdminUI";
+import {
+  CatalogModal,
+  CatalogToolbar,
+  ItemIcon,
+  ItemTitle,
+  RowActions,
+  Select,
+  StatCards,
+  StatusOptions,
+  StatusPill,
+} from "../../components/CatalogPage/CatalogPage";
+import { ColorField, FormPreview, StatusCards } from "../../components/FormFields/FormFields";
 import "./InstitutionPrograms.css";
 
-const STATUS_LABELS = { ACTIVE: "Active", INACTIVE: "Inactive" };
-
-// Shown exactly as the college entered it: "4 years", "18 months".
-const formatDuration = ({ durationValue: value, durationUnit: unit }) => {
-  if (value == null || !unit) return "—";
-  const word = unit === "YEARS" ? "year" : "month";
-  return `${value} ${value === 1 ? word : `${word}s`}`;
-};
-
-// Native select with the chevron that `.select-field` (appearance-none) hides.
-function Select({ className = "", children, ...props }) {
-  return (
-    <span className={`select-wrap ${className}`}>
-      <select className="select-field" {...props}>
-        {children}
-      </select>
-      <ChevronDown className="select-chevron" aria-hidden="true" />
-    </span>
-  );
-}
+const STATUSES = { ACTIVE: { label: "Active", tone: "success" }, INACTIVE: { label: "Inactive", tone: "warning" } };
+const STATUS_CHOICES = [
+  { value: "ACTIVE", label: "Active", hint: "Batches can be created for this program", tone: "success" },
+  { value: "INACTIVE", label: "Inactive", hint: "Hidden when creating new batches", tone: "neutral" },
+];
 
 function ProgramForm({ program, onClose, onSaved }) {
   const isEditing = Boolean(program);
-  const [form, setForm] = useState({
-    code: program?.code || "",
-    name: program?.name || "",
-    degreeLevel: program?.degreeLevel || "",
-    durationValue: program?.durationValue ?? "",
-    durationUnit: program?.durationUnit || "YEARS",
-  });
-  const inYears = form.durationUnit === "YEARS";
+  const [code, setCode] = useState(program?.code || "");
+  const [name, setName] = useState(program?.name || "");
+  const [description, setDescription] = useState(program?.description || "");
+  const [status, setStatus] = useState(program?.status || "ACTIVE");
+  const autoColor = codeColor(code || "PROGRAM");
+  // "" = automatic. A saved colour that equals the generated one counts as automatic.
+  const [color, setColor] = useState(program?.color && program.color !== codeColor(program.code) ? program.color : "");
   const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    const onKey = (event) => event.key === "Escape" && !isSaving && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isSaving, onClose]);
-
-  const field = (key) => ({
-    value: form[key],
-    onChange: (event) => setForm((current) => ({ ...current, [key]: event.target.value })),
-  });
 
   const submit = async (event) => {
     event.preventDefault();
     setIsSaving(true);
-    const details = {
-      name: form.name,
-      degreeLevel: form.degreeLevel,
-      // Value and unit go as entered; an empty value clears both.
-      durationValue: form.durationValue === "" ? null : Number(form.durationValue),
-      durationUnit: form.durationValue === "" ? null : form.durationUnit,
-    };
-
     try {
-      if (isEditing) await api.patch(`/institution/programs/${program._id}`, details);
-      else await api.post("/institution/programs", { ...details, code: form.code });
+      const details = { name, description, status };
+      if (isEditing) {
+        // Always send the colour on edit so choosing "Auto" resets a custom one.
+        await api.patch(`/institution/programs/${program._id}`, { ...details, color: color || autoColor });
+      } else {
+        // No colour sent = the server generates it from the code.
+        await api.post("/institution/programs", { ...details, code, ...(color && { color }) });
+      }
       toast.success(isEditing ? "Program updated" : "Program added");
       onSaved();
     } catch (saveError) {
@@ -87,67 +58,72 @@ function ProgramForm({ program, onClose, onSaved }) {
   };
 
   return (
-    <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && !isSaving && onClose()}>
-      <div role="dialog" aria-modal="true" aria-labelledby="program-form-title" className="modal">
-        <form onSubmit={submit}>
-          <div className="modal-head">
-            <h2 id="program-form-title" className="modal-title">
-              {isEditing ? `Edit ${program.code}` : "Add program"}
-            </h2>
-            <button type="button" className="icon-btn" onClick={onClose} disabled={isSaving} aria-label="Close">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="modal-body">
-            <Input
-              label="Code"
+    <CatalogModal
+      title={isEditing ? `Edit ${program.code}` : "Add program"}
+      submitLabel={isEditing ? "Save changes" : "Save"}
+      isSaving={isSaving}
+      onClose={onClose}
+      onSubmit={submit}
+    >
+      <div className="program-form">
+        <div className="field-pair">
+          <div className="space-y-1.5">
+            <label htmlFor="program-name" className="field-label block">
+              Program name
+            </label>
+            <input
+              id="program-name"
+              className="input-field"
               required
-              autoFocus={!isEditing}
+              autoFocus
+              maxLength={200}
+              placeholder="e.g. B.Tech in Computer Science"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label htmlFor="program-code" className="field-label block">
+              Code
+            </label>
+            <input
+              id="program-code"
+              className="input-field uppercase"
+              required
               maxLength={20}
               disabled={isEditing}
               placeholder="e.g. CSE"
-              description={isEditing ? "The code is fixed after creation." : "Unique in your college. It cannot be changed later."}
-              {...field("code")}
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
             />
-            <Input label="Name" required autoFocus={isEditing} maxLength={200} placeholder="e.g. B.Tech in Computer Science" {...field("name")} />
-            <div className="field-pair">
-              <Input label="Degree level" maxLength={60} placeholder="e.g. Bachelor" {...field("degreeLevel")} />
-              <div className="space-y-1">
-                <label htmlFor="program-duration" className="field-label block">
-                  Duration
-                </label>
-                <div className="duration-field">
-                  <input
-                    id="program-duration"
-                    type="number"
-                    className="input-field"
-                    min={inYears ? 0.5 : 1}
-                    max={inYears ? 20 : 240}
-                    step={inYears ? 0.5 : 1}
-                    placeholder={inYears ? "e.g. 4" : "e.g. 48"}
-                    {...field("durationValue")}
-                  />
-                  <Select aria-label="Duration unit" {...field("durationUnit")}>
-                    <option value="YEARS">Years</option>
-                    <option value="MONTHS">Months</option>
-                  </Select>
-                </div>
-              </div>
-            </div>
           </div>
+        </div>
+        <p className="field-hint">{isEditing ? "The code is fixed after creation." : "The code is unique in your college and cannot be changed later."}</p>
 
-          <div className="modal-foot">
-            <Button type="button" variant="secondary" onClick={onClose} disabled={isSaving}>
-              Cancel
-            </Button>
-            <Button type="submit" isLoading={isSaving}>
-              {isEditing ? "Save changes" : "Add program"}
-            </Button>
-          </div>
-        </form>
+        <div className="space-y-1.5">
+          <label htmlFor="program-description" className="field-label block">
+            Description <span className="text-ink/40">(optional)</span>
+          </label>
+          <textarea
+            id="program-description"
+            className="input-field program-textarea"
+            rows={3}
+            maxLength={500}
+            placeholder="A short note about this program"
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+          />
+        </div>
+
+        <ColorField value={color} autoColor={autoColor} onChange={setColor} />
+        <StatusCards choices={STATUS_CHOICES} value={status} onChange={setStatus} />
+
+        <FormPreview icon={BookOpen} color={color || autoColor} title={name || "Program name"}>
+          {code && <span className="program-preview-code">{code.toUpperCase()}</span>}
+          <StatusPill statuses={STATUSES} value={status} />
+        </FormPreview>
       </div>
-    </div>
+    </CatalogModal>
   );
 }
 
@@ -194,18 +170,21 @@ export function InstitutionPrograms() {
     return (programs || []).filter(
       (program) =>
         (!status || program.status === status) &&
-        (!term || [program.name, program.code, program.degreeLevel].some((value) => value?.toLowerCase().includes(term)))
+        (!term || [program.name, program.code, program.description].some((value) => value?.toLowerCase().includes(term)))
     );
   }, [programs, status, search]);
 
   const hasFilters = Boolean(status || search);
+  const emptyMessage = hasFilters ? "No programs match these filters." : "No programs yet.";
+  const columns = 3 + (canUpdate ? 1 : 0);
 
   const changeStatus = async (program, next) => {
     setBusyId(program._id);
     try {
-      await api.patch(`/institution/programs/${program._id}`, { status: next });
-      toast.success(`${program.code} is now ${STATUS_LABELS[next].toLowerCase()}`);
-      await load();
+      const { data } = await api.patch(`/institution/programs/${program._id}`, { status: next });
+      // Swap in the saved row so the dropdown, stats and filters update with the toast, not after a reload.
+      setPrograms((list) => list.map((item) => (item._id === program._id ? { ...data.program, color: data.program.color ?? item.color } : item)));
+      toast.success(`${program.code} is now ${STATUSES[next].label.toLowerCase()}`);
     } catch (updateError) {
       toast.error(getErrorMessage(updateError, "Failed to change the status"));
     } finally {
@@ -214,34 +193,18 @@ export function InstitutionPrograms() {
   };
 
   const actions = (program) => (
-    <div className="actions">
-      <button type="button" className="edit-btn" onClick={() => setEditor({ program })} aria-label={`Edit ${program.code}`} title="Edit">
-        <Pencil className="h-4 w-4" />
-      </button>
-      <Select
-        className={program.status === "ACTIVE" ? "is-active" : "is-inactive"}
-        aria-label={`Status of ${program.code}`}
-        value={program.status}
-        disabled={busyId === program._id}
-        onChange={(event) => changeStatus(program, event.target.value)}
-      >
-        {Object.entries(STATUS_LABELS).map(([value, label]) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </Select>
-    </div>
+    <RowActions
+      name={program.code}
+      statuses={STATUSES}
+      value={program.status}
+      disabled={busyId === program._id}
+      onEdit={() => setEditor({ program })}
+      onChange={(next) => changeStatus(program, next)}
+    />
   );
-
-  const badge = (program) => (
-    <StatusBadge tone={program.status === "ACTIVE" ? "success" : "warning"}>{STATUS_LABELS[program.status]}</StatusBadge>
-  );
-
-  const emptyMessage = hasFilters ? "No programs match these filters." : "No programs yet.";
 
   return (
-    <div className="institution-programs">
+    <div className="catalog-page institution-programs">
       <AdminPageHeader
         title="Programs"
         description={`Courses offered by ${institution?.name || "your institution"}`}
@@ -261,64 +224,27 @@ export function InstitutionPrograms() {
       ) : (
         programs && (
           <>
-            <div className="stats">
-              {stats.map((stat) => (
-                <div key={stat.label} className={`stat tone-${stat.tone}`}>
-                  <span className="stat-icon">
-                    <stat.icon className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <p className="stat-number">{stat.value}</p>
-                    <p className="stat-label">{stat.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <StatCards stats={stats} />
 
-            <div className="toolbar">
-              <Select className="status-filter" aria-label="Filter by status" value={status} onChange={(event) => setStatus(event.target.value)}>
+            <CatalogToolbar
+              search={search}
+              onSearch={setSearch}
+              placeholder="Search by name, code, description"
+              hasFilters={hasFilters}
+              onClear={() => {
+                setStatus("");
+                setSearch("");
+              }}
+              shown={visible.length}
+              total={total}
+              view={view}
+              onView={setView}
+            >
+              <Select className="filter" aria-label="Filter by status" value={status} onChange={(event) => setStatus(event.target.value)}>
                 <option value="">All status</option>
-                {Object.entries(STATUS_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
+                <StatusOptions statuses={STATUSES} />
               </Select>
-              <label className="search">
-                <Search className="search-icon" aria-hidden="true" />
-                <input
-                  type="search"
-                  aria-label="Search programs"
-                  placeholder="Search by name, code, level"
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                  className="input-field"
-                />
-              </label>
-              <button
-                type="button"
-                className="clear-btn"
-                disabled={!hasFilters}
-                onClick={() => {
-                  setStatus("");
-                  setSearch("");
-                }}
-              >
-                <RotateCcw className="h-4 w-4" /> Clear filters
-              </button>
-              <span className="count-pill">
-                {visible.length} of {total}
-              </span>
-
-              <div className="view-toggle" role="group" aria-label="View">
-                <button type="button" aria-pressed={view === "grid"} aria-label="Grid view" title="Grid view" onClick={() => setView("grid")}>
-                  <LayoutGrid className="h-4 w-4" />
-                </button>
-                <button type="button" aria-pressed={view === "table"} aria-label="Table view" title="Table view" onClick={() => setView("table")}>
-                  <List className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+            </CatalogToolbar>
 
             {view === "table" ? (
               <div className="table-card">
@@ -327,8 +253,7 @@ export function InstitutionPrograms() {
                     <thead>
                       <tr>
                         <th>Program</th>
-                        <th>Degree level</th>
-                        <th>Duration</th>
+                        <th>Description</th>
                         <th>Status</th>
                         {canUpdate && <th>Actions</th>}
                       </tr>
@@ -337,25 +262,18 @@ export function InstitutionPrograms() {
                       {visible.map((program) => (
                         <tr key={program._id}>
                           <td>
-                            <div className="program-cell">
-                              <span className="program-icon">
-                                <BookOpen className="h-4 w-4" />
-                              </span>
-                              <div className="min-w-0">
-                                <p className="program-name">{program.name}</p>
-                                <p className="program-code">{program.code}</p>
-                              </div>
-                            </div>
+                            <ItemTitle icon={BookOpen} title={program.name} code={program.code} color={program.color} />
                           </td>
-                          <td>{program.degreeLevel || "—"}</td>
-                          <td className="whitespace-nowrap tabular-nums">{formatDuration(program)}</td>
-                          <td>{badge(program)}</td>
+                          <td className="program-desc">{program.description || "—"}</td>
+                          <td>
+                            <StatusPill statuses={STATUSES} value={program.status} />
+                          </td>
                           {canUpdate && <td>{actions(program)}</td>}
                         </tr>
                       ))}
                       {visible.length === 0 && (
                         <tr>
-                          <td colSpan={canUpdate ? 5 : 4} className="empty">
+                          <td colSpan={columns} className="empty">
                             {emptyMessage}
                           </td>
                         </tr>
@@ -367,29 +285,18 @@ export function InstitutionPrograms() {
             ) : visible.length === 0 ? (
               <div className="panel empty">{emptyMessage}</div>
             ) : (
-              <div className="program-grid">
+              <div className="item-grid">
                 {visible.map((program) => (
-                  <article key={program._id} className="program-card">
+                  <article key={program._id} className="item-card">
                     <div className="card-top">
-                      <span className="program-icon">
-                        <BookOpen className="h-4 w-4" />
-                      </span>
-                      {badge(program)}
+                      <ItemIcon icon={BookOpen} color={program.color} />
+                      <StatusPill statuses={STATUSES} value={program.status} />
                     </div>
                     <div>
-                      <h3 className="program-name">{program.name}</h3>
-                      <p className="program-code">{program.code}</p>
+                      <h3 className="item-name">{program.name}</h3>
+                      <p className="item-code">{program.code}</p>
                     </div>
-                    <dl className="card-meta">
-                      <div>
-                        <dt>Degree level</dt>
-                        <dd>{program.degreeLevel || "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Duration</dt>
-                        <dd>{formatDuration(program)}</dd>
-                      </div>
-                    </dl>
+                    {program.description && <p className="program-desc">{program.description}</p>}
                     {canUpdate && <div className="card-actions">{actions(program)}</div>}
                   </article>
                 ))}

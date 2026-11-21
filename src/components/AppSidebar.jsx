@@ -15,6 +15,8 @@ import {
   FileWarning,
   GraduationCap,
   KeyRound,
+  Landmark,
+  Layers,
   LayoutDashboard,
   Link2,
   Loader2,
@@ -28,6 +30,7 @@ import {
   X,
   History,
   ClipboardCheck,
+  ClipboardList,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
@@ -53,30 +56,40 @@ export const SECTIONS = [
       { to: "/faucet", label: "Devnet faucet", icon: Droplets },
     ],
   },
+  // collegeOnly: shown only while working in a college ("Working in"); these pages need that membership.
   {
     label: "Institution",
     icon: School,
     modules: [
       // No permissions on the desk: it is where an applicant registers, before any role exists.
       { to: "/institution", label: "Registration & desk", icon: School, end: true },
-      { to: "/institution/staff", label: "Staff", icon: UsersRound, permissions: ["staff:read"] },
-      { to: "/institution/programs", label: "Programs", icon: BookOpen, permissions: ["program:read"] },
-      {
-        to: "/batch-upload",
-        label: "Batch upload",
-        icon: Upload,
-        permissions: ["batch:upload"],
-      },
-      { to: "/admin/institutions", label: "Institutions", icon: Building2, adminOnly: true },
-      { to: "/admin/applications", label: "Applications", icon: ClipboardCheck, adminOnly: true },
-      { to: "/admin/registration-links", label: "Registration links", icon: Link2, adminOnly: true },
+      { to: "/institution/programs", label: "Programs", icon: BookOpen, permissions: ["program:read"], collegeOnly: true },
+      { to: "/institution/batches", label: "Batches", icon: Layers, permissions: ["programSession:read"], collegeOnly: true },
+      { to: "/institution/students", label: "Students", icon: Users, permissions: ["student:read"], collegeOnly: true },
+      { to: "/institution/enrollments", label: "Enrollments", icon: ClipboardList, permissions: ["enrollment:read"], collegeOnly: true },
+      { to: "/batch-upload", label: "Batch upload", icon: Upload, permissions: ["batch:upload"], collegeOnly: true },
     ],
   },
   {
+    // Each college's own settings, for the college picked in "Working in".
     label: "Administration",
+    icon: Landmark,
+    modules: [
+      { to: "/administration/staff", label: "Staff", icon: UsersRound, permissions: ["staff:read"], collegeOnly: true },
+      { to: "/administration/roles", label: "Roles", icon: KeyRound, permissions: ["role:manage"], collegeOnly: true },
+      { to: "/administration/activity", label: "Activity log", icon: History, permissions: ["audit:read"], collegeOnly: true },
+      { to: "/administration/settings", label: "Settings", icon: Settings, permissions: ["academicSession:read"], collegeOnly: true },
+    ],
+  },
+  {
+    // The Super Admin panel: every college and the platform itself.
+    label: "Platform Admin",
     icon: ShieldCheck,
     modules: [
       { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true, adminOnly: true },
+      { to: "/admin/institutions", label: "Institutions", icon: Building2, adminOnly: true },
+      { to: "/admin/applications", label: "Applications", icon: ClipboardCheck, adminOnly: true },
+      { to: "/admin/registration-links", label: "Registration links", icon: Link2, adminOnly: true },
       { to: "/admin/users", label: "Users", icon: Users, adminOnly: true },
       { to: "/admin/roles", label: "Roles & permissions", icon: KeyRound, adminOnly: true },
       { to: "/admin/credentials", label: "Credentials", icon: BadgeCheck, adminOnly: true },
@@ -194,6 +207,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
     canManagePlatform,
     hasAnyPermission,
     memberships,
+    activeMembership,
     activeInstitutionId,
     selectInstitution,
   } = useAuth();
@@ -208,6 +222,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
     : "Not signed in";
   const canSee = (module) =>
     (!module.adminOnly || canManagePlatform) &&
+    (!module.collegeOnly || activeMembership) &&
     (!module.permissions || hasAnyPermission(...module.permissions));
   const visibleSections = SECTIONS.map((section) => ({
     ...section,
