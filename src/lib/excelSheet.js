@@ -88,12 +88,13 @@ const status = (fallback) => (values) => ({ ...values, status: values.status ? v
 export const STUDENT_SHEET = {
   fileName: "students-template.xlsx",
   sheetName: "Students",
-  required: ["fullName"],
+  required: ["fullName", "email"],
   columns: [
     { key: "fullName", header: "Full name", width: 28 },
     { key: "registrationNo", header: "Registration no.", width: 20, text: true },
     { key: "email", header: "Email", width: 30 },
     { key: "phone", header: "Phone", width: 18, text: true },
+    { key: "walletHint", header: "Wallet address (optional)", width: 48, text: true },
     { key: "status", header: "Status", width: 12, list: ["Active", "Inactive"] },
   ],
   prepare: (values) => {
@@ -102,7 +103,9 @@ export const STUDENT_SHEET = {
   },
   instructions: [
     "How to fill the Students sheet",
-    "• One row per student. Full name is required; the other columns are optional.",
+    "• One row per student. Full name and Email are required; the other columns are optional.",
+    "• The email is where the student's wallet invite is sent.",
+    "• Wallet address is the Solana wallet you expect the student to use. It is only a hint: the student still proves their own wallet from the invite.",
     "• Registration no. is your college's own number. It must be unique in your college and in this file.",
     "• Status is Active or Inactive. Leave it empty for Active.",
     "• A student who takes a second course is NOT added again: courses are added as enrollments.",

@@ -178,6 +178,45 @@ export function AuthProvider({ children }) {
     }
   }, [wallet, persistSession]);
 
+  // Student invite: sign a challenge with the wallet to prove it is theirs; the server links the college's profile
+  // to the account holding that wallet, and signs the student in.
+  const claimStudentInvite = useCallback(
+    async (inviteToken) => {
+      if (!wallet.connected || !wallet.publicKey) {
+        throw new Error("Connect a wallet first");
+      }
+
+      if (typeof wallet.signMessage !== "function") {
+        throw new Error("This wallet does not support message signing");
+      }
+
+      setIsAuthenticating(true);
+      setAuthError("");
+
+      try {
+        const address = wallet.publicKey.toBase58();
+        const { data: nonceData } = await api.post("/auth/nonce", { walletAddress: address });
+        const signatureBytes = await wallet.signMessage(new TextEncoder().encode(nonceData.message), "utf8");
+        const signature = Buffer.from(signatureBytes).toString("base64");
+
+        const { data } = await api.post(`/auth/student-invite/${inviteToken}/claim`, {
+          walletAddress: address,
+          signature,
+        });
+
+        persistSession(data.token, data.user, address);
+
+        return data.user;
+      } catch (error) {
+        setAuthError(getErrorMessage(error, "Failed to link the wallet"));
+        throw error;
+      } finally {
+        setIsAuthenticating(false);
+      }
+    },
+    [wallet, persistSession]
+  );
+
   const loginWithEmail = useCallback(
     async (email, password) => {
       setIsAuthenticating(true);
@@ -343,6 +382,7 @@ export function AuthProvider({ children }) {
       signIn,
       signOut,
       loginWithEmail,
+      claimStudentInvite,
 
       activateAccount,
       resendActivation,
@@ -384,6 +424,7 @@ export function AuthProvider({ children }) {
       signIn,
       signOut,
       loginWithEmail,
+      claimStudentInvite,
 
       activateAccount,
       resendActivation,

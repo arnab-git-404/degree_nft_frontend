@@ -31,6 +31,7 @@ import { AdminActivity, CollegeActivity } from "./pages/admin/AdminActivity/Admi
 import { AdminApplications } from "./pages/admin/AdminApplications/AdminApplications";
 import { AdminSettings } from "./pages/admin/AdminSettings/AdminSettings";
 import { Apply } from "./pages/Apply/Apply";
+import { StudentClaim } from "./pages/StudentClaim/StudentClaim";
 import { Faucet } from "./pages/Faucet/Faucet";
 import { Login } from "./pages/Login/Login";
 import { Activate } from "./pages/Activate/Activate";
@@ -72,6 +73,7 @@ const AppRoutes = () => {
       <Route path="/activate" element={<Activate />} />
       <Route path="/activate/:token" element={<Activate />} />
       <Route path="/apply/:token" element={<Apply />} />
+      <Route path="/claim/:token" element={<StudentClaim />} />
       <Route
         path="/profile"
         element={

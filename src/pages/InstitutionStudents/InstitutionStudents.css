@@ -33,8 +33,23 @@
     @apply border-ink/10 bg-ink/5 text-ink/50 line-through;
   }
 
+  & .wallet-line {
+    @apply mt-1 text-[12px] whitespace-nowrap text-ink/55 tabular-nums;
+  }
+  & .wallet-flag {
+    @apply ml-1.5 rounded bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold text-amber-700;
+  }
+
   /* The grid view's pager sits in an otherwise empty card; hide it when there is only one page. */
   & .table-card:empty {
     @apply hidden;
   }
+}
+
+/* Add / edit panel (not nested: it may render outside the page root). */
+.student-form {
+  @apply space-y-5;
+}
+.student-preview-code {
+  @apply rounded-md bg-ink/10 px-2 py-0.5 text-[12px] font-semibold tracking-wide text-ink/70;
 }
