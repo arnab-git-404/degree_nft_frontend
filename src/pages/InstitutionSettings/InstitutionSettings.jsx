@@ -1,7 +1,8 @@
-import { CalendarDays } from "lucide-react";
+import { Award, CalendarDays } from "lucide-react";
 import { AdminPageHeader } from "../../components/admin/AdminUI";
 import { useAuth } from "../../context/AuthContext";
 import { InstitutionAcademicSessions } from "../InstitutionAcademicSessions/InstitutionAcademicSessions";
+import { CredentialTypes } from "./CredentialTypes";
 import "./InstitutionSettings.css";
 
 // One card per setting: icon + title + description, then the setting's own content.
@@ -34,11 +35,19 @@ export function InstitutionSettings() {
       description: "Manage the academic years program batches are created in",
       content: <InstitutionAcademicSessions />,
     },
+    {
+      key: "credential-types",
+      allowed: hasPermission("credentialType:read"),
+      icon: Award,
+      title: "Credential Types",
+      description: "The kinds of credential this college issues (Degree, Marksheet, Provisional...)",
+      content: <CredentialTypes />,
+    },
   ].filter((section) => section.allowed);
 
   return (
     <div className="institution-settings">
-      <AdminPageHeader title="System Settings" description="Configure this college's academic years and other settings." />
+      <AdminPageHeader title="System Settings" description="Configure this college's academic years, credential types and other settings." />
       {sections.map(({ key, content, allowed: _allowed, ...section }) => (
         <SettingsSection key={key} {...section}>
           {content}

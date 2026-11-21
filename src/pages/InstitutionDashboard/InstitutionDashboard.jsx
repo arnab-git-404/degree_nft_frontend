@@ -13,10 +13,6 @@ import api from "../../lib/api";
 import { Select } from "../../components/CatalogPage/CatalogPage";
 import "./InstitutionDashboard.css";
 
-// Mirrors CREDENTIAL_TYPES in the backend nft model.
-const CREDENTIAL_TYPES = ["DEGREE", "PROVISIONAL", "MARKSHEET", "TRANSCRIPT", "CERTIFICATE", "OTHER"];
-const typeLabel = (type) => type.charAt(0) + type.slice(1).toLowerCase();
-
 export function InstitutionDashboard() {
   const EXTERNAL_API_URL = "https://degree-nft.vercel.app/";
 
@@ -62,7 +58,20 @@ export function InstitutionDashboard() {
   const [enrollments, setEnrollments] = useState([]);
   const [enrollmentSearch, setEnrollmentSearch] = useState("");
   const [enrollmentId, setEnrollmentId] = useState("");
-  const [credentialType, setCredentialType] = useState("DEGREE");
+  const [credentialTypes, setCredentialTypes] = useState([]); // the college's Active master entries
+  const [credentialType, setCredentialType] = useState("");
+
+  useEffect(() => {
+    if (!isAuthenticated || !activeInstitutionId) return;
+    api
+      .get("/institution/credential-types")
+      .then(({ data }) => {
+        const active = data.credentialTypes.filter((type) => type.status === "ACTIVE");
+        setCredentialTypes(active);
+        setCredentialType((current) => (active.some((type) => type.code === current) ? current : active[0]?.code || ""));
+      })
+      .catch(() => setCredentialTypes([]));
+  }, [isAuthenticated, activeInstitutionId]);
 
   useEffect(() => {
     if (!isAuthenticated || !activeInstitutionId) return;
@@ -221,6 +230,8 @@ export function InstitutionDashboard() {
   const validateForm = () => {
     // Institution information validation
     if (!enrollmentId) return "Choose the student's enrollment";
+
+    if (!credentialType) return "Choose a credential type (add one under Credential types)";
 
     if (!formData.institutionName?.trim()) return "Institution name is required";
 
@@ -533,8 +544,9 @@ export function InstitutionDashboard() {
                 <div className="space-y-1">
                   <label className="field-label block">Credential type</label>
                   <Select value={credentialType} onChange={(e) => setCredentialType(e.target.value)}>
-                    {CREDENTIAL_TYPES.map((type) => (
-                      <option key={type} value={type}>{typeLabel(type)}</option>
+                    {credentialTypes.length === 0 && <option value="">No active credential types</option>}
+                    {credentialTypes.map((type) => (
+                      <option key={type._id} value={type.code}>{type.name}</option>
                     ))}
                   </Select>
                 </div>
@@ -668,6 +680,7 @@ export function InstitutionDashboard() {
               type="submit"
               disabled={
                 !enrollmentId ||
+                !credentialType ||
                 !formData.institutionName ||
                 !formData.studentName ||
                 !isValidPublicKey(formData.studentAddress) ||

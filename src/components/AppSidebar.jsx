@@ -141,7 +141,7 @@ export const SECTIONS = [
         to: "/administration/settings",
         label: "Settings",
         icon: Settings,
-        permissions: ["academicSession:read"],
+        permissions: ["academicSession:read", "credentialType:read"],
         collegeOnly: true,
       },
     ],
