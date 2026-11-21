@@ -121,8 +121,8 @@ function SidebarLink({ module, onNavigate, collapsed = false }) {
       className={({ isActive }) => {
         const tone = isActive
           ? "bg-cobalt text-white shadow-[0_4px_14px_rgb(79_70_229/0.35)]"
-          : "text-slate-400 hover:bg-white/5 hover:text-white";
-        const dot = isActive ? "before:bg-white/75" : "before:bg-slate-600 hover:before:bg-acid";
+          : "text-ink/60 hover:bg-ink/5 hover:text-ink";
+        const dot = isActive ? "before:bg-white/75" : "before:bg-ink/25 hover:before:bg-cobalt";
         // No ::before when collapsed: an empty pseudo-element would become a flex item and shift the icon.
         const shape = collapsed
           ? "justify-center py-2.5"
@@ -147,8 +147,8 @@ function SidebarGroup({ section, id, isOpen, hasActive, onToggle, onNavigate }) 
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={id}
-        className={`group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[14px] font-semibold transition-colors hover:bg-white/5 hover:text-white ${
-          isOpen || hasActive ? "text-white" : "text-slate-400"
+        className={`group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[14px] font-semibold transition-colors hover:bg-ink/5 hover:text-ink ${
+          isOpen || hasActive ? "text-ink" : "text-ink/60"
         }`}
       >
         <Icon
@@ -159,7 +159,7 @@ function SidebarGroup({ section, id, isOpen, hasActive, onToggle, onNavigate }) 
         <span className="flex-1 truncate">{section.label}</span>
         <ChevronRight
           className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 ${
-            isOpen ? "rotate-90 text-acid" : "text-slate-600"
+            isOpen ? "rotate-90 text-cobalt" : "text-ink/35"
           }`}
           aria-hidden="true"
         />
@@ -174,7 +174,7 @@ function SidebarGroup({ section, id, isOpen, hasActive, onToggle, onNavigate }) 
         }`}
       >
         <div className="overflow-hidden">
-          <div className="relative space-y-0.5 pt-0.5 pb-1.5 before:absolute before:top-1 before:bottom-2.5 before:left-[19px] before:w-px before:bg-white/10">
+          <div className="relative space-y-0.5 pt-0.5 pb-1.5 before:absolute before:top-1 before:bottom-2.5 before:left-[19px] before:w-px before:bg-ink/10">
             {section.modules.map((module) => (
               <SidebarLink key={module.to} module={module} onNavigate={onNavigate} />
             ))}
@@ -250,7 +250,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
   };
 
   return (
-    <div className="relative flex h-full flex-col bg-rail text-slate-300">
+    <div className="relative flex h-full flex-col bg-white text-ink/70">
       {onToggleCollapse ? (
         <button
           type="button"
@@ -266,7 +266,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
       ) : null}
 
       <div
-        className={`flex min-h-16 shrink-0 items-center gap-2 border-b border-white/10 py-3.5 ${
+        className={`flex min-h-16 shrink-0 items-center gap-2 border-b border-ink/10 py-3.5 ${
           collapsed ? "justify-center px-2" : "justify-between px-3.5"
         }`}
       >
@@ -284,10 +284,10 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
             <GraduationCap className="h-5 w-5" />
           </span>
           <span className={collapsed ? "sr-only" : "min-w-0 leading-tight"}>
-            <span className="block truncate text-[15px] font-bold text-white">
+            <span className="block truncate text-[15px] font-bold text-ink">
               DegreeNFT
             </span>
-            <span className="mt-0.5 block truncate text-[11px] text-slate-500">
+            <span className="mt-0.5 block truncate text-[11px] text-ink/50">
               Registry ERP
             </span>
           </span>
@@ -296,7 +296,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
           <button
             type="button"
             onClick={onClose}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-slate-300 transition-colors hover:bg-cobalt hover:text-white"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-ink/10 bg-ink/5 text-ink/60 transition-colors hover:bg-cobalt hover:text-white"
             aria-label="Close sidebar"
           >
             <X className="h-4 w-4" />
@@ -305,10 +305,10 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
       </div>
 
       {memberships.length > 0 && !collapsed && (
-        <div className="border-b border-white/10 px-3.5 py-3">
+        <div className="border-b border-ink/10 px-3.5 py-3">
           <label
             htmlFor="active-institution"
-            className="mb-1.5 block text-[12px] font-semibold text-slate-500"
+            className="mb-1.5 block text-[12px] font-semibold text-ink/50"
           >
             Working in
           </label>
@@ -317,7 +317,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
             value={activeInstitutionId || ""}
             onChange={(event) => selectInstitution(event.target.value)}
             disabled={memberships.length === 1}
-            className="h-9 w-full rounded-md border border-white/10 bg-white/5 px-2.5 text-[13px] font-medium text-white transition-colors hover:border-cobalt/60 focus:border-cobalt focus:outline-none disabled:opacity-100 disabled:hover:border-white/10"
+            className="h-9 w-full rounded-md border border-ink/15 bg-white px-2.5 text-[13px] font-medium text-ink transition-colors hover:border-cobalt/60 focus:border-cobalt focus:outline-none disabled:opacity-100 disabled:hover:border-ink/15"
           >
             {memberships.map((membership) => (
               <option
@@ -338,7 +338,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
             // Rail: every module as an icon, groups split by a thin line.
             <div
               key={section.label}
-              className="space-y-0.5 border-t border-white/10 pt-1.5 pb-1 first:border-t-0 first:pt-0"
+              className="space-y-0.5 border-t border-ink/10 pt-1.5 pb-1 first:border-t-0 first:pt-0"
             >
               {section.modules.map((module) => (
                 <SidebarLink key={module.to} module={module} onNavigate={onNavigate} collapsed />
@@ -360,10 +360,10 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
         )}
       </nav>
 
-      <div className="border-t border-white/10 p-2">
+      <div className="border-t border-ink/10 p-2">
         {isRestoring ? (
           <div
-            className={`flex items-center gap-2 py-2 text-xs text-slate-400 ${
+            className={`flex items-center gap-2 py-2 text-xs text-ink/60 ${
               collapsed ? "justify-center" : "px-2.5"
             }`}
           >
@@ -376,7 +376,7 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
               to="/profile"
               onClick={onNavigate}
               title={collapsed ? displayName : undefined}
-              className={`flex items-center gap-2.5 rounded-[9px] py-2 transition-colors hover:bg-white/5 ${
+              className={`flex items-center gap-2.5 rounded-[9px] py-2 transition-colors hover:bg-ink/5 ${
                 collapsed ? "justify-center" : "px-2.5"
               }`}
             >
@@ -384,10 +384,10 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
                 {getInitials(displayName)}
               </span>
               <span className={collapsed ? "sr-only" : "min-w-0 flex-1 leading-tight"}>
-                <span className="block truncate text-[13px] font-semibold text-white">
+                <span className="block truncate text-[13px] font-semibold text-ink">
                   {displayName}
                 </span>
-                <span className="mt-0.5 block truncate text-[11px] text-slate-500">
+                <span className="mt-0.5 block truncate text-[11px] text-ink/50">
                   {roleLabel}
                   {walletAddress ? ` · ${shortenAddress(walletAddress)}` : ""}
                 </span>
@@ -396,12 +396,12 @@ export function AppSidebar({ onNavigate, onClose, collapsed = false, onToggleCol
                 <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_5px_rgb(16_185_129/0.5)]" aria-hidden="true" />
               )}
             </Link>
-            <div className="mx-2 my-1.5 h-px bg-white/10" />
+            <div className="mx-2 my-1.5 h-px bg-ink/10" />
             <button
               type="button"
               onClick={handleSignOut}
               title={collapsed ? "Log out" : undefined}
-              className={`flex w-full items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium text-slate-400 transition-colors hover:bg-red-500/10 hover:text-red-400 ${
+              className={`flex w-full items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium text-ink/60 transition-colors hover:bg-red-50 hover:text-red-600 ${
                 collapsed ? "justify-center" : "px-2.5"
               }`}
             >
