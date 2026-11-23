@@ -88,6 +88,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/verify" element={<VerificationPortal />} />
+      <Route path="/verify/:assetAddress" element={<VerificationPortal />} />
       <Route
         path="/student"
         element={

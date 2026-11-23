@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import {
+  AlertTriangle,
   BadgeCheck,
   CheckCircle2,
+  CircleHelp,
   Copy,
   ExternalLink,
   Globe,
@@ -17,22 +21,21 @@ import toast from "react-hot-toast";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { getExplorerUrl, isValidPublicKey, SOLANA_NETWORK } from "../../lib/solana";
+import api, { getErrorMessage } from "../../lib/api";
 import "./VerificationPortal.css";
-
-const SAMPLE_ADDRESS = "FYYAm8NKgaShjzFkdi5rVY5TC47jeSKpo7PxEgHBPFDz";
 
 const STEPS = [
   [
-    "Paste the address",
-    "Use the NFT mint address or the wallet the degree was issued to.",
+    "Scan or paste",
+    "Scan the credential's QR code, or paste the credential (NFT) address.",
   ],
   [
-    "Read the registry",
-    "The credential record is checked against the on-chain registry.",
+    "Checked from both sides",
+    "Our record, the college's official collection and the Solana chain must all agree.",
   ],
   [
-    "Confirm authenticity",
-    "A verified result links directly to the record on Solana Explorer.",
+    "Official status",
+    "Owning the NFT is not enough: a suspended or revoked credential is shown as such.",
   ],
 ];
 
@@ -45,39 +48,63 @@ const copyText = async (text, message) => {
   }
 };
 
+// What each verification status means to the person checking (VERIFIED is the only "good" one).
+const OUTCOMES = {
+  VERIFIED: { title: "Credential verified", text: "Issued by the college below, held by the wallet it was issued to, and currently valid.", good: true },
+  SUSPENDED: { title: "Credential suspended", text: "The issuing college has suspended this credential. It is not valid at the moment." },
+  REVOKED: { title: "Credential revoked", text: "The issuing college has revoked this credential. It is no longer valid." },
+  SUPERSEDED: { title: "Credential superseded", text: "This credential was corrected after it was issued; ask the holder for the current one." },
+  NOT_FOUND: { title: "No credential found", text: "This address is not a DegreeNFT credential. Check it, or contact the issuing college." },
+  VERIFICATION_UNAVAILABLE: { title: "Could not verify right now", text: "A check could not be completed (for example the Solana network did not answer). Try again shortly." },
+};
+
 export function VerificationPortal() {
-  const [address, setAddress] = useState("");
+  const { assetAddress } = useParams(); // /verify/:assetAddress, the link behind every credential's QR code
+  const navigate = useNavigate();
+  const [address, setAddress] = useState(assetAddress || "");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
 
   const isAddressValid = isValidPublicKey(address);
 
-  const handleVerify = async (event) => {
-    event.preventDefault();
-    if (!isAddressValid) return;
-
+  const runCheck = useCallback(async (target) => {
     setIsLoading(true);
     setResult(null);
-
     try {
-      // shortcut: simulated lookup, always "valid"; replace with a real registry/on-chain check before relying on it.
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      setResult({ status: "valid", address, checkedAt: new Date() });
-      toast.success("Credential found on the registry");
+      const { data } = await api.get(`/verify/${target}`);
+      setResult({ ...data, checkedAt: new Date(data.checkedAt) });
     } catch (error) {
-      console.error("Error verifying credential:", error);
-      setResult({ status: "invalid", address, checkedAt: new Date() });
+      toast.error(getErrorMessage(error, "Verification failed"));
+      setResult({ status: "VERIFICATION_UNAVAILABLE", assetAddress: target, checkedAt: new Date() });
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (assetAddress && isValidPublicKey(assetAddress)) {
+      setAddress(assetAddress);
+      runCheck(assetAddress);
+    }
+  }, [assetAddress, runCheck]);
+
+  const handleVerify = (event) => {
+    event.preventDefault();
+    if (!isAddressValid) return;
+    // Put the address in the URL so the result page can be shared or bookmarked.
+    if (address === assetAddress) runCheck(address);
+    else navigate(`/verify/${address}`);
   };
 
   const reset = () => {
     setAddress("");
     setResult(null);
+    navigate("/verify");
   };
 
-  const isValid = result?.status === "valid";
+  const outcome = result && OUTCOMES[result.status];
+  const isValid = Boolean(outcome?.good);
+  const shareUrl = result && `${window.location.origin}/verify/${result.assetAddress}`;
 
   return (
     <div className="verify-page">
@@ -111,7 +138,7 @@ export function VerificationPortal() {
             <div>
               <h2 className="lookup-title">Look up a degree NFT</h2>
               <p className="lookup-sub">
-                Paste the NFT mint address or the student&apos;s wallet address.
+                Paste the credential (NFT) address, or open the link from its QR code.
               </p>
             </div>
           </div>
@@ -121,7 +148,7 @@ export function VerificationPortal() {
               <Search className="search-icon" aria-hidden="true" />
               <Input
                 id="verify-address"
-                aria-label="NFT or wallet address"
+                aria-label="Credential (NFT) address"
                 placeholder="e.g. FYYAm8NKgaShjzFkdi5rVY5TC47..."
                 value={address}
                 autoComplete="off"
@@ -146,19 +173,9 @@ export function VerificationPortal() {
           </div>
 
           <div className="lookup-foot">
-            <button
-              type="button"
-              className="sample"
-              onClick={() => copyText(SAMPLE_ADDRESS, "Example address copied")}
-              title="Copy example address"
-            >
-              <span className="sample-label">Example</span>
-              <span className="sample-address">{SAMPLE_ADDRESS}</span>
-              <Copy className="h-3.5 w-3.5 shrink-0" />
-            </button>
             <p className="privacy">
               <Lock className="h-3.5 w-3.5 shrink-0" />
-              Reads public registry data only. No wallet connection needed.
+              Shows only public facts and the holder's initials. No wallet connection needed.
             </p>
           </div>
         </div>
@@ -179,30 +196,54 @@ export function VerificationPortal() {
               <div className="outcome-head">
                 {isValid ? (
                   <CheckCircle2 className="outcome-icon" />
-                ) : (
+                ) : result.status === "VERIFICATION_UNAVAILABLE" ? (
+                  <CircleHelp className="outcome-icon" />
+                ) : result.status === "NOT_FOUND" ? (
                   <XCircle className="outcome-icon" />
+                ) : (
+                  <AlertTriangle className="outcome-icon" />
                 )}
                 <div className="min-w-0">
-                  <p className="outcome-title">
-                    {isValid ? "Credential verified" : "No credential found"}
-                  </p>
-                  <p className="outcome-text">
-                    {isValid
-                      ? "This address belongs to an issued DegreeNFT credential."
-                      : "Check the address and try again, or contact the issuing institution."}
-                  </p>
+                  <p className="outcome-title">{outcome.title}</p>
+                  <p className="outcome-text">{outcome.text}</p>
                 </div>
               </div>
 
               <dl className="details">
+                {result.credential && (
+                  <>
+                    <div className="detail">
+                      <dt>Credential</dt>
+                      <dd>
+                        {result.credential.title} ({result.credential.type})
+                      </dd>
+                    </div>
+                    <div className="detail">
+                      <dt>Issued by</dt>
+                      <dd>{result.college?.name}</dd>
+                    </div>
+                    {result.credential.holder && (
+                      <div className="detail">
+                        <dt>Holder</dt>
+                        <dd>{result.credential.holder}</dd>
+                      </div>
+                    )}
+                    {result.credential.issuedAt && (
+                      <div className="detail">
+                        <dt>Issued on-chain</dt>
+                        <dd>{new Date(result.credential.issuedAt).toLocaleDateString()}</dd>
+                      </div>
+                    )}
+                  </>
+                )}
                 <div className="detail">
                   <dt>Address</dt>
                   <dd className="detail-address">
-                    <code>{result.address}</code>
+                    <code>{result.assetAddress}</code>
                     <button
                       type="button"
                       className="icon-btn"
-                      onClick={() => copyText(result.address, "Address copied")}
+                      onClick={() => copyText(result.assetAddress, "Address copied")}
                       aria-label="Copy address"
                     >
                       <Copy className="h-3.5 w-3.5" />
@@ -211,7 +252,7 @@ export function VerificationPortal() {
                 </div>
                 <div className="detail">
                   <dt>Network</dt>
-                  <dd>Solana {SOLANA_NETWORK}</dd>
+                  <dd>Solana {result.chain?.network || SOLANA_NETWORK}</dd>
                 </div>
                 <div className="detail">
                   <dt>Checked</dt>
@@ -219,9 +260,32 @@ export function VerificationPortal() {
                 </div>
               </dl>
 
+              {result.checks && (
+                <ul className="checks">
+                  {result.checks.map((check) => (
+                    <li key={check.key} className={check.ok === true ? "is-ok" : check.ok === false ? "is-bad" : "is-unknown"}>
+                      {check.ok === true ? <CheckCircle2 className="h-3.5 w-3.5" /> : check.ok === false ? <XCircle className="h-3.5 w-3.5" /> : <CircleHelp className="h-3.5 w-3.5" />}
+                      {check.label}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {result.credential && (
+                <div className="share">
+                  <QRCodeSVG value={shareUrl} size={112} marginSize={1} aria-label="QR code of this verification page" />
+                  <div className="min-w-0">
+                    <p className="share-title">Share this check</p>
+                    <button type="button" className="btn-ghost" onClick={() => copyText(shareUrl, "Verification link copied")}>
+                      <Copy className="h-3.5 w-3.5" /> Copy verification link
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="actions">
                 <a
-                  href={getExplorerUrl(result.address)}
+                  href={getExplorerUrl(result.assetAddress)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-outline"
