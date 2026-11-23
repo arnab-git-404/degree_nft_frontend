@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { CheckCircle, UsersRound, XCircle } from "lucide-react";
+import { CheckCircle, Link2, UsersRound, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../../lib/api";
 import { useAdminList } from "../../../hooks/useAdminList";
@@ -16,6 +16,7 @@ import {
   AdminToolbar,
   StatusBadge,
 } from "../../../components/admin/AdminUI";
+import { ChainPanel } from "./ChainPanel";
 import "./AdminInstitutions.css";
 
 const FILTER_OPTIONS = [
@@ -46,6 +47,7 @@ export function AdminInstitutions() {
   });
   const [updatingId, setUpdatingId] = useState("");
   const [membersOf, setMembersOf] = useState("");
+  const [chainOf, setChainOf] = useState("");
 
   // Super Admin only (P04-04): moves the primary-head pointer; the API checks the target is an ACTIVE admin.
   const transferHead = async (institutionId, member, reason) => {
@@ -149,6 +151,15 @@ export function AdminInstitutions() {
                         </Button>
                         <Button
                           size="sm"
+                          variant={chainOf === institution._id ? "default" : "secondary"}
+                          aria-expanded={chainOf === institution._id}
+                          onClick={() => setChainOf(chainOf === institution._id ? "" : institution._id)}
+                        >
+                          <Link2 className="h-3.5 w-3.5" />
+                          On-chain
+                        </Button>
+                        <Button
+                          size="sm"
                           variant="secondary"
                           disabled={updatingId === institution._id}
                           onClick={() =>
@@ -187,6 +198,13 @@ export function AdminInstitutions() {
                           canManage
                           onTransferHead={(member, reason) => transferHead(institution._id, member, reason)}
                         />
+                      </td>
+                    </tr>
+                  )}
+                  {chainOf === institution._id && (
+                    <tr className="members-row">
+                      <td colSpan={5}>
+                        <ChainPanel institution={institution} />
                       </td>
                     </tr>
                   )}

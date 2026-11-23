@@ -30,6 +30,7 @@ import {
   School,
   ScrollText,
   Settings,
+  Wallet,
   Upload,
   UserRound,
   Users,
@@ -111,6 +112,13 @@ export const SECTIONS = [
         collegeOnly: true,
       },
       {
+        to: "/institution/approvals",
+        label: "Approvals",
+        icon: ShieldCheck,
+        permissions: ["approval:first", "approval:final", "credential:recover", "credential:burn"],
+        collegeOnly: true,
+      },
+      {
         to: "/batch-upload",
         label: "Batch upload",
         icon: Upload,
@@ -143,6 +151,13 @@ export const SECTIONS = [
         label: "Activity log",
         icon: History,
         permissions: ["audit:read"],
+        collegeOnly: true,
+      },
+      {
+        to: "/administration/billing",
+        label: "Billing",
+        icon: Wallet,
+        permissions: ["billing:read"],
         collegeOnly: true,
       },
       {

@@ -12,11 +12,13 @@ import { InstitutionDashboard } from "./pages/InstitutionDashboard/InstitutionDa
 import { InstitutionStaff } from "./pages/InstitutionStaff/InstitutionStaff";
 import { InstitutionPrograms } from "./pages/InstitutionPrograms/InstitutionPrograms";
 import { InstitutionCredentials } from "./pages/InstitutionCredentials/InstitutionCredentials";
+import { InstitutionApprovals } from "./pages/InstitutionApprovals/InstitutionApprovals";
 import { InstitutionBatches } from "./pages/InstitutionBatches/InstitutionBatches";
 import { InstitutionRoles } from "./pages/InstitutionRoles/InstitutionRoles";
 import { InstitutionStudents } from "./pages/InstitutionStudents/InstitutionStudents";
 import { InstitutionEnrollments } from "./pages/InstitutionEnrollments/InstitutionEnrollments";
 import { InstitutionSettings } from "./pages/InstitutionSettings/InstitutionSettings";
+import { InstitutionBilling } from "./pages/InstitutionBilling/InstitutionBilling";
 import { VerificationPortal } from "./pages/VerificationPortal/VerificationPortal";
 import { StudentDashboard } from "./pages/StudentDashboard/StudentDashboard";
 import { BatchUploadPortal } from "./pages/BatchUploadPortal/BatchUploadPortal";
@@ -33,6 +35,7 @@ import { AdminApplications } from "./pages/admin/AdminApplications/AdminApplicat
 import { AdminSettings } from "./pages/admin/AdminSettings/AdminSettings";
 import { Apply } from "./pages/Apply/Apply";
 import { StudentClaim } from "./pages/StudentClaim/StudentClaim";
+import { RecoverWallet } from "./pages/RecoverWallet/RecoverWallet";
 import { Faucet } from "./pages/Faucet/Faucet";
 import { Login } from "./pages/Login/Login";
 import { Activate } from "./pages/Activate/Activate";
@@ -75,6 +78,7 @@ const AppRoutes = () => {
       <Route path="/activate/:token" element={<Activate />} />
       <Route path="/apply/:token" element={<Apply />} />
       <Route path="/claim/:token" element={<StudentClaim />} />
+      <Route path="/recover/:token" element={<RecoverWallet />} />
       <Route
         path="/profile"
         element={
@@ -151,6 +155,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/institution/approvals"
+        element={
+          <ProtectedRoute anyOf={["approval:first", "approval:final", "credential:recover", "credential:burn"]}>
+            <InstitutionApprovals />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/institution/credentials"
         element={
           <ProtectedRoute anyOf={["credential:read"]}>
@@ -168,6 +180,14 @@ const AppRoutes = () => {
       />
       {/* Academic years now live on the Settings page */}
       <Route path="/administration/academic-sessions" element={<Navigate to="/administration/settings" replace />} />
+      <Route
+        path="/administration/billing"
+        element={
+          <ProtectedRoute anyOf={["billing:read"]}>
+            <InstitutionBilling />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/administration/settings"
         element={

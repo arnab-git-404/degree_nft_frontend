@@ -1,0 +1,102 @@
+@reference "../../index.css";
+
+/* College › Approvals. Shared layout comes from .catalog-page (components/CatalogPage). */
+.institution-approvals {
+  & .appr-bar {
+    @apply flex flex-wrap items-center justify-between gap-3;
+  }
+  & .appr-tags {
+    @apply flex flex-wrap gap-2;
+  }
+  & .appr-tag {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-paper-soft px-3 py-1 text-[13px] text-ink/70;
+  }
+  & .appr-tag b {
+    @apply font-semibold;
+  }
+  & .appr-tag i {
+    @apply h-1.5 w-1.5 rounded-full bg-ink/30;
+  }
+  & .tag-warn i {
+    background: rgb(217 119 6);
+  }
+  & .tag-warn b {
+    color: rgb(217 119 6);
+  }
+  & .tag-ok i {
+    background: rgb(16 185 129);
+  }
+  & .tag-ok b {
+    color: rgb(16 185 129);
+  }
+  & .tag-red i {
+    background: rgb(220 38 38);
+  }
+  & .tag-red b {
+    color: rgb(220 38 38);
+  }
+
+  & .seg {
+    @apply inline-flex rounded-lg bg-ink/5 p-0.5;
+  }
+  & .seg button {
+    @apply rounded-md px-3 py-1 text-[13px] font-semibold text-ink/45;
+  }
+  & .seg .is-on {
+    @apply bg-paper-soft text-ink/80 shadow-sm;
+  }
+
+  & .appr-list {
+    @apply grid gap-3;
+  }
+  & .appr-card {
+    @apply rounded-2xl border border-ink/10 bg-paper-soft;
+  }
+  & .appr-card header {
+    @apply flex items-center gap-3 border-b border-ink/10 px-4 py-3;
+  }
+  & .appr-card h3 {
+    @apply truncate text-[15px] font-semibold;
+  }
+  & .appr-card header p {
+    @apply text-[12px] text-ink/50;
+  }
+  & .appr-kind {
+    @apply grid h-10 w-10 shrink-0 place-items-center rounded-xl;
+  }
+  & .kind-recovery {
+    background: rgb(79 70 229 / 0.1);
+    color: rgb(79 70 229);
+  }
+  & .kind-burn {
+    background: rgb(220 38 38 / 0.1);
+    color: rgb(220 38 38);
+  }
+  & .appr-card dl {
+    @apply grid gap-x-6 gap-y-2 px-4 py-3 text-[13px] sm:grid-cols-[140px_1fr];
+  }
+  & .appr-card dt {
+    @apply font-medium text-ink/55;
+  }
+  & .appr-card dd {
+    @apply min-w-0 break-words;
+  }
+  & .appr-card code {
+    @apply break-all rounded-md bg-ink/5 px-1.5 py-0.5 font-mono text-[12px];
+  }
+  & .appr-steps {
+    @apply grid gap-2 px-4 pb-3 sm:grid-cols-2;
+  }
+  & .appr-step {
+    @apply flex flex-col gap-0.5 rounded-lg border border-dashed border-ink/15 px-3 py-2 text-[13px];
+  }
+  & .appr-step.is-done {
+    @apply border-solid border-emerald-200 bg-emerald-50 text-emerald-800;
+  }
+  & .appr-step__label {
+    @apply text-[11px] font-semibold uppercase tracking-wide text-ink/45;
+  }
+  & .appr-card footer {
+    @apply flex flex-wrap items-center gap-2 border-t border-ink/10 px-4 py-3;
+  }
+}

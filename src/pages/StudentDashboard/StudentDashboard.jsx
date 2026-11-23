@@ -1,14 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Connection, clusterApiUrl } from "@solana/web3.js";
-import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { CredentialCard } from "../../components/nft/CredentialCard";
-import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
-import {
-  createNft,
-  mplTokenMetadata,
-} from "@metaplex-foundation/mpl-token-metadata";
-import { generateSigner } from "@metaplex-foundation/umi";
 import {
   UserCheck,
   ExternalLink,
@@ -28,26 +20,19 @@ import {
 import { shortenAddress } from "../../lib/utils";
 import { Button } from "../../components/Button";
 import { SignInRequired } from "../../components/SignInRequired";
-import { useNavigate } from "react-router-dom";
 import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import "./StudentDashboard.css";
 
-const INSTITUTION_FEES = 0.01;
-
 export function StudentDashboard() {
-  const navigate = useNavigate();
 
   const wallet = useWallet();
-  const connection = new Connection(clusterApiUrl("devnet"));
   const { isAuthenticated, isRestoring } = useAuth();
 
   const { connected, publicKey } = wallet;
   const walletAddress = publicKey?.toBase58();
   const toastShownRef = useRef(false);
-  const [walletBalance, setWalletBalance] = useState(null);
-  const [balanceRefreshing, setBalanceRefreshing] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -76,17 +61,6 @@ export function StudentDashboard() {
   // New state for store metadata
   const [metadataDetails, setMetadataDetails] = useState(null);
   const [loadingMetadata, setLoadingMetadata] = useState(false);
-
-  // Initialize UMI when wallet is connected
-  const umi = useMemo(() => {
-    const umi = createUmi(connection);
-
-    if (wallet.publicKey) {
-      return umi.use(walletAdapterIdentity(wallet));
-    }
-
-    return umi;
-  }, [connection, wallet]);
 
   // Calculate time remaining for confirmation deadline
   useEffect(() => {
@@ -213,10 +187,6 @@ export function StudentDashboard() {
 
     if (connected && walletAddress) {
       fetchMintedNFTs();
-      checkWalletBalance(); // Initial balance check
-
-      const balanceInterval = setInterval(() => checkWalletBalance(), 5000); // Refresh every 5 seconds
-      return () => clearInterval(balanceInterval); // Cleanup interval
     }
   }, [connected, walletAddress, isAuthenticated]);
 
@@ -251,119 +221,29 @@ export function StudentDashboard() {
     }
   };
 
-  // Handle Minting using UMI directly in the frontend
+  // Claim: the backend mints the credential into this (signed-in) wallet. The student needs no SOL.
   const handleMintNft = async () => {
-    const minimumBalance = 0.01;
-
-    // Check if UMI, publicKey, and credentialInfo are available
-    if (!umi || !publicKey || !credentialInfo || !credentialInfo.uri || !credentialInfo.name) {
-      setMintError(
-        "Cannot mint: Missing wallet connection, UMI instance, or NFT metadata",
-      );
-      toast.error("Missing required information for minting");
-      return;
-    }
-
-    // Check wallet balance & Forward to faucet if insufficient
-    if (walletBalance < minimumBalance) {
-      toast(
-        (t) => (
-          <div className="flex items-center justify-between w-full  p-1">
-            <div className="flex-1">
-              <p className="font-bold text-red-600">Insufficient Balance</p>
-              <p className="text-m text-ink">
-                You need minimum ~{minimumBalance} Devnet SOL for minting. Your
-                balance: {walletBalance} SOL
-              </p>
-            </div>
-
-            <Button
-              onClick={() => {
-                navigate("/faucet");
-                toast.dismiss(t.id);
-              }}
-              className="ml-4 !py-1.5 !px-3 hover:bg-cobalt bg-cobalt text-paper hover:cursor-pointer"
-            >
-              Go to Faucet
-            </Button>
-          </div>
-        ),
-        {
-          duration: 3000,
-          id: "insufficient-balance-toast", // Prevent duplicate toasts
-        },
-      );
-      return;
-    }
-
+    if (!credentialInfo) return;
     setIsMinting(true);
     setMintError("");
     setMintSuccess(false);
     setMintedNft(null);
-
-    // Show toast for starting mint process
-    const mintToastId = toast.loading("Minting your credential NFT...");
-
+    const toastId = toast.loading("Issuing your credential to your wallet...");
     try {
-      await umi.use(mplTokenMetadata());
-
-      const mint = generateSigner(umi);
-
-      const { signature } = await createNft(umi, {
-        mint: mint,
-        name: credentialInfo.name,
-        symbol: credentialInfo.symbol,
-        uri: credentialInfo.uri,
-        sellerFeeBasisPoints: 500, // 5% royalty
-        creators: [
-          {
-            address: publicKey,
-            verified: true,
-            share: 100,
-          },
-        ],
-      }).sendAndConfirm(umi, { confirm: { commitment: "confirmed" } });
-
-      const mintedNftData = {
-        address: mint.publicKey.toString(),
-        signature: signature.toString(),
-        name: credentialInfo.name,
-        symbol: credentialInfo.symbol || "CRED",
-        uri: credentialInfo.uri,
-        dateIssued: new Date().toISOString(),
-      };
-
+      const { data } = await api.post("/student/credentials/claim", {
+        walletAddress,
+        credentialId: credentialInfo._id,
+        revision: credentialInfo.revision,
+      });
+      setMintedNft({ address: data.nft.assetAddress, signature: data.nft.mintSignature, name: credentialInfo.name });
       setMintSuccess(true);
-      setMintedNft(mintedNftData);
       setIsAuthorized(false);
-
-      // Update toast to success
-      toast.success("NFT minted successfully!", { id: mintToastId });
-
-      // Notify backend about successful mint
-      try {
-        await api.post("/student/credentials/mint", {
-          walletAddress: walletAddress,
-          nft_Mint_Address: mint.publicKey.toString(),
-          credentialId: credentialInfo._id,
-          revision: credentialInfo.revision,
-        });
-        console.log("Backend notified of successful mint.");
-      } catch (backendError) {
-        console.error("Failed to notify backend:", backendError);
-        toast.warning("Minting succeeded, but failed to update server status");
-      }
-
-      // Refresh minted NFTs list
+      toast.success("Your credential is in your wallet!", { id: toastId });
       fetchMintedNFTs();
-    } catch (err) {
-      console.error("Failed to mint NFT:", err);
-      let errorMessage = "An error occurred during minting.";
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      }
-      setMintError(`Minting failed: ${errorMessage}`);
-      toast.error("Failed to mint NFT", { id: mintToastId });
+    } catch (error) {
+      const message = error.response?.data?.message || "Claiming failed. Please try again.";
+      setMintError(message);
+      toast.error(message, { id: toastId });
     } finally {
       setIsMinting(false);
     }
@@ -487,28 +367,6 @@ export function StudentDashboard() {
     }
   };
 
-  //Check user current wallet balance
-  const checkWalletBalance = async () => {
-    if (!walletAddress) {
-      toast.error("Wallet not connected");
-      return false;
-    }
-    setBalanceRefreshing(true);
-
-    try {
-      const balanceInLamports = await connection.getBalance(publicKey);
-      const solBalance = balanceInLamports / 1_000_000_000; // Convert lamports to SOL
-      setWalletBalance(solBalance.toFixed(3));
-      return true; // Sufficient balance
-    } catch (error) {
-      console.error("Error checking wallet balance:", error);
-      toast.error("Failed to check wallet balance");
-      setWalletBalance(null);
-      return false;
-    } finally {
-      setBalanceRefreshing(false);
-    }
-  };
 
   // Render loading state for authorization check
   if (isLoading) {
@@ -592,16 +450,6 @@ export function StudentDashboard() {
                 {shortenAddress(walletAddress || "")}
               </span>
             </span>
-            <span className="pill">
-              Balance{" "}
-              <span className="font-mono">
-                {balanceRefreshing ? (
-                  <Loader2 className="inline-block h-3 w-3 animate-spin" />
-                ) : (
-                  `${walletBalance} SOL`
-                )}
-              </span>
-            </span>
           </div>
         </div>
 
@@ -614,7 +462,7 @@ export function StudentDashboard() {
       {mintSuccess && mintedNft && (
         <div className="success">
           <CheckCircle className="h-4 w-4 shrink-0 text-green-700" />
-          <span className="font-semibold text-green-800">NFT minted successfully!</span>
+          <span className="font-semibold text-green-800">Credential claimed: it is now in your wallet.</span>
           <a
             href={getNftExplorerLink(
               mintedNft.address,
@@ -833,17 +681,14 @@ export function StudentDashboard() {
                   )}
 
                   {(isConfirmed || timeRemaining?.expired) && (
-                    <Button
-                      onClick={handleMintNft}
-                      disabled={isMinting || !umi.identity}
-                    >
+                    <Button onClick={handleMintNft} disabled={isMinting}>
                       {isMinting ? (
                         <>
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          Minting...
+                          Claiming...
                         </>
                       ) : (
-                        "Mint credential NFT"
+                        "Claim credential NFT"
                       )}
                     </Button>
                   )}
@@ -869,13 +714,6 @@ export function StudentDashboard() {
                   </p>
                 )}
 
-                {!umi.identity && (
-                  <p className="msg msg-warn">
-                    <AlertCircle className="h-3.5 w-3.5" /> Wallet not fully
-                    ready for signing. Please ensure it's connected and
-                    initialized.
-                  </p>
-                )}
               </div>
             </div>
           )}

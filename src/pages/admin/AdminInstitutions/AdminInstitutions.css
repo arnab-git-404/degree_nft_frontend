@@ -16,3 +16,35 @@
 .admin-institutions .members-row > td {
   @apply bg-ink/2 p-2;
 }
+
+/* On-chain panel (expanded row) and its confirm modal */
+.chain-panel {
+  @apply space-y-3 px-1 py-2;
+}
+.chain-panel__text {
+  @apply text-[13px] text-ink/70;
+}
+.chain-facts {
+  @apply grid gap-x-6 gap-y-2 text-[13px] sm:grid-cols-[180px_1fr];
+}
+.chain-facts dt {
+  @apply font-medium text-ink/60;
+}
+.chain-facts dd {
+  @apply flex min-w-0 flex-wrap items-center gap-2;
+}
+.chain-facts code {
+  @apply break-all rounded-md bg-ink/5 px-1.5 py-0.5 font-mono text-[12px];
+}
+.chain-facts a {
+  color: rgb(79 70 229);
+}
+.chain-hint {
+  @apply w-full text-[12px] text-ink/50;
+}
+.chain-confirm {
+  @apply space-y-3 text-[13px] text-ink/80;
+}
+.chain-confirm__check {
+  @apply flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-900;
+}

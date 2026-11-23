@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, GraduationCap, PauseCircle, Plus, Send, UserRound, UsersRound } from "lucide-react";
+import { CheckCircle2, GraduationCap, KeyRound, PauseCircle, Plus, Send, UserRound, UsersRound } from "lucide-react";
+import { ReasonModal } from "../../components/ReasonModal";
 import toast from "react-hot-toast";
 import api, { getErrorMessage } from "../../lib/api";
 import { ENROLLMENT_STATUSES, enrollmentLabel } from "../../lib/admin";
@@ -155,6 +156,8 @@ export function InstitutionStudents() {
   const canUpdate = hasPermission("student:update");
   const canReadEnrollments = hasPermission("enrollment:read");
   const canEnroll = hasPermission("enrollment:create");
+  const canRecover = hasPermission("credential:recover");
+  const [recovering, setRecovering] = useState(null); // student whose wallet was lost
   const [data, setData] = useState(null);
   const [courses, setCourses] = useState({}); // studentId -> enrollments
   const [error, setError] = useState("");
@@ -213,7 +216,7 @@ export function InstitutionStudents() {
   ];
   const hasFilters = Boolean(query.status || search);
   const emptyMessage = hasFilters ? "No students match these filters." : "No students yet.";
-  const showActions = canUpdate || canEnroll;
+  const showActions = canUpdate || canEnroll || canRecover;
   const columns = 4 + (canReadEnrollments ? 1 : 0) + (showActions ? 1 : 0);
 
   const changeStatus = async (student, next) => {
@@ -259,6 +262,22 @@ export function InstitutionStudents() {
     }
   };
 
+  // Lost wallet: emails the student a link to prove a new wallet; two approvals then move their credentials.
+  const startRecovery = async (reason) => {
+    try {
+      const { data: response } = await api.post(`/institution/students/${recovering._id}/recovery`, { reason });
+      if (response.delivery === "sent") toast.success(`Recovery link emailed to ${recovering.email}. Approve it under Approvals once the student confirms.`);
+      else if (response.recoveryUrl) {
+        const copied = await navigator.clipboard?.writeText(response.recoveryUrl).then(() => true, () => false);
+        if (copied) toast.success("Email is not set up on this server, so the recovery link was copied to your clipboard");
+        else toast(response.recoveryUrl, { duration: 20000 });
+      } else toast.error("The recovery was started, but the email could not be sent");
+      setRecovering(null);
+    } catch (recoverError) {
+      toast.error(getErrorMessage(recoverError, "Failed to start the recovery"));
+    }
+  };
+
   const actions = (student) => (
     <div className="student-actions">
       {canUpdate && (
@@ -281,6 +300,11 @@ export function InstitutionStudents() {
           aria-label={`Invite ${student.fullName}`}
         >
           <Send className="h-4 w-4" /> {student.claimStatus === "INVITED" || student.claimStatus === "INVITE_EXPIRED" ? "Resend" : "Invite"}
+        </Button>
+      )}
+      {canRecover && student.claimStatus === "LINKED" && (
+        <Button size="sm" variant="ghost" onClick={() => setRecovering(student)} aria-label={`Recover the wallet of ${student.fullName}`}>
+          <KeyRound className="h-4 w-4" /> Recover wallet
         </Button>
       )}
       {canEnroll && (
@@ -478,6 +502,24 @@ export function InstitutionStudents() {
             closeEditor();
             reload();
           }}
+        />
+      )}
+      {recovering && (
+        <ReasonModal
+          title={`Recover the wallet of ${recovering.fullName}`}
+          intro={
+            <>
+              <p>
+                Use this when the student can no longer use their wallet. They get an email at <b>{recovering.email || "(no email)"}</b> to connect and prove a
+                new wallet. Then two different officials approve under <b>Approvals</b>, and all their credentials from your college move to the new wallet.
+              </p>
+              <p className="mt-2">Check the student&apos;s identity your usual way first. The old wallet link is kept in the history.</p>
+            </>
+          }
+          submitLabel="Send recovery link"
+          placeholder="e.g. Phone stolen, verified in person with ID"
+          onClose={() => setRecovering(null)}
+          onSubmit={startRecovery}
         />
       )}
     </div>

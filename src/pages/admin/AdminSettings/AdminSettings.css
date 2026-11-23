@@ -189,3 +189,17 @@
     }
   }
 }
+
+/* Credential pricing: the facts below the price inputs */
+.admin-settings .billing-facts {
+  @apply mt-4 grid gap-x-6 gap-y-2 text-[13px] sm:grid-cols-[220px_1fr];
+}
+.admin-settings .billing-facts dt {
+  @apply font-medium text-ink/60;
+}
+.admin-settings .billing-facts dd {
+  @apply min-w-0 break-all;
+}
+.admin-settings .billing-facts code {
+  @apply rounded-md bg-ink/5 px-1.5 py-0.5 font-mono text-[12px];
+}

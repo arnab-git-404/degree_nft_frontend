@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Pencil, ScrollText } from "lucide-react";
+import { Flame, Pencil, ScrollText, ShieldAlert } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getErrorMessage } from "../../lib/api";
 import { formatDate } from "../../lib/admin";
@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/Button";
 import { AdminError, AdminLoading, AdminPageHeader } from "../../components/admin/AdminUI";
 import { CatalogModal, ItemTitle, StatusPill } from "../../components/CatalogPage/CatalogPage";
+import { ReasonModal } from "../../components/ReasonModal";
 import "./InstitutionCredentials.css";
 
 const STATUSES = {
@@ -14,6 +15,13 @@ const STATUSES = {
   CONFIRMED: { label: "Confirmed", tone: "info" },
   AUTO_CONFIRMED: { label: "Confirmed", tone: "info" },
   MINTED: { label: "Minted", tone: "success" },
+};
+
+// The official academic validity. Suspended/Revoked credentials fail public verification and cannot be claimed.
+const ACADEMIC = {
+  ACTIVE: { label: "Valid", tone: "success" },
+  SUSPENDED: { label: "Suspended", tone: "warning" },
+  REVOKED: { label: "Revoked", tone: "danger" },
 };
 
 const plural = (count, word) => `${count} ${word}${count > 1 ? "s" : ""}`;
@@ -131,6 +139,12 @@ export function InstitutionCredentials() {
   const { activeMembership, hasPermission } = useAuth();
   const institution = activeMembership?.institutionId;
   const canRevise = hasPermission("credential:create");
+  const canChangeStatus = hasPermission("credential:revoke");
+  const canBurn = hasPermission("credential:burn");
+  const showActions = canRevise || canChangeStatus || canBurn;
+  const [statusTarget, setStatusTarget] = useState(null);
+  const [nextStatus, setNextStatus] = useState("SUSPENDED");
+  const [burnTarget, setBurnTarget] = useState(null);
   const [credentials, setCredentials] = useState(null);
   const [error, setError] = useState("");
   const [reviseTarget, setReviseTarget] = useState(null);
@@ -150,6 +164,30 @@ export function InstitutionCredentials() {
   }, [load, institution?._id]);
 
   const closeRevise = useCallback(() => setReviseTarget(null), []);
+
+  const openStatus = (credential) => {
+    setNextStatus((credential.academicStatus || "ACTIVE") === "ACTIVE" ? "SUSPENDED" : "ACTIVE");
+    setStatusTarget(credential);
+  };
+  const changeStatus = async (reason) => {
+    try {
+      await api.post(`/institution/credentials/${statusTarget._id}/status`, { status: nextStatus, reason });
+      toast.success(`${statusTarget.name} is now ${ACADEMIC[nextStatus].label.toLowerCase()}`);
+      setStatusTarget(null);
+      load();
+    } catch (statusError) {
+      toast.error(getErrorMessage(statusError, "Failed to change the status"));
+    }
+  };
+  const requestBurn = async (reason) => {
+    try {
+      await api.post(`/institution/credentials/${burnTarget._id}/burn`, { reason });
+      toast.success("Burn requested. It needs two approvals under Approvals.");
+      setBurnTarget(null);
+    } catch (burnError) {
+      toast.error(getErrorMessage(burnError, "Failed to request the burn"));
+    }
+  };
 
   const count = (...statuses) => credentials?.filter((credential) => statuses.includes(credential.status)).length ?? 0;
   const tags = [
@@ -189,7 +227,7 @@ export function InstitutionCredentials() {
                       <th>Student</th>
                       <th>Status</th>
                       <th>Issued</th>
-                      {canRevise && <th>Actions</th>}
+                      {showActions && <th>Actions</th>}
                     </tr>
                   </thead>
                   <tbody>
@@ -210,23 +248,38 @@ export function InstitutionCredentials() {
                           </td>
                           <td>
                             <div className="cred-status">
+                              <StatusPill statuses={ACADEMIC} value={credential.academicStatus || "ACTIVE"} />
                               <StatusPill statuses={STATUSES} value={credential.status} />
                               <span className="cred-rev">v{credential.revision ?? 1}</span>
                               {credential.openReports > 0 && <span className="cred-reported">{plural(credential.openReports, "open report")}</span>}
                             </div>
                           </td>
                           <td>{formatDate(credential.allocatedAt)}</td>
-                          {canRevise && (
+                          {showActions && (
                             <td>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                disabled={credential.minted}
-                                title={credential.minted ? "Minted credentials cannot be changed" : undefined}
-                                onClick={() => setReviseTarget(credential)}
-                              >
-                                <Pencil className="h-3.5 w-3.5" /> Revise
-                              </Button>
+                              <div className="cred-actions">
+                                {canRevise && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={credential.minted}
+                                    title={credential.minted ? "Minted credentials cannot be changed" : undefined}
+                                    onClick={() => setReviseTarget(credential)}
+                                  >
+                                    <Pencil className="h-3.5 w-3.5" /> Revise
+                                  </Button>
+                                )}
+                                {canChangeStatus && (
+                                  <Button variant="ghost" size="sm" onClick={() => openStatus(credential)}>
+                                    <ShieldAlert className="h-3.5 w-3.5" /> Status
+                                  </Button>
+                                )}
+                                {canBurn && credential.minted && credential.academicStatus !== "REVOKED" && (
+                                  <Button variant="ghost" size="sm" className="text-red-700" onClick={() => setBurnTarget(credential)}>
+                                    <Flame className="h-3.5 w-3.5" /> Burn
+                                  </Button>
+                                )}
+                              </div>
                             </td>
                           )}
                         </tr>
@@ -234,7 +287,7 @@ export function InstitutionCredentials() {
                     })}
                     {credentials.length === 0 && (
                       <tr>
-                        <td colSpan={canRevise ? 5 : 4} className="empty">
+                        <td colSpan={showActions ? 5 : 4} className="empty">
                           No credentials issued yet.
                         </td>
                       </tr>
@@ -245,6 +298,47 @@ export function InstitutionCredentials() {
             </div>
           </>
         )
+      )}
+
+      {statusTarget && (
+        <ReasonModal
+          title={`Academic status of ${statusTarget.name}`}
+          intro="Suspended and revoked credentials stay on record (and on-chain) but fail public verification and cannot be claimed. Every change is kept in the history."
+          submitLabel="Save status"
+          placeholder="e.g. Degree withdrawn by the university board"
+          canSubmit={nextStatus !== (statusTarget.academicStatus || "ACTIVE")}
+          onClose={() => setStatusTarget(null)}
+          onSubmit={changeStatus}
+        >
+          <div className="space-y-1.5">
+            <label htmlFor="academic-status" className="field-label block">
+              New status
+            </label>
+            <select id="academic-status" className="select-field w-full" value={nextStatus} onChange={(event) => setNextStatus(event.target.value)}>
+              {Object.entries(ACADEMIC).map(([value, { label }]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </ReasonModal>
+      )}
+
+      {burnTarget && (
+        <ReasonModal
+          title={`Request burning ${burnTarget.name}`}
+          intro={
+            <p>
+              Burning <b>destroys the NFT on-chain for good</b>. It is only for exceptional cases; to cancel a degree, set its status to <b>Revoked</b>{" "}
+              instead. A burn needs a first and a final approval from two different people.
+            </p>
+          }
+          submitLabel="Request burn"
+          placeholder="e.g. Issued to the wrong student by mistake"
+          onClose={() => setBurnTarget(null)}
+          onSubmit={requestBurn}
+        />
       )}
 
       {reviseTarget && (
