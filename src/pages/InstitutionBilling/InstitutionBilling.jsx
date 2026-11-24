@@ -122,7 +122,7 @@ export function InstitutionBilling() {
                 </span>
                 <div>
                   <h2>Top up your balance</h2>
-                  <p>Send SOL or USDC ({billing.network}) to the DegreeNFT treasury, then press &ldquo;Check for new payments&rdquo;.</p>
+                  <p>Send SOL or USDC ({billing.network}) to the DegreeNFT treasury, then press &ldquo;Check for new payments&rdquo;. A payment can take a few seconds to show up.</p>
                 </div>
               </header>
               <dl>

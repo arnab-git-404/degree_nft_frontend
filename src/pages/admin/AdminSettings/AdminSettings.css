@@ -203,3 +203,7 @@
 .admin-settings .billing-facts code {
   @apply rounded-md bg-ink/5 px-1.5 py-0.5 font-mono text-[12px];
 }
+
+.admin-settings .billing-alert {
+  @apply mb-3 rounded-lg bg-red-50 px-3 py-2 text-[13px] text-red-700;
+}

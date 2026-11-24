@@ -65,6 +65,16 @@ export function BillingSettings() {
 
       <div className="card-body">
         <AdminError message={error} />
+        {info?.writesLocked && (
+          <p className="billing-alert">
+            Mainnet writes are locked: college keys are still stored in the database. Set up proper key custody, then set MAINNET_KEY_CUSTODY_APPROVED=true on the server.
+          </p>
+        )}
+        {info?.feePayer?.low && (
+          <p className="billing-alert">
+            The fee wallet is running low. Top it up with SOL: claims pause below {info.feePayer.pauseBelowSol} SOL.
+          </p>
+        )}
         {info && (
           <form id="billing-settings-form" onSubmit={save} className="card-section">
             <div className="field-grid">
