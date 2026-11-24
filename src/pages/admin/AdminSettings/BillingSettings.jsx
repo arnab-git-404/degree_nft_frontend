@@ -67,7 +67,7 @@ export function BillingSettings() {
         <AdminError message={error} />
         {info?.writesLocked && (
           <p className="billing-alert">
-            Mainnet writes are locked: college keys are still stored in the database. Set up proper key custody, then set MAINNET_KEY_CUSTODY_APPROVED=true on the server.
+            Mainnet writes are locked. When the Mainnet fee payer, treasury and settings are checked, set MAINNET_KEY_CUSTODY_APPROVED=true on the server.
           </p>
         )}
         {info?.feePayer?.low && (

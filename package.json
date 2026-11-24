@@ -10,11 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
-    "@metaplex-foundation/umi": "^1.1.1",
-    "@metaplex-foundation/umi-bundle-defaults": "^1.1.1",
-    "@metaplex-foundation/umi-signer-wallet-adapters": "^1.1.1",
-    "@metaplex-foundation/umi-uploader-nft-storage": "^1.1.1",
     "@solana-developers/helpers": "^2.8.1",
     "@solana/spl-token": "^0.4.13",
     "@solana/wallet-adapter-react": "^0.15.35",

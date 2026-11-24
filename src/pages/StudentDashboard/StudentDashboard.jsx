@@ -62,6 +62,66 @@ export function StudentDashboard() {
   const [metadataDetails, setMetadataDetails] = useState(null);
   const [loadingMetadata, setLoadingMetadata] = useState(false);
 
+  // Every credential waiting for this student (oldest first); the review panel shows the selected one.
+  const [pending, setPending] = useState([]);
+
+  const fetchMetadata = async (uri) => {
+    if (!uri) return;
+    setLoadingMetadata(true);
+    try {
+      const response = await fetch(uri);
+      setMetadataDetails(await response.json());
+    } catch {
+      toast.error("Failed to load credential details");
+    } finally {
+      setLoadingMetadata(false);
+    }
+  };
+
+  const selectCredential = (item) => {
+    setCredentialInfo(item);
+    setIsConfirmed(Boolean(item.isConfirmed));
+    setConfirmationDeadline(item.confirmationDeadline || null);
+    setAlreadyReported(Boolean(item.existingReport));
+    setIsReportingIssue(false);
+    setMintError("");
+    setMetadataDetails(null);
+    fetchMetadata(item.uri);
+  };
+
+  // Keeps the list in step after a confirm or a report on the selected credential.
+  const patchSelected = (changes) =>
+    setPending((list) => list.map((item) => (item._id === credentialInfo?._id ? { ...item, ...changes } : item)));
+
+  const loadPending = async () => {
+    setIsLoading(true);
+    setAuthorizationError("");
+    try {
+      const { data } = await api.get(`/student/credentials/next/${walletAddress}`);
+      const list = data.credentials || [];
+      setPending(list);
+      if (list.length) {
+        setIsAuthorized(true);
+        selectCredential(list.find((item) => item._id === credentialInfo?._id) || list[0]);
+        if (!toastShownRef.current) {
+          toast.success(list.length > 1 ? `${list.length} credentials are waiting for you` : "A credential is waiting for you");
+          toastShownRef.current = true;
+        }
+      } else {
+        setIsAuthorized(false);
+        setCredentialInfo(null);
+        setAuthorizationError(data.message || "No credential found for this wallet.");
+      }
+    } catch (error) {
+      setIsAuthorized(false);
+      setCredentialInfo(null);
+      setAuthorizationError(error.response?.data?.message || "Failed to load your credentials. Please try again.");
+      toast.error("Failed to check credentials");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Calculate time remaining for confirmation deadline
   useEffect(() => {
     if (!confirmationDeadline) return;
@@ -98,96 +158,23 @@ export function StudentDashboard() {
     return () => clearInterval(interval);
   }, [confirmationDeadline]);
 
-  // Fetch authorization status when wallet connects or changes
+  // Load the student's pending and claimed credentials when the wallet or sign-in changes.
   useEffect(() => {
-    const checkAuthorization = async () => {
-      if (!connected || !walletAddress) {
-        resetStates();
-        return;
-      }
-
-      if (!isAuthenticated) {
-        resetStates();
-        return;
-      }
-
-      setIsLoading(true);
-      resetErrorStates();
-
-      try {
-        const response = await api.get(
-          `/student/credentials/next/${walletAddress}`,
-        );
-
-        if (response.data.authorized && response.data.credential) {
-          setIsAuthorized(true);
-          setCredentialInfo(response.data.credential);
-          fetchMetadata(response.data.credential.uri);
-
-          if (response.data.existingReport) {
-            setAlreadyReported(true);
-          }
-          // Set confirmation status and deadline
-          if (response.data.credential.confirmationStatus) {
-            setIsConfirmed(
-              response.data.credential.confirmationStatus === "CONFIRMED",
-            );
-            setConfirmationDeadline(response.data.confirmationDeadline);
-          } else {
-            setIsConfirmed(false);
-            setConfirmationDeadline(null);
-          }
-
-          if (!toastShownRef.current) {
-            toast.success("Found credentials ready to review!");
-            toastShownRef.current = true;
-          }
-        } else {
-          setIsAuthorized(false);
-          setCredentialInfo(null);
-          setAuthorizationError(
-            response.data.message || "No credential found for this wallet.",
-          );
-        }
-      } catch (error) {
-        console.error("Error checking authorization:", error);
-        setIsAuthorized(false);
-        setCredentialInfo(null);
-        setAuthorizationError(
-          error.response?.data?.message ||
-            "Failed to check authorization. Please try again.",
-        );
-        toast.error("Failed to check credentials");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const resetStates = () => {
+    setMintSuccess(false);
+    setMintedNft(null);
+    setMintError("");
+    if (!connected || !walletAddress || !isAuthenticated) {
+      setPending([]);
       setIsAuthorized(false);
       setCredentialInfo(null);
       setAuthorizationError("");
-      setIsLoading(false);
-      setMintSuccess(false);
-      setMintedNft(null);
-      setMintError("");
       setConfirmationDeadline(null);
       setTimeRemaining(null);
       setIsConfirmed(false);
-    };
-
-    const resetErrorStates = () => {
-      setAuthorizationError("");
-      setMintSuccess(false);
-      setMintedNft(null);
-      setMintError("");
-    };
-
-    checkAuthorization();
-
-    if (connected && walletAddress) {
-      fetchMintedNFTs();
+      return;
     }
+    loadPending();
+    fetchMintedNFTs();
   }, [connected, walletAddress, isAuthenticated]);
 
   const handleConfirm = async () => {
@@ -209,6 +196,7 @@ export function StudentDashboard() {
 
       if (response.data.success) {
         setIsConfirmed(true);
+        patchSelected({ isConfirmed: true, confirmationStatus: "CONFIRMED" });
         toast.success("Credential confirmed successfully!");
       } else {
         toast.error("Failed to confirm credential");
@@ -237,9 +225,9 @@ export function StudentDashboard() {
       });
       setMintedNft({ address: data.nft.assetAddress, signature: data.nft.mintSignature, name: credentialInfo.name });
       setMintSuccess(true);
-      setIsAuthorized(false);
       toast.success("Your credential is in your wallet!", { id: toastId });
       fetchMintedNFTs();
+      loadPending();
     } catch (error) {
       const message = error.response?.data?.message || "Claiming failed. Please try again.";
       setMintError(message);
@@ -325,25 +313,12 @@ export function StudentDashboard() {
     setIsSendingIssue(true);
 
     try {
-      // Fetch NFT data from Pinata
-      const nftUriDataFromPinata = await fetch(credentialInfo.uri);
-      const nftUriData = await nftUriDataFromPinata.json();
-      // console.log("NFT Data:", nftUriData);
-
       const response = await api.post("/student/credentials/report", {
-        //  institutionWallet: we need to extract this from the NFT uri or metadata. So Do it Later || Done (9.17PM , 19.06.2025)
-        institutionWallet:
-          nftUriData.properties.creators[0].institutionWalletAddress || "",
         studentWallet: walletAddress,
         credentialId: credentialInfo._id,
         reportType: "Credential Issue",
         reportDetails: issueDescription.trim(),
       });
-
-      console.log(
-        "Institution Wallet:",
-        nftUriData.properties.creators[0].institutionWalletAddress,
-      );
 
       // Handle if the user has already reported an issue
       if (response.status === 409) {
@@ -355,6 +330,7 @@ export function StudentDashboard() {
         setIsReportingIssue(false);
         setIssueDescription("");
         setAlreadyReported(true);
+        patchSelected({ existingReport: true });
         toast.success("Issue reported Successfully! Contact Your institution.");
       } else {
         toast.error(response.data.message || "Failed to report issue");
@@ -419,23 +395,6 @@ export function StudentDashboard() {
     );
   }
 
-  // Add function to fetch metadata
-  const fetchMetadata = async (uri) => {
-    if (!uri) return;
-
-    setLoadingMetadata(true);
-    try {
-      const response = await fetch(uri);
-      const data = await response.json();
-      setMetadataDetails(data);
-    } catch (error) {
-      console.error("Error fetching metadata:", error);
-      toast.error("Failed to load credential details");
-    } finally {
-      setLoadingMetadata(false);
-    }
-  };
-
   // Render connected state
   return (
     <div className="student-page">
@@ -475,13 +434,43 @@ export function StudentDashboard() {
           >
             View NFT <ExternalLink className="h-3 w-3" />
           </a>
-          <button
-            type="button"
-            className="success-link"
-            onClick={() => window.location.reload()}
-          >
-            Reload page
-          </button>
+          {pending.length > 0 && (
+            <button type="button" className="success-link" onClick={() => setMintSuccess(false)}>
+              Review the next credential ({pending.length} left)
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Pick which pending credential to review (when there are several) */}
+      {pending.length > 1 && !mintSuccess && (
+        <div className="picker" role="tablist" aria-label="Your pending credentials">
+          {pending.map((item) => {
+            const state =
+              item.academicStatus !== "ACTIVE"
+                ? { label: item.academicStatus === "SUSPENDED" ? "Suspended" : "Revoked", tone: "bad" }
+                : item.existingReport
+                  ? { label: "Reported", tone: "bad" }
+                  : item.isConfirmed
+                    ? { label: "Ready to claim", tone: "ok" }
+                    : { label: "Needs review", tone: "warn" };
+            return (
+              <button
+                key={item._id}
+                type="button"
+                role="tab"
+                aria-selected={item._id === credentialInfo?._id}
+                className={`picker-item ${item._id === credentialInfo?._id ? "is-on" : ""}`}
+                onClick={() => selectCredential(item)}
+              >
+                <span className="picker-name">{item.name}</span>
+                <span className="picker-sub">
+                  {item.credentialType} · {item.institutionName || "College"}
+                </span>
+                <span className={`picker-state is-${state.tone}`}>{state.label}</span>
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -507,6 +496,12 @@ export function StudentDashboard() {
               <b>Corrected by your institution (revision {credentialInfo.revision}).</b>
               {credentialInfo.revisionNote ? ` Reason: ${credentialInfo.revisionNote}.` : ""} Your earlier confirmation no longer applies, so please review the details and
               confirm again.
+            </p>
+          )}
+          {credentialInfo.academicStatus && credentialInfo.academicStatus !== "ACTIVE" && (
+            <p className="mx-4 mb-2 rounded-lg bg-red-50 px-3 py-2 text-[13px] text-red-700">
+              Your institution has {credentialInfo.academicStatus === "SUSPENDED" ? "suspended" : "revoked"} this credential, so it can&apos;t be
+              claimed now. Contact your institution.
             </p>
           )}
           {alreadyReported && (
@@ -680,8 +675,8 @@ export function StudentDashboard() {
                     </>
                   )}
 
-                  {(isConfirmed || timeRemaining?.expired) && (
-                    <Button onClick={handleMintNft} disabled={isMinting}>
+                  {(isConfirmed || timeRemaining?.expired) && (credentialInfo.academicStatus || "ACTIVE") === "ACTIVE" && (
+                    <Button onClick={handleMintNft} disabled={isMinting || alreadyReported}>
                       {isMinting ? (
                         <>
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -725,7 +720,7 @@ export function StudentDashboard() {
         <div className="pending">
           <Calendar className="h-4 w-4 shrink-0 text-ink/50" />
           <span className="font-medium">
-            Pending credentials: {credentialInfo ? credentialInfo.length : "None"}
+            Pending credentials: {pending.length || "None"}
           </span>
           <span className="cell-sub">
             {authorizationError ||

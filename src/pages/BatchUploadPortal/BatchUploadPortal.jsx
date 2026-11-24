@@ -23,10 +23,8 @@ import {
 import { Button } from "../../components/Button";
 import { AdminError, AdminPageHeader, StatusBadge } from "../../components/admin/AdminUI";
 import { StatCards } from "../../components/CatalogPage/CatalogPage";
-import { useSolana } from "../../context/SolanaContext";
 import { useAuth } from "../../context/AuthContext";
 import api, { getErrorMessage } from "../../lib/api";
-import { isValidPublicKey } from "../../lib/solana";
 import { shortenAddress } from "../../lib/utils";
 import "./BatchUploadPortal.css";
 
@@ -35,41 +33,33 @@ const MAX_RECORDS = 200;
 const BATCH_STEPS = [
   { key: "upload", label: "Upload", sub: "Choose a CSV file" },
   { key: "review", label: "Review", sub: "Check the records" },
-  { key: "processing", label: "Process", sub: "Pin and allocate" },
+  { key: "processing", label: "Process", sub: "Pin and issue" },
   { key: "complete", label: "Done", sub: "See the results" },
 ];
 
-const CSV_COLUMNS = [
-  "institutionName",
-  "studentName",
-  "studentAddress",
-  "degreeType",
-  "issueDate",
-  "graduationYear",
-  "cgpa",
-  "programDuration",
-  "major",
-];
+// One row per credential. The student and enrollment come from the college's own records (registration no. +
+// program + batch); the credential always goes to the wallet the student proved, so there is no wallet column.
+const CSV_COLUMNS = ["registrationNo", "programCode", "startYear", "credentialType", "degreeTitle", "cgpa"];
+const OPTIONAL_COLUMNS = ["endYear", "honors", "issueDate"];
 
 const HELP_ITEMS = [
-  [Clock, "Processing takes about 5-10 seconds per certificate."],
-  [Wallet, "Each student needs a valid Solana wallet address."],
-  [ShieldCheck, "Metadata is pinned to IPFS; students mint the NFT on Solana."],
-  [AlertCircle, "Failed rows can be fixed and uploaded again in a new batch."],
+  [Clock, "Processing takes a few seconds per credential."],
+  [Wallet, "Each student must have linked their wallet first (Students page › Invite). Credentials go only to that wallet."],
+  [ShieldCheck, "Rows are matched to enrollments by registration no., program code and batch start year (add the end year when two batches start the same year)."],
+  [AlertCircle, "Fix rows with issues in the CSV and upload it again; nothing is issued until every row is ready."],
 ];
 
 const templateData = [
   {
-    institutionName: "Example Institution",
-    studentName: "John Doe",
-    studentAddress: "29peNqmLi7xRtQfyiibo4WTKwRDS9hWQ93iFZxq2YTPj",
-    degreeType: "Bachelor of Technology",
+    registrationNo: "21CSE001",
+    programCode: "CSE",
+    startYear: "2022",
+    endYear: "2026",
+    credentialType: "DEGREE",
+    degreeTitle: "Bachelor of Technology",
+    cgpa: "8.7",
+    honors: "",
     issueDate: new Date().toISOString().split("T")[0],
-    graduationYear: "2026",
-    cgpa: "10",
-    programDuration: "4 years",
-    major: "Computer Science Engineering",
-    honors: "Lead Organizer Of Google Developer Groups",
   },
 ];
 
@@ -78,7 +68,7 @@ const downloadTemplateCSV = () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "degree_certificate_template.csv";
+  link.download = "credential_batch_template.csv";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -89,57 +79,34 @@ const parseFile = (file) =>
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: (header) => header.trim(),
       complete: (results) => resolve(results.data),
       error: reject,
     });
   });
 
-const validateParsedData = (data) => {
-  const errors = [];
-  const currentYear = new Date().getFullYear();
-
+// Checks that need no server: required columns, numbers, known credential types, repeated rows.
+const validateParsedData = (data, typeCodes) => {
+  const problems = new Map(); // index -> [messages]
+  const add = (index, message) => problems.set(index, [...(problems.get(index) || []), message]);
+  const seen = new Map();
   data.forEach((record, index) => {
-    const recordErrors = [];
-
-    CSV_COLUMNS.forEach((field) => {
-      if (!record[field]?.trim()) {
-        recordErrors.push(`Missing ${field}`);
-      }
-    });
-
-    if (record.studentAddress && !isValidPublicKey(record.studentAddress.trim())) {
-      recordErrors.push("Invalid Solana wallet address");
-    }
-
-    if (record.cgpa) {
-      const cgpa = parseFloat(record.cgpa);
-      if (isNaN(cgpa) || cgpa < 0 || cgpa > 10) {
-        recordErrors.push("CGPA should be between 0 and 10");
-      }
-    }
-
-    if (record.graduationYear) {
-      const year = parseInt(record.graduationYear);
-      if (isNaN(year) || year < 1900 || year > currentYear + 10) {
-        recordErrors.push("Invalid graduation year");
-      }
-    }
-
-    if (recordErrors.length > 0) {
-      errors.push({
-        index,
-        studentName: record.studentName || `Record #${index + 1}`,
-        errors: recordErrors,
-      });
-    }
+    CSV_COLUMNS.forEach((field) => !String(record[field] ?? "").trim() && add(index, `Missing ${field}`));
+    const cgpa = Number(record.cgpa);
+    if (record.cgpa && (Number.isNaN(cgpa) || cgpa < 0 || cgpa > 10)) add(index, "CGPA should be between 0 and 10");
+    if (record.startYear && !/^\d{4}$/.test(String(record.startYear).trim())) add(index, "startYear should be a year like 2022");
+    if (record.endYear && !/^\d{4}$/.test(String(record.endYear).trim())) add(index, "endYear should be a year like 2026");
+    const type = String(record.credentialType ?? "").trim().toUpperCase();
+    if (type && !typeCodes.includes(type)) add(index, `"${type}" is not an active credential type (see Settings › Credential types)`);
+    const key = [record.registrationNo, record.programCode, record.startYear, record.endYear, type].map((value) => String(value ?? "").trim().toUpperCase()).join("|");
+    if (seen.has(key)) add(index, `Same student, batch and type as row ${seen.get(key) + 2}`);
+    else seen.set(key, index);
   });
-
-  return errors;
+  return problems;
 };
 
 export function BatchUploadPortal() {
   const { connected, publicKey } = useWallet();
-  const { setCurrentIpfsHash } = useSolana();
   const { isAuthenticated, hasPermission, roleName, activeMembership } = useAuth();
   const navigate = useNavigate();
   const canUploadBatches = hasPermission("batch:upload");
@@ -156,6 +123,15 @@ export function BatchUploadPortal() {
   const [stats, setStats] = useState(null);
   const [statsError, setStatsError] = useState("");
   const [isLoadingStats, setIsLoadingStats] = useState(false);
+  const [typeCodes, setTypeCodes] = useState([]);
+
+  // The college's active credential types, to check the credentialType column before anything is sent.
+  useEffect(() => {
+    api
+      .get("/institution/credential-types")
+      .then(({ data }) => setTypeCodes(data.credentialTypes.filter((type) => type.status === "ACTIVE").map((type) => type.code)))
+      .catch(() => setTypeCodes([]));
+  }, [institution?._id]);
 
   const loadStats = useCallback(async () => {
     setIsLoadingStats(true);
@@ -197,10 +173,21 @@ export function BatchUploadPortal() {
         return;
       }
 
-      const errors = validateParsedData(data);
+      toast.loading("Checking the rows against your college's records...", { id: toastId });
+      const problems = validateParsedData(data, typeCodes);
+      const { data: matched } = await api.post("/institution/credentials/resolve", {
+        rows: data.map((record, index) => ({ ...record, row: index + 2 })),
+      });
+      const rows = data.map((record, index) => ({ ...record, ...matched.results[index] }));
+      rows.forEach((row, index) => row.error && problems.set(index, [...(problems.get(index) || []), row.error]));
+      const errors = [...problems.entries()].map(([index, messages]) => ({
+        index,
+        studentName: rows[index].studentName || rows[index].registrationNo || `Record #${index + 1}`,
+        errors: messages,
+      }));
       setFile(uploadedFile);
       setValidationErrors(errors);
-      setParsedData(data);
+      setParsedData(rows);
       setUploadStep("review");
 
       if (errors.length > 0) {
@@ -209,8 +196,7 @@ export function BatchUploadPortal() {
         toast.success(`Parsed ${data.length} records`, { id: toastId });
       }
     } catch (error) {
-      console.error("Error handling file upload:", error);
-      toast.error("Error reading the CSV file", { id: toastId });
+      toast.error(getErrorMessage(error, "Error reading the CSV file"), { id: toastId });
     }
   };
 
@@ -226,62 +212,46 @@ export function BatchUploadPortal() {
     handleFile(event.dataTransfer.files[0]);
   };
 
-  const createNftMetadata = (formData) => ({
-    name: `${formData.institutionName} - ${formData.degreeType}`,
-    symbol: "DegreeNFT",
-    description: `${formData.degreeType} issued by ${formData.institutionName} to ${formData.studentName}`,
-    seller_fee_basis_points: 500,
-    image: "https://cdn.tourradar.com/s3/tour/720x480/251218_65585c177b316.jpg", // Replace with your certificate image URL
-    external_url: "https://degree-nft.vercel.app/",
-    attributes: [
-      { trait_type: "Student Name", value: formData.studentName },
-      { trait_type: "Institution", value: formData.institutionName },
-      { trait_type: "Degree", value: formData.degreeType },
-      { trait_type: "Major", value: formData.major },
-      { trait_type: "CGPA", value: formData.cgpa },
-      { trait_type: "Graduation Year", value: formData.graduationYear },
-      { trait_type: "Program Duration", value: formData.programDuration },
-      { trait_type: "Issue Date", value: formData.issueDate },
-      { trait_type: "Honors", value: formData.honors || "None" },
-    ],
-    properties: {
-      creators: [
-        {
-          address: publicKey?.toString() || "29peNqmLi7xRtQfyiibo4WTKwRDS9hWQ93iFZxq2YTPj",
-          share: 100,
-        },
+  // Public metadata: the matched record supplies the student, program and batch years.
+  const createMetadata = (row) => {
+    const type = String(row.credentialType).trim().toUpperCase();
+    return {
+      name: `${institution?.name || "College"} - ${row.degreeTitle}`,
+      symbol: "DegreeNFT",
+      description: `${row.degreeTitle} issued by ${institution?.name || "the college"} to ${row.studentName}`,
+      image: "https://cdn.tourradar.com/s3/tour/720x480/251218_65585c177b316.jpg", // Replace with your certificate image URL
+      external_url: "https://degree-nft.vercel.app/",
+      attributes: [
+        { trait_type: "Student Name", value: row.studentName },
+        { trait_type: "Institution", value: institution?.name || "" },
+        { trait_type: "Credential Type", value: type },
+        { trait_type: "Degree", value: row.degreeTitle },
+        { trait_type: "Major", value: row.programName },
+        { trait_type: "CGPA", value: String(row.cgpa).trim() },
+        { trait_type: "Graduation Year", value: String(row.endYear) },
+        { trait_type: "Program Duration", value: `${row.endYear - row.startYear} years` },
+        { trait_type: "Issue Date", value: String(row.issueDate || "").trim() || new Date().toISOString().split("T")[0] },
+        { trait_type: "Honors", value: String(row.honors || "").trim() || "None" },
       ],
-      files: [
-        {
-          type: "image/png",
-          uri: "https://cdn.tourradar.com/s3/tour/720x480/251218_65585c177b316.jpg", // Replace with your certificate image URL
-        },
-      ],
-      category: "image",
-    },
-  });
-
-  const uploadToPinata = async (metadata) => {
-    try {
-      const response = await api.post("/ipfs/pin-json", metadata);
-      setCurrentIpfsHash(response.data.IpfsHash);
-      return response.data.IpfsHash;
-    } catch (error) {
-      console.error("Error uploading to Pinata:", error);
-      throw new Error("Failed to upload metadata to IPFS");
-    }
+      properties: {
+        files: [{ type: "image/png", uri: "https://cdn.tourradar.com/s3/tour/720x480/251218_65585c177b316.jpg" }],
+        category: "image",
+      },
+    };
   };
 
-  const createNftAllocation = async (ipfsHash, studentData) => {
-    const response = await api.post("/institution/credentials", {
-      studentWallet: studentData.studentAddress.trim(),
-      name: studentData.degreeType,
+  // The server sends it to the enrollment's student, at the wallet they proved; no wallet is sent from here.
+  const issueCredential = async (row) => {
+    const { data: pinned } = await api.post("/ipfs/pin-json", createMetadata(row));
+    await api.post("/institution/credentials", {
+      enrollmentId: row.enrollmentId,
+      credentialType: String(row.credentialType).trim().toUpperCase(),
+      name: String(row.degreeTitle).trim(),
       symbol: "DegreeNFT",
-      uri: `https://ipfs.io/ipfs/${ipfsHash}`,
-      ipfsHash,
-      sellerFeeBasisPoints: 500,
+      uri: `https://ipfs.io/ipfs/${pinned.IpfsHash}`,
+      ipfsHash: pinned.IpfsHash,
     });
-    return response.data;
+    return pinned.IpfsHash;
   };
 
   const handleBatchMint = async () => {
@@ -309,8 +279,7 @@ export function BatchUploadPortal() {
       const student = parsedData[i];
 
       try {
-        const ipfsHash = await uploadToPinata(JSON.stringify(createNftMetadata(student)));
-        await createNftAllocation(ipfsHash, student);
+        const ipfsHash = await issueCredential(student);
         succeeded += 1;
 
         setProcessingResults((prev) => [
@@ -318,7 +287,7 @@ export function BatchUploadPortal() {
           {
             success: true,
             studentName: student.studentName,
-            degreeType: student.degreeType,
+            degreeType: student.degreeTitle,
             timestamp: new Date().toISOString(),
             ipfsHash,
           },
@@ -327,14 +296,13 @@ export function BatchUploadPortal() {
         // Small delay to avoid rate limiting
         await new Promise((resolve) => setTimeout(resolve, 300));
       } catch (error) {
-        console.error(`Error processing student ${student.studentName}:`, error);
 
         setProcessingResults((prev) => [
           ...prev,
           {
             success: false,
             studentName: student.studentName,
-            degreeType: student.degreeType,
+            degreeType: student.degreeTitle,
             timestamp: new Date().toISOString(),
             error: getErrorMessage(error, "Unknown error"),
           },
@@ -397,7 +365,7 @@ export function BatchUploadPortal() {
     <div className="catalog-page batch-page">
       <AdminPageHeader
         title="Batch upload"
-        description={`Issue degree credentials for ${institution?.name || "your institution"} from a single CSV file.`}
+        description={`Issue credentials for ${institution?.name || "your institution"} from a single CSV file. Students then claim them.`}
         onRefresh={loadStats}
         isRefreshing={isLoadingStats}
         actions={
@@ -442,7 +410,7 @@ export function BatchUploadPortal() {
               <div className="card-head">
                 <div>
                   <h2 className="card-title">Upload student records</h2>
-                  <p className="card-sub">One row per degree certificate, up to {MAX_RECORDS} rows.</p>
+                  <p className="card-sub">One row per credential, up to {MAX_RECORDS} rows. Students are found by registration no.</p>
                 </div>
               </div>
 
@@ -496,7 +464,11 @@ export function BatchUploadPortal() {
                     {CSV_COLUMNS.map((column) => (
                       <code key={column}>{column}</code>
                     ))}
-                    <code className="optional">honors (optional)</code>
+                    {OPTIONAL_COLUMNS.map((column) => (
+                      <code key={column} className="optional">
+                        {column} (optional)
+                      </code>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -532,7 +504,7 @@ export function BatchUploadPortal() {
                       {validationErrors.map((error) => (
                         <div key={error.index} className="error-item">
                           <span className="font-semibold">
-                            Row {error.index + 1} · {error.studentName}
+                            Row {error.index + 2} · {error.studentName}
                           </span>
                           <ul>
                             {error.errors.map((err) => (
@@ -550,27 +522,31 @@ export function BatchUploadPortal() {
                     <table className="data-table">
                       <thead>
                         <tr>
-                          <th>#</th>
-                          <th>Student name</th>
-                          <th>Wallet address</th>
+                          <th>Row</th>
+                          <th>Student</th>
+                          <th>Batch</th>
+                          <th>Type</th>
                           <th>Degree</th>
-                          <th>Major</th>
                           <th>CGPA</th>
-                          <th>Duration</th>
-                          <th>Graduation</th>
+                          <th>Goes to wallet</th>
                         </tr>
                       </thead>
                       <tbody>
                         {parsedData.slice(0, 10).map((student, index) => (
                           <tr key={index}>
-                            <td className="cell-sub">{index + 1}</td>
-                            <td className="nowrap font-medium">{student.studentName}</td>
-                            <td className="cell-mono">{shortenAddress(student.studentAddress || "")}</td>
-                            <td className="nowrap">{student.degreeType}</td>
-                            <td className="nowrap">{student.major}</td>
+                            <td className="cell-sub">{index + 2}</td>
+                            <td className="nowrap font-medium">
+                              {student.studentName || "—"}
+                              <span className="cell-sub block">{student.registrationNo}</span>
+                            </td>
+                            <td className="nowrap">
+                              {student.programCode} {student.startYear}
+                              {student.endYear ? `–${student.endYear}` : ""}
+                            </td>
+                            <td className="nowrap">{String(student.credentialType || "").toUpperCase()}</td>
+                            <td className="nowrap">{student.degreeTitle}</td>
                             <td className="tabular-nums">{student.cgpa}</td>
-                            <td className="nowrap">{student.programDuration}</td>
-                            <td className="tabular-nums">{student.graduationYear}</td>
+                            <td className="cell-mono">{student.wallet ? shortenAddress(student.wallet) : <span className="text-red-700">not linked</span>}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -589,7 +565,7 @@ export function BatchUploadPortal() {
                 </Button>
                 <Button onClick={handleBatchMint} disabled={validationErrors.length > 0 || isProcessing}>
                   <Upload className="h-3.5 w-3.5" />
-                  Process {parsedData.length} certificates
+                  Issue {parsedData.length} credentials
                 </Button>
               </div>
             </>

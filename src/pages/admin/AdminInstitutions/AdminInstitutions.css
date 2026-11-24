@@ -48,3 +48,8 @@
 .chain-confirm__check {
   @apply flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-900;
 }
+
+.chain-add {
+  @apply inline-flex items-center gap-1 text-[12px] font-medium;
+  color: rgb(79 70 229);
+}

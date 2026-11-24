@@ -35,7 +35,6 @@ export function InstitutionDashboard() {
 
   const {
     connected,
-    isValidPublicKey,
     setCurrentIpfsHash,
     isLoading,
   } = useSolana();
@@ -44,7 +43,7 @@ export function InstitutionDashboard() {
   const [formData, setFormData] = useState({
     institutionName: "",
     studentName: "",
-    studentAddress: "",
+
     degreeType: "",
     issueDate: new Date().toISOString().split("T")[0],
     graduationYear: "",
@@ -93,7 +92,6 @@ export function InstitutionDashboard() {
     setFormData((prev) => ({
       ...prev,
       studentName: student?.fullName || "",
-      studentAddress: student?.walletHint || "",
       major: program?.name || "",
       graduationYear: session?.endYear ? String(session.endYear) : "",
       programDuration: session?.startYear && session?.endYear ? `${session.endYear - session.startYear} years` : "",
@@ -238,14 +236,6 @@ export function InstitutionDashboard() {
     // Student information validation
     if (!formData.studentName?.trim()) return "Student name is required";
 
-    if (
-      !formData.studentAddress?.trim() &&
-      !isValidPublicKey(formData.studentAddress)
-    )
-      return "Student wallet address is required";
-
-    if (formData.studentAddress === publicKey?.toString())
-      return "Student wallet address cannot be the same as the institution wallet address";
 
     // Degree information validation
     if (!formData.degreeType?.trim()) return "Degree type is required";
@@ -325,7 +315,7 @@ export function InstitutionDashboard() {
       setFormData({
         institutionName: formData.institutionName,
         studentName: "",
-        studentAddress: "",
+
         degreeType: "",
         issueDate: new Date().toISOString().split("T")[0],
         graduationYear: "",
@@ -352,7 +342,6 @@ export function InstitutionDashboard() {
 
     try {
       const response = await api.post("/institution/credentials", {
-        studentWallet: formData.studentAddress,
         name: formData.degreeType,
         symbol: "DegreeNFT",
         uri: metadataUri,
@@ -568,24 +557,13 @@ export function InstitutionDashboard() {
                   title="Complete legal name as it appears on official documents"
                   required
                 />
-                <Input
-                  label="Student wallet address (Solana)"
-                  name="studentAddress"
-                  placeholder="e.g. EzAvxJV9odS9WTfgnMCmRjKmvn82ziEWDMKJTnrEP4gH"
-                  value={formData.studentAddress}
-                  onChange={handleInputChange}
-                  className="font-mono"
-                  description="The degree NFT is sent to this wallet"
-                  error={
-                    formData.studentAddress &&
-                    !isValidPublicKey(formData.studentAddress)
-                      ? "Invalid Solana address"
-                      : formData.studentAddress === publicKey?.toString()
-                      ? "Student wallet address cannot be the same as the institution wallet address"
-                      : undefined
-                  }
-                  required
-                />
+                <div className="space-y-1">
+                  <p className="field-label block">Student wallet</p>
+                  <p className="text-[13px] text-ink/60">
+                    Sent to the wallet the student linked through their invite. If they haven&apos;t linked one yet, send the invite from the
+                    Students page first.
+                  </p>
+                </div>
               </div>
             </fieldset>
 
@@ -683,7 +661,6 @@ export function InstitutionDashboard() {
                 !credentialType ||
                 !formData.institutionName ||
                 !formData.studentName ||
-                !isValidPublicKey(formData.studentAddress) ||
                 !formData.degreeType ||
                 !formData.issueDate ||
                 !formData.graduationYear ||

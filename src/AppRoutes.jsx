@@ -192,7 +192,7 @@ const AppRoutes = () => {
       <Route
         path="/administration/settings"
         element={
-          <ProtectedRoute anyOf={INSTITUTION_DESK_PERMISSIONS}>
+          <ProtectedRoute anyOf={["academicSession:read", "credentialType:read"]}>
             <InstitutionSettings />
           </ProtectedRoute>
         }

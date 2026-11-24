@@ -331,7 +331,7 @@ export function InstitutionCredentials() {
           intro={
             <p>
               Burning <b>destroys the NFT on-chain for good</b>. It is only for exceptional cases; to cancel a degree, set its status to <b>Revoked</b>{" "}
-              instead. A burn needs a first and a final approval from two different people.
+              instead. A burn needs approvals from the college officials, each signing with their own wallet.
             </p>
           }
           submitLabel="Request burn"
