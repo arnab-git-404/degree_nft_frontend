@@ -23,6 +23,7 @@ import { SignInRequired } from "../../components/SignInRequired";
 import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { getExplorerUrl } from "../../lib/solana";
 import "./StudentDashboard.css";
 
 export function StudentDashboard() {
@@ -258,21 +259,8 @@ export function StudentDashboard() {
     }
   };
 
-  const getNftExplorerLink = (address, signature, type = "address") => {
-    const cluster = "devnet";
-
-    try {
-      if (type === "address" && address) {
-        return `https://explorer.solana.com/address/${address}?cluster=${cluster}`;
-      } else if (type === "transaction" && signature) {
-        return `https://explorer.solana.com/tx/${signature}?cluster=${cluster}`;
-      }
-      return null;
-    } catch (error) {
-      console.error("Error creating explorer link:", error);
-      return null;
-    }
-  };
+  const getNftExplorerLink = (address, signature, type = "address") =>
+    type === "address" && address ? getExplorerUrl(address, "address") : type === "transaction" && signature ? getExplorerUrl(signature, "tx") : null;
 
   // Format remaining time into a readable string
   const formatTimeRemaining = () => {

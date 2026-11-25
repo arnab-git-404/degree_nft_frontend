@@ -23,6 +23,7 @@ import { Input } from "../../components/Input";
 import { useAuth } from "../../context/AuthContext";
 import { getDeskPath } from "../../lib/roles";
 import { shortenAddress } from "../../lib/utils";
+import { SOLANA_NETWORK, getExplorerUrl } from "../../lib/solana";
 import { Invitations } from "./Invitations";
 import "./Profile.css";
 
@@ -319,7 +320,7 @@ export function Profile() {
             </div>
             <div>
               <dt>Network</dt>
-              <dd>Solana devnet</dd>
+              <dd>Solana {SOLANA_NETWORK}</dd>
             </div>
           </dl>
         </aside>
@@ -527,7 +528,7 @@ export function Profile() {
 
                       <div className="wallet-actions">
                         <a
-                          href={`https://explorer.solana.com/address/${wallet.address}?cluster=devnet`}
+                          href={getExplorerUrl(wallet.address, "address")}
                           target="_blank"
                           rel="noreferrer"
                           className="icon-btn"

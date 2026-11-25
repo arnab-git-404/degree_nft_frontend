@@ -1,3 +1,4 @@
+import { IS_MAINNET } from "../lib/solana";
 import { useEffect, useId, useState } from "react";
 import {
   Link,
@@ -61,7 +62,7 @@ export const SECTIONS = [
         icon: GraduationCap,
         permissions: ["credential:read", "credential:confirm", "report:create"],
       },
-      { to: "/faucet", label: "Devnet faucet", icon: Droplets },
+      ...(IS_MAINNET ? [] : [{ to: "/faucet", label: "Devnet faucet", icon: Droplets }]),
     ],
   },
   // collegeOnly: shown only while working in a college ("Working in"); these pages need that membership.

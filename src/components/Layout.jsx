@@ -1,3 +1,4 @@
+import { SOLANA_NETWORK } from "../lib/solana";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -79,7 +80,7 @@ export function Layout({ children }) {
         </main>
         <footer className="flex justify-between border-t border-ink/10 px-4 py-2.5 text-[12px] text-ink/40 sm:px-7">
           <span>DegreeNFT Registry</span>
-          <span>Solana devnet</span>
+          <span>Solana {SOLANA_NETWORK}</span>
         </footer>
       </div>
 

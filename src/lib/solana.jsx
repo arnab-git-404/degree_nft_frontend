@@ -17,8 +17,11 @@ if (typeof window !== 'undefined') {
 }
 
 // Switch to devnet
-export const SOLANA_NETWORK = 'devnet';
-export const SOLANA_CONNECTION = new Connection(clusterApiUrl(SOLANA_NETWORK));
+// One setting picks the network for the whole frontend (must match the backend's SOLANA_CLUSTER).
+export const SOLANA_NETWORK = import.meta.env.VITE_SOLANA_NETWORK === 'mainnet' ? 'mainnet' : 'devnet';
+export const IS_MAINNET = SOLANA_NETWORK === 'mainnet';
+export const SOLANA_RPC_URL = import.meta.env.VITE_SOLANA_RPC_URL || clusterApiUrl(IS_MAINNET ? 'mainnet-beta' : 'devnet');
+export const SOLANA_CONNECTION = new Connection(SOLANA_RPC_URL);
 
 
 
@@ -45,7 +48,7 @@ export const isValidPublicKey = (address) => {
  */
 
 export const getExplorerUrl = (address, type = 'account') => {
-  return `https://explorer.solana.com/${type}/${address}?cluster=${SOLANA_NETWORK}`;
+  return `https://explorer.solana.com/${type}/${address}${IS_MAINNET ? '' : '?cluster=devnet'}`;
 };
 
 /**

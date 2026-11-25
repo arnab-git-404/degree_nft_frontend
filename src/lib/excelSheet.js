@@ -137,3 +137,32 @@ export const ENROLLMENT_SHEET = {
     "• Keep the first row (the column names) as it is. Up to 2000 rows per file.",
   ],
 };
+
+// Batch credentials: built per college, so the Credential type column offers that college's own active types.
+export const credentialSheet = (typeCodes) => ({
+  fileName: "credentials-batch-template.xlsx",
+  sheetName: "Credentials",
+  required: ["registrationNo", "programCode", "startYear", "credentialType", "degreeTitle", "cgpa"],
+  columns: [
+    { key: "registrationNo", header: "Registration no.", width: 20, text: true },
+    { key: "programCode", header: "Program code", width: 14, text: true },
+    { key: "startYear", header: "Batch start year", width: 16 },
+    { key: "endYear", header: "Batch end year", width: 16 },
+    { key: "credentialType", header: "Credential type", width: 18, ...(typeCodes.length && { list: typeCodes }) },
+    { key: "degreeTitle", header: "Degree / credential title", width: 32 },
+    { key: "cgpa", header: "CGPA", width: 10 },
+    { key: "honors", header: "Honors (optional)", width: 28 },
+    { key: "issueDate", header: "Issue date (YYYY-MM-DD)", width: 22, text: true },
+  ],
+  prepare: (values) => ({ ...values, credentialType: values.credentialType.toUpperCase() }),
+  instructions: [
+    "How to fill the Credentials sheet",
+    "• One row per credential. Registration no., Program code, Batch start year, Credential type, Degree title and CGPA are required.",
+    "• The student must exist (Students page), be enrolled in that batch, and have linked their wallet (Students › Invite).",
+    "• The credential is sent only to the wallet the student linked. There is no wallet column on purpose.",
+    "• Program code is the code on the Programs page (e.g. CSE). Batch end year is only needed when two batches of the program start the same year.",
+    `• Credential type is one of your college's active types${typeCodes.length ? ` (${typeCodes.join(", ")})` : ""}; manage them in Settings › Credential types.`,
+    "• CGPA is a number from 0 to 10. Issue date is optional (today if empty), written as YYYY-MM-DD.",
+    "• Keep the first row (the column names) as it is. Up to 200 rows per file.",
+  ],
+});

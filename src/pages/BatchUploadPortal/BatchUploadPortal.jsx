@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
-import Papa from "papaparse";
 import toast from "react-hot-toast";
 import {
   AlertCircle,
@@ -26,12 +25,13 @@ import { StatCards } from "../../components/CatalogPage/CatalogPage";
 import { useAuth } from "../../context/AuthContext";
 import api, { getErrorMessage } from "../../lib/api";
 import { shortenAddress } from "../../lib/utils";
+import { credentialSheet, downloadTemplate, readSheet } from "../../lib/excelSheet";
 import "./BatchUploadPortal.css";
 
 const MAX_RECORDS = 200;
 
 const BATCH_STEPS = [
-  { key: "upload", label: "Upload", sub: "Choose a CSV file" },
+  { key: "upload", label: "Upload", sub: "Choose an Excel file" },
   { key: "review", label: "Review", sub: "Check the records" },
   { key: "processing", label: "Process", sub: "Pin and issue" },
   { key: "complete", label: "Done", sub: "See the results" },
@@ -39,51 +39,16 @@ const BATCH_STEPS = [
 
 // One row per credential. The student and enrollment come from the college's own records (registration no. +
 // program + batch); the credential always goes to the wallet the student proved, so there is no wallet column.
-const CSV_COLUMNS = ["registrationNo", "programCode", "startYear", "credentialType", "degreeTitle", "cgpa"];
-const OPTIONAL_COLUMNS = ["endYear", "honors", "issueDate"];
+const REQUIRED_COLUMNS = ["Registration no.", "Program code", "Batch start year", "Credential type", "Degree / credential title", "CGPA"];
+const OPTIONAL_COLUMNS = ["Batch end year", "Honors", "Issue date"];
+const REQUIRED_KEYS = ["registrationNo", "programCode", "startYear", "credentialType", "degreeTitle", "cgpa"];
 
 const HELP_ITEMS = [
   [Clock, "Processing takes a few seconds per credential."],
   [Wallet, "Each student must have linked their wallet first (Students page › Invite). Credentials go only to that wallet."],
   [ShieldCheck, "Rows are matched to enrollments by registration no., program code and batch start year (add the end year when two batches start the same year)."],
-  [AlertCircle, "Fix rows with issues in the CSV and upload it again; nothing is issued until every row is ready."],
+  [AlertCircle, "Fix rows with issues in the Excel file and upload it again; nothing is issued until every row is ready."],
 ];
-
-const templateData = [
-  {
-    registrationNo: "21CSE001",
-    programCode: "CSE",
-    startYear: "2022",
-    endYear: "2026",
-    credentialType: "DEGREE",
-    degreeTitle: "Bachelor of Technology",
-    cgpa: "8.7",
-    honors: "",
-    issueDate: new Date().toISOString().split("T")[0],
-  },
-];
-
-const downloadTemplateCSV = () => {
-  const blob = new Blob([Papa.unparse(templateData)], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "credential_batch_template.csv";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-const parseFile = (file) =>
-  new Promise((resolve, reject) => {
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: (header) => header.trim(),
-      complete: (results) => resolve(results.data),
-      error: reject,
-    });
-  });
 
 // Checks that need no server: required columns, numbers, known credential types, repeated rows.
 const validateParsedData = (data, typeCodes) => {
@@ -91,15 +56,17 @@ const validateParsedData = (data, typeCodes) => {
   const add = (index, message) => problems.set(index, [...(problems.get(index) || []), message]);
   const seen = new Map();
   data.forEach((record, index) => {
-    CSV_COLUMNS.forEach((field) => !String(record[field] ?? "").trim() && add(index, `Missing ${field}`));
+    REQUIRED_KEYS.forEach((field, position) => !String(record[field] ?? "").trim() && add(index, `Missing ${REQUIRED_COLUMNS[position]}`));
     const cgpa = Number(record.cgpa);
     if (record.cgpa && (Number.isNaN(cgpa) || cgpa < 0 || cgpa > 10)) add(index, "CGPA should be between 0 and 10");
-    if (record.startYear && !/^\d{4}$/.test(String(record.startYear).trim())) add(index, "startYear should be a year like 2022");
-    if (record.endYear && !/^\d{4}$/.test(String(record.endYear).trim())) add(index, "endYear should be a year like 2026");
+    if (record.startYear && !/^\d{4}$/.test(String(record.startYear).trim())) add(index, "Batch start year should be a year like 2022");
+    if (record.endYear && !/^\d{4}$/.test(String(record.endYear).trim())) add(index, "Batch end year should be a year like 2026");
+    // Excel may turn a typed date into a local format (11/25/2026): ask for the unambiguous form.
+    if (record.issueDate && !/^\d{4}-\d{2}-\d{2}$/.test(String(record.issueDate).trim())) add(index, "Issue date should be written as YYYY-MM-DD (e.g. 2026-06-30)");
     const type = String(record.credentialType ?? "").trim().toUpperCase();
     if (type && !typeCodes.includes(type)) add(index, `"${type}" is not an active credential type (see Settings › Credential types)`);
     const key = [record.registrationNo, record.programCode, record.startYear, record.endYear, type].map((value) => String(value ?? "").trim().toUpperCase()).join("|");
-    if (seen.has(key)) add(index, `Same student, batch and type as row ${seen.get(key) + 2}`);
+    if (seen.has(key)) add(index, `Same student, batch and type as row ${data[seen.get(key)].row}`);
     else seen.set(key, index);
   });
   return problems;
@@ -153,15 +120,16 @@ export function BatchUploadPortal() {
   const handleFile = async (uploadedFile) => {
     if (!uploadedFile) return;
 
-    if (uploadedFile.name.split(".").pop().toLowerCase() !== "csv") {
-      toast.error("Please upload a CSV file");
+    if (uploadedFile.name.split(".").pop().toLowerCase() !== "xlsx") {
+      toast.error("Please upload an Excel (.xlsx) file. Download the template to start.");
       return;
     }
 
-    const toastId = toast.loading("Parsing file...");
+    const toastId = toast.loading("Reading the Excel file...");
 
     try {
-      const data = await parseFile(uploadedFile);
+      // Each row keeps its Excel row number, so problems point at the right line in the sheet.
+      const data = await readSheet(uploadedFile, credentialSheet(typeCodes));
 
       if (data.length === 0) {
         toast.error("The file has no records", { id: toastId });
@@ -176,12 +144,13 @@ export function BatchUploadPortal() {
       toast.loading("Checking the rows against your college's records...", { id: toastId });
       const problems = validateParsedData(data, typeCodes);
       const { data: matched } = await api.post("/institution/credentials/resolve", {
-        rows: data.map((record, index) => ({ ...record, row: index + 2 })),
+        rows: data,
       });
       const rows = data.map((record, index) => ({ ...record, ...matched.results[index] }));
       rows.forEach((row, index) => row.error && problems.set(index, [...(problems.get(index) || []), row.error]));
       const errors = [...problems.entries()].map(([index, messages]) => ({
         index,
+        rowNo: rows[index].row,
         studentName: rows[index].studentName || rows[index].registrationNo || `Record #${index + 1}`,
         errors: messages,
       }));
@@ -196,7 +165,8 @@ export function BatchUploadPortal() {
         toast.success(`Parsed ${data.length} records`, { id: toastId });
       }
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error reading the CSV file"), { id: toastId });
+      // A bad file explains itself (missing column, not an Excel file); a server error comes from the API.
+      toast.error(error.response ? getErrorMessage(error, "Could not check the rows") : error.message, { id: toastId });
     }
   };
 
@@ -365,7 +335,7 @@ export function BatchUploadPortal() {
     <div className="catalog-page batch-page">
       <AdminPageHeader
         title="Batch upload"
-        description={`Issue credentials for ${institution?.name || "your institution"} from a single CSV file. Students then claim them.`}
+        description={`Issue credentials for ${institution?.name || "your institution"} from a single Excel file. Students then claim them.`}
         onRefresh={loadStats}
         isRefreshing={isLoadingStats}
         actions={
@@ -429,13 +399,13 @@ export function BatchUploadPortal() {
                     <Upload className="h-6 w-6" />
                   </span>
                   <span className="dropzone-title">
-                    Drop your CSV here or <span className="text-cobalt">browse</span>
+                    Drop your Excel file here or <span className="text-cobalt">browse</span>
                   </span>
-                  <span className="dropzone-sub">.csv only · max {MAX_RECORDS} records</span>
+                  <span className="dropzone-sub">Excel (.xlsx) · max {MAX_RECORDS} rows</span>
                   <input
                     type="file"
                     id="file-upload"
-                    accept=".csv"
+                    accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     onChange={handleInputChange}
                     className="sr-only"
                   />
@@ -449,7 +419,11 @@ export function BatchUploadPortal() {
                       <p className="card-sub">Start from the template with one example row.</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" onClick={downloadTemplateCSV}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => downloadTemplate(credentialSheet(typeCodes)).catch(() => toast.error("Could not create the template"))}
+                  >
                     <Download className="h-3.5 w-3.5" />
                     Download template
                   </Button>
@@ -461,7 +435,7 @@ export function BatchUploadPortal() {
                     Required columns
                   </p>
                   <div className="columns">
-                    {CSV_COLUMNS.map((column) => (
+                    {REQUIRED_COLUMNS.map((column) => (
                       <code key={column}>{column}</code>
                     ))}
                     {OPTIONAL_COLUMNS.map((column) => (
@@ -498,13 +472,13 @@ export function BatchUploadPortal() {
                   <div className="errors">
                     <p className="errors-title">
                       <AlertCircle className="h-4 w-4" />
-                      Fix these rows in your CSV, then upload it again
+                      Fix these rows in your Excel file, then upload it again
                     </p>
                     <div className="errors-list">
                       {validationErrors.map((error) => (
                         <div key={error.index} className="error-item">
                           <span className="font-semibold">
-                            Row {error.index + 2} · {error.studentName}
+                            Row {error.rowNo} · {error.studentName}
                           </span>
                           <ul>
                             {error.errors.map((err) => (
@@ -534,7 +508,7 @@ export function BatchUploadPortal() {
                       <tbody>
                         {parsedData.slice(0, 10).map((student, index) => (
                           <tr key={index}>
-                            <td className="cell-sub">{index + 2}</td>
+                            <td className="cell-sub">{student.row}</td>
                             <td className="nowrap font-medium">
                               {student.studentName || "—"}
                               <span className="cell-sub block">{student.registrationNo}</span>
