@@ -1,0 +1,14 @@
+@reference "../../index.css";
+
+.institution-batches .batch-filter {
+  max-width: 20rem;
+}
+
+/* Create batch modal (not nested: it may render outside the page root). */
+.batch-form {
+  @apply space-y-5;
+}
+
+.batch-preview-code {
+  @apply rounded-md bg-ink/10 px-2 py-0.5 text-[12px] font-semibold tracking-wide text-ink/70;
+}

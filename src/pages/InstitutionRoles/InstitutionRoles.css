@@ -1,0 +1,49 @@
+@reference "../../index.css";
+
+/* College Admin › Roles. Shared layout comes from .catalog-page (components/CatalogPage). */
+.institution-roles {
+  & .perm-summary {
+    @apply max-w-80 truncate text-[13px] text-ink/70;
+  }
+
+  /* The permission picker needs more room than the default catalog modal. */
+  & .modal {
+    @apply max-w-3xl;
+  }
+
+  & .role-note {
+    @apply rounded-md bg-acid/50 px-3 py-2 text-[13px] text-ink/70;
+  }
+
+  & .perm-groups {
+    @apply max-h-[50vh] space-y-3 overflow-y-auto pr-1;
+  }
+
+  & .perm-group-label {
+    @apply mb-1 text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
+  }
+
+  & .perm-grid {
+    @apply grid gap-1.5 sm:grid-cols-2;
+  }
+
+  & .perm {
+    @apply flex cursor-pointer items-start gap-2 rounded-md border border-ink/10 px-2.5 py-1.5 transition-colors hover:border-ink/30;
+
+    & input {
+      @apply mt-0.5 h-4 w-4 shrink-0 accent-cobalt;
+    }
+  }
+
+  & .perm.is-checked {
+    @apply border-cobalt/60 bg-cobalt/5;
+  }
+
+  & .perm-label {
+    @apply block text-[14px] leading-tight font-medium;
+  }
+
+  & .perm-desc {
+    @apply mt-0.5 block text-[12px] leading-4 text-ink/55;
+  }
+}

@@ -35,7 +35,7 @@ export function AuthBanner() {
 
         <Link
           to={`/login?next=${next}`}
-          className="inline-flex h-9 items-center justify-center bg-cobalt px-4 font-mono text-[9px] uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink"
+          className="inline-flex h-9 items-center justify-center bg-cobalt px-4 text-xs text-paper transition-colors hover:bg-ink"
         >
           Sign in
         </Link>

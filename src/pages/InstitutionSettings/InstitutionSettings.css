@@ -1,0 +1,43 @@
+.institution-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-section {
+  background: var(--paper-soft);
+  border: 1px solid rgb(var(--ink) / 0.1);
+  border-radius: 16px;
+}
+
+.settings-section__head {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgb(var(--ink) / 0.08);
+}
+
+.settings-section__icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 12px;
+  background: rgb(79 70 229 / 0.1);
+  color: rgb(79 70 229);
+}
+
+.settings-section__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.settings-section__desc {
+  font-size: 13px;
+  color: rgb(var(--ink) / 0.55);
+}
+
+.settings-section__body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}

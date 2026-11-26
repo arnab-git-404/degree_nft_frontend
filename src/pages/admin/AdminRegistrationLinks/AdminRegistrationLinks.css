@@ -1,0 +1,38 @@
+@reference "../../../index.css";
+
+/* Admin › Registration links. Scoped under .admin-reg-links. */
+.admin-reg-links {
+  @apply space-y-3;
+
+  & .create-bar {
+    @apply flex flex-col gap-2 rounded-xl border border-ink/10 bg-paper-soft p-2 shadow-xs sm:flex-row sm:items-center;
+  }
+
+  & .create-label {
+    @apply shrink-0 pl-1 text-xs font-medium text-ink/60;
+  }
+
+  & .url {
+    @apply flex items-center gap-1;
+
+    & code {
+      @apply max-w-64 truncate rounded bg-paper px-1.5 py-0.5 font-mono text-[12px];
+    }
+  }
+
+  & .copy-btn {
+    @apply rounded p-1 text-ink/50 hover:bg-paper hover:text-ink;
+  }
+
+  & .num {
+    @apply text-right tabular-nums;
+  }
+
+  & .date {
+    @apply text-xs whitespace-nowrap text-ink/55;
+  }
+
+  & .col-actions {
+    @apply text-right;
+  }
+}

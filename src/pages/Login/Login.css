@@ -1,0 +1,96 @@
+@reference "../../index.css";
+
+/* Login. Two columns on desktop (brand panel + form), form only on phones. */
+.login-page {
+  @apply grid min-h-screen lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)];
+
+  /* ---- Brand panel ---- */
+  & .brand-panel {
+    @apply hidden flex-col justify-between bg-rail p-8 text-slate-300 lg:flex xl:p-10;
+  }
+
+  & .brand-row {
+    @apply flex items-center gap-2;
+  }
+
+  & .brand-mark {
+    @apply flex h-7 w-7 items-center justify-center rounded-md bg-cobalt text-white;
+  }
+
+  & .brand-headline {
+    @apply max-w-sm text-2xl leading-snug font-semibold text-white;
+  }
+
+  & .highlights {
+    @apply mt-6 max-w-sm space-y-3;
+
+    & li {
+      @apply flex gap-3;
+    }
+  }
+
+  & .highlight-icon {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white/10 text-indigo-300;
+  }
+
+  & .highlight-title {
+    @apply block text-[14px] font-medium text-white;
+  }
+
+  & .highlight-text {
+    @apply block text-xs text-slate-400;
+  }
+
+  & .verify-link {
+    @apply inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white;
+  }
+
+  /* ---- Form side ---- */
+  & .form-side {
+    @apply flex items-center justify-center px-4 py-8;
+  }
+
+  & .form-wrap {
+    @apply w-full max-w-[360px];
+  }
+
+  & .mobile-brand {
+    @apply mb-6 flex justify-center lg:hidden;
+  }
+
+  & .form-title {
+    @apply text-lg font-semibold;
+  }
+
+  & .form-sub {
+    @apply mt-0.5 text-xs text-ink/55;
+  }
+
+  & .form {
+    @apply mt-4 space-y-3;
+  }
+
+  & .eye-btn {
+    @apply absolute top-[28px] right-2.5 text-ink/40 transition-colors hover:text-cobalt;
+  }
+
+  & .form-error {
+    @apply rounded-md bg-red-50 px-2.5 py-1.5 text-xs text-red-700;
+  }
+
+  & .divider {
+    @apply my-4 flex items-center gap-3;
+
+    & > span:not(.divider-text) {
+      @apply h-px flex-1 bg-ink/10;
+    }
+  }
+
+  & .divider-text {
+    @apply text-[12px] text-ink/40;
+  }
+
+  & .mobile-note {
+    @apply mt-4 text-[12px] leading-4 text-ink/50 lg:hidden;
+  }
+}

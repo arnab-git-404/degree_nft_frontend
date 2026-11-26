@@ -1,0 +1,70 @@
+@reference "../../index.css";
+
+.student-claim {
+  @apply flex min-h-screen items-center justify-center px-4 py-8;
+
+  & .claim-card {
+    @apply w-full max-w-[420px] space-y-4 rounded-2xl border border-ink/10 bg-paper-soft p-6 shadow-sm sm:p-8;
+  }
+  & .claim-brand {
+    @apply flex justify-center;
+  }
+  & .claim-loading {
+    @apply flex justify-center py-8;
+  }
+  & .claim-title {
+    @apply text-[22px] leading-tight font-bold tracking-tight;
+  }
+  & .claim-text {
+    @apply text-[14px] leading-6 text-ink/65;
+  }
+  & .claim-state {
+    @apply space-y-2 text-center;
+  }
+  & .claim-state__icon {
+    @apply mx-auto h-12 w-12 rounded-2xl p-2.5;
+
+    &.is-bad {
+      @apply bg-red-50 text-red-700;
+    }
+  }
+  & .claim-steps {
+    @apply space-y-3 rounded-xl bg-ink/[0.04] p-4;
+
+    & li {
+      @apply flex items-start gap-3 text-[14px] text-ink/50;
+    }
+    & li.is-now,
+    & li.is-done {
+      @apply text-ink;
+    }
+  }
+  & .claim-steps__n {
+    @apply grid h-6 w-6 shrink-0 place-items-center rounded-full bg-ink/10 text-[12px] font-semibold;
+  }
+  & li.is-now .claim-steps__n {
+    @apply bg-cobalt text-white;
+  }
+  & li.is-done .claim-steps__n {
+    @apply bg-emerald-500 text-white;
+  }
+  & .claim-steps__sub {
+    @apply block text-[12px] font-normal text-ink/50;
+  }
+  & .claim-hint {
+    @apply flex items-start gap-2 rounded-lg px-3 py-2 text-[13px];
+
+    &.is-ok {
+      @apply bg-emerald-50 text-emerald-700;
+    }
+    &.is-warn {
+      @apply bg-amber-50 text-amber-700;
+    }
+  }
+  & .claim-error {
+    @apply rounded-md bg-red-50 px-3 py-2 text-[13px] text-red-700;
+  }
+  & .claim-foot {
+    @apply text-center text-[12px] text-ink/45;
+  }
+}

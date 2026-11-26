@@ -1,0 +1,105 @@
+@reference "../../../index.css";
+
+/* Admin › Activity log. Scoped under .admin-activity (the details modal renders inside it). */
+.admin-activity {
+  @apply space-y-3;
+
+  /* Stats header: 2 per row on phones, 4 on tablets, all 7 on desktop */
+  & .stats {
+    @apply grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7;
+  }
+
+  & .stat {
+    @apply rounded-xl border border-ink/10 bg-paper-soft px-3 py-2 shadow-xs;
+  }
+
+  & .stat-label {
+    @apply truncate text-xs text-ink/55;
+  }
+
+  & .stat-number {
+    @apply text-lg leading-tight font-semibold tabular-nums;
+  }
+
+  & .stat-number.is-danger {
+    @apply text-red-700;
+  }
+
+  & .log-row td {
+    @apply align-top;
+  }
+
+  & .when {
+    @apply text-xs whitespace-nowrap text-ink/55;
+  }
+
+  & .action-code {
+    @apply mt-0.5 flex items-center gap-1.5 font-mono text-[12px] text-ink/45;
+  }
+
+  & .where {
+    @apply text-xs;
+  }
+
+  & .actions {
+    @apply text-right;
+  }
+
+  /* ---- Details modal ---- */
+  & .modal-backdrop {
+    @apply fixed inset-0 z-[120] flex overflow-y-auto bg-ink/50 p-3 backdrop-blur-sm;
+  }
+
+  /* m-auto centres both ways and still scrolls from the top when taller than the screen */
+  & .modal {
+    @apply m-auto w-full max-w-2xl rounded-xl border border-ink/10 bg-paper-soft shadow-2xl;
+  }
+
+  & .modal-head {
+    @apply flex items-start justify-between gap-3 border-b border-ink/10 px-4 py-2.5;
+  }
+
+  & .modal-kicker {
+    @apply text-[12px] text-ink/50;
+  }
+
+  & .modal-title {
+    @apply text-base leading-tight font-semibold break-words;
+  }
+
+  & .icon-btn {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-ink/55 transition-colors hover:bg-paper hover:text-ink;
+  }
+
+  & .modal-body {
+    @apply space-y-3 px-4 py-3;
+  }
+
+  & .fields {
+    @apply divide-y divide-ink/10 rounded-md border border-ink/10 bg-paper;
+  }
+
+  & .field {
+    @apply grid gap-0.5 px-3 py-1.5 text-xs sm:grid-cols-[8rem_1fr] sm:gap-3;
+
+    & dt {
+      @apply text-ink/50;
+    }
+
+    & dd {
+      @apply min-w-0 break-words;
+    }
+
+    & code {
+      @apply font-mono text-[12px];
+    }
+  }
+
+  & .section-label {
+    @apply mb-1 text-[12px] font-semibold tracking-wide text-ink/50 uppercase;
+  }
+
+  & .json {
+    @apply max-h-72 overflow-auto rounded-md border border-ink/10 bg-paper p-3 font-mono text-[12px] whitespace-pre-wrap;
+  }
+}

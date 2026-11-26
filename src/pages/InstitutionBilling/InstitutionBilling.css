@@ -1,0 +1,86 @@
+@reference "../../index.css";
+
+/* College › Billing. Shared layout comes from .catalog-page (components/CatalogPage). */
+.institution-billing {
+  & .bill-tags {
+    @apply flex flex-wrap gap-2;
+  }
+  & .bill-tag {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-paper-soft px-3 py-1 text-[13px] text-ink/70;
+  }
+  & .bill-tag b {
+    @apply font-semibold;
+  }
+  & .bill-tag i {
+    @apply h-1.5 w-1.5 rounded-full bg-ink/30;
+  }
+  & .tag-total b {
+    color: rgb(79 70 229);
+  }
+  & .tag-active i {
+    background: rgb(16 185 129);
+  }
+  & .tag-active b {
+    color: rgb(16 185 129);
+  }
+  & .tag-red i {
+    background: rgb(220 38 38);
+  }
+  & .tag-red b {
+    color: rgb(220 38 38);
+  }
+
+  & .bill-note {
+    @apply rounded-lg px-3 py-2 text-[13px];
+  }
+  & .bill-note--warn {
+    @apply bg-amber-50 text-amber-800;
+  }
+  & .bill-note--bad {
+    @apply bg-red-50 text-red-700;
+  }
+
+  & .bill-pay {
+    @apply rounded-2xl border border-ink/10 bg-paper-soft;
+  }
+  & .bill-pay header {
+    @apply flex items-center gap-3 border-b border-ink/10 px-5 py-4;
+  }
+  & .bill-pay header h2 {
+    @apply text-[16px] font-semibold;
+  }
+  & .bill-pay header p {
+    @apply text-[13px] text-ink/55;
+  }
+  & .bill-pay__icon {
+    @apply grid h-11 w-11 place-items-center rounded-xl;
+    background: rgb(79 70 229 / 0.1);
+    color: rgb(79 70 229);
+  }
+  & .bill-pay dl {
+    @apply grid gap-x-6 gap-y-3 px-5 py-4 sm:grid-cols-[220px_1fr];
+  }
+  & .bill-pay dt {
+    @apply text-[13px] font-medium text-ink/60;
+  }
+  & .bill-pay dd {
+    @apply flex min-w-0 flex-wrap items-center gap-2;
+  }
+  & .bill-pay code {
+    @apply break-all rounded-md bg-ink/5 px-2 py-1 font-mono text-[12.5px];
+  }
+  & .bill-copy {
+    @apply rounded-md p-1.5 text-ink/60 hover:bg-ink/5;
+  }
+  & .bill-hint {
+    @apply w-full text-[12px] text-ink/50;
+  }
+
+  & .bill-details {
+    @apply text-[13px] text-ink/70;
+  }
+  & .bill-details a {
+    @apply ml-2 inline-flex items-center gap-1 text-[12px] font-medium;
+    color: rgb(79 70 229);
+  }
+}

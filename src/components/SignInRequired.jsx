@@ -21,50 +21,40 @@ export function SignInRequired({
   };
 
   return (
-    <div className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center text-center">
-      <span className="flex h-16 w-16 items-center justify-center border border-ink/20 bg-paper-soft text-cobalt">
-        <ShieldCheck className="h-8 w-8" />
-      </span>
-      <p className="eyebrow mt-6">Access restricted</p>
-      <h2 className="mt-3 font-serif text-4xl leading-tight tracking-tight">
-        {title}
-      </h2>
-      <p className="mt-3 max-w-md text-sm leading-6 text-ink/60">
-        {description}
-      </p>
-      {authError ? (
-        <p className="mt-3 text-sm text-red-700">{authError}</p>
-      ) : null}
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="flex w-full max-w-md items-start gap-3 rounded-xl border border-ink/10 bg-paper-soft p-4 shadow-xs">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-acid text-cobalt">
+          <ShieldCheck className="h-5 w-5" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-[12px] text-ink/50">Access restricted</p>
+          <h2 className="text-base leading-tight font-semibold">{title}</h2>
+          <p className="mt-1 text-xs leading-5 text-ink/60">{description}</p>
+          {authError ? (
+            <p className="mt-1 text-xs text-red-700">{authError}</p>
+          ) : null}
 
-      <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-        {connected ? (
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={handleSignIn}
-            disabled={isAuthenticating}
-          >
-            {isAuthenticating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {connected ? (
+              <button
+                type="button"
+                className="btn-outline"
+                onClick={handleSignIn}
+                disabled={isAuthenticating}
+              >
+                {isAuthenticating ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : null}
+                {isAuthenticating ? "Signing in..." : "Sign in with wallet"}
+              </button>
             ) : null}
-            {isAuthenticating ? "Signing in..." : "Sign in with wallet"}
-          </button>
-        ) : null}
-        <Link to={`/login?next=${next}`} className="btn-primary">
-          Sign in
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+            <Link to={`/login?next=${next}`} className="btn-primary">
+              Sign in
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
       </div>
-
-      <p className="mt-5 text-xs text-ink/45">
-        New here?{" "}
-        <Link
-          to="/login?mode=signup"
-          className="border-b border-ink/40 text-ink transition-colors hover:border-cobalt hover:text-cobalt"
-        >
-          Create an account
-        </Link>
-      </p>
     </div>
   );
 }
