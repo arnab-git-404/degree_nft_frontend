@@ -219,9 +219,6 @@ const AppRoutes = () => {
       </Route>
       <Route path="/faucet" element={<Faucet />} />
 
-      {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-      {/* <Route path="/mint" element={<MintNFT />} /> */}
-      {/* <Route path="/profile/:id" element={<Profile />} /> */}
       <Route path="*" element={<NotFound />} />
     </Routes>
     </RevokedGate>
