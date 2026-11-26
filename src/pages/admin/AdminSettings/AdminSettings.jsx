@@ -6,6 +6,7 @@ import { formatDate } from "../../../lib/admin";
 import { Button } from "../../../components/Button";
 import { AdminError, AdminLoading, AdminPageHeader } from "../../../components/admin/AdminUI";
 import { BillingSettings } from "./BillingSettings";
+import { CompressionSettings } from "./CompressionSettings";
 import "./AdminSettings.css";
 
 // Common choices; "secure" means SSL/TLS from the start (465), otherwise STARTTLS.
@@ -291,6 +292,7 @@ export function AdminSettings() {
       </section>
 
       <BillingSettings />
+      <CompressionSettings />
     </div>
   );
 }
